@@ -1,16 +1,17 @@
-<script setup>
-  import notebookAndPen from "@icon-park/vue-next/lib/icons/NotebookAndPen";
+<script lang="ts" setup>
   import user from "@icon-park/vue-next/lib/icons/User";
-  import folderOpen from "@icon-park/vue-next/lib/icons/FolderOpen";
   import robotOne from "@icon-park/vue-next/lib/icons/RobotOne";
   import transferData from "@icon-park/vue-next/lib/icons/TransferData";
   import help from "@icon-park/vue-next/lib/icons/Help";
+  import notebook from "@icon-park/vue-next/lib/icons/Notebook"
+  import folderOpen from "@icon-park/vue-next/lib/icons/FolderOpen"
+  import notes from "@icon-park/vue-next/lib/icons/Notes"
   import {ref} from 'vue';
 
   function boggleDrawer() {
     const drawer = document.getElementById("tree-view");
     const width = drawer.style.width;
-    const openWidth = "300px";
+    const openWidth = "250px";
     if (width === openWidth) {
       // close
       drawer.style.width = "0";
@@ -22,32 +23,116 @@
 
   // 侧边菜单是否折叠
   const isCollapse = ref(true);
+
+  // 树形控件需要用到的数据结构
+  interface Tree {
+    id: number
+    label: string
+    children?: Tree[]
+  }
+
+  // 指定Tree中哪个属性对应children和label
+  const props = {
+    children: "children",
+    label: "label"
+  }
+
+  const data: Tree[] = [
+    {
+      id: 0,
+      label: '文件夹1',
+      children: [
+        {
+          id: 1,
+          label: '文件夹1-1',
+          children: [
+            {
+              id: 2,
+              label: '文件1-1-1',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 3,
+      label: '文件夹2',
+      children: [
+        {
+          id: 4,
+          label: '文件夹2-1',
+          children: [
+            {
+              id: 5,
+              label: '文件2-1-1',
+            },
+          ],
+        },
+        {
+          id: 6,
+          label: '文件夹2-2',
+          children: [
+            {
+              id: 7,
+              label: '文件2-2-1',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 8,
+      label: '文件夹3',
+      children: [
+        {
+          id: 9,
+          label: '文件夹3-1',
+          children: [
+            {
+              id: 10,
+              label: '文件3-1-1',
+            },
+          ],
+        },
+        {
+          id: 11,
+          label: '文件夹3-2',
+          children: [
+            {
+              id: 12,
+              label: '文件3-2-1',
+            },
+          ],
+        },
+      ],
+    },
+  ]
+
 </script>
 
 <template>
     <el-container style="height: 100vh">
       <el-header id="header">
         <div id="icon-and-name" style="display: flex; align-items: center">
-<!--          <notebook-and-pen theme="outline" size="24" fill="#333" style="margin: 0 15px 0 20px"/>-->
           <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
           <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">iNote</span>
         </div>
         <div id="user-zone">
-          <user theme="outline" size="24" fill="#333"/>
+          <router-link to="/userInfo"><user theme="outline" size="24" fill="#333"/></router-link>
           <router-link to="/login" class="user-zone-font">登录</router-link>
           <router-link to="/login" class="user-zone-font">注册</router-link>
         </div>
       </el-header>
 
       <el-container>
-        <el-menu id="side-bar" :collapse="isCollapse">
+        <el-menu id="side-bar" :collapse="isCollapse" active-text-color="#a5d63f">
           <div>
             <el-menu-item index="1" @click="isCollapse=!isCollapse">
               <transfer-data theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">展开与收起</span></template>
             </el-menu-item>
             <el-menu-item index="2" v-on:click="boggleDrawer">
-              <folder-open class="icon" id="folder-icon" theme="outline" fill="#333" size="24"/>
+              <notebook class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">我的笔记</span></template>
             </el-menu-item>
             <el-menu-item index="3">
@@ -62,7 +147,15 @@
         </el-menu>
 
         <el-main id="workspace" style="padding: 0">
-          <el-container id="tree-view"></el-container>
+          <el-tree id="tree-view" :data="data" :props="props">
+            <template #default="{ node, data }">
+              <span>
+                <folder-open v-if="data.children" theme="outline" size="16" fill="#333" style="margin-right: 5px"/>
+                <notes v-else theme="outline" size="16" fill="#a5d63f" style="margin-right: 5px"/>
+                <span>{{ node.label }}</span>
+              </span>
+            </template>
+          </el-tree>
         </el-main>
       </el-container>
 
@@ -117,9 +210,13 @@
 
   #tree-view {
     width: 0;
-    background-color: #e9e9e9;
+    background-color: white;
     height: 100%;
+    font-size: 16px;
+    font-weight: bold;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    transition: width 0.2s linear;
+    overflow: hidden;
   }
 
   #workspace {

@@ -9,10 +9,12 @@ import {createRouter, createWebHistory} from "vue-router";
 
 import LoginVue from '@/views/Login.vue'
 import MainPageVue from '@/views/MainPage.vue'
+import UserInfoVue from "@/views/UserInfo.vue"
 
 const routes = [
     {path: "/login", component: LoginVue},
-    {path: "/", component: MainPageVue}
+    {path: "/", component: MainPageVue},
+    {path: "/userInfo", component: UserInfoVue}
 ]
 
 const router = createRouter({
