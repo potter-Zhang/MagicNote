@@ -6,6 +6,11 @@
   import notebook from "@icon-park/vue-next/lib/icons/Notebook"
   import folderOpen from "@icon-park/vue-next/lib/icons/FolderOpen"
   import notes from "@icon-park/vue-next/lib/icons/Notes"
+  import fileAdditionOne from "@icon-park/vue-next/lib/icons/FileAdditionOne"
+  import folderPlus from "@icon-park/vue-next/lib/icons/FolderPlus"
+  import deleteOne from "@icon-park/vue-next/lib/icons/DeleteOne"
+
+  import type Node from 'element-plus/es/components/tree/src/model/node'
   import {ref} from 'vue';
 
   function boggleDrawer() {
@@ -37,7 +42,7 @@
     label: "label"
   }
 
-  const data: Tree[] = [
+  const dataSource = ref<Tree[]>([
     {
       id: 0,
       label: '文件夹1',
@@ -106,8 +111,33 @@
         },
       ],
     },
-  ]
+  ])
 
+  var selectedNodeParent = null;
+  var selectedNode: Tree = null;
+
+  const selectNode = (data: Tree, node: Node) => {
+    selectedNode = data;
+    selectedNodeParent = node.parent.data;
+  }
+
+  const addNode = (type: string) => {
+    if (selectedNode == null || selectedNode.children == null)
+      return;
+    const newNode: Tree = {id: -1, label: type}
+    if (type === "dir")
+      newNode.children = [];
+    selectedNode.children.push(newNode);
+  }
+
+  const delNode = () => {
+    if (selectedNode == null)
+      return;
+    // 选中的是根节点的话没有parent
+    let children: Tree[] = selectedNodeParent.children ? selectedNodeParent.children:selectedNodeParent;
+    const index = children.findIndex((d) => d.id === selectedNode.id);
+    children.splice(index, 1);
+  }
 </script>
 
 <template>
@@ -147,15 +177,26 @@
         </el-menu>
 
         <el-main id="workspace" style="padding: 0">
-          <el-tree id="tree-view" :data="data" :props="props">
-            <template #default="{ node, data }">
+          <div id="tree-view">
+            <div id="operationBar">
+              <delete-one class="icon" theme="outline" size="20" fill="#000000" style="padding-right: 5px" @click="delNode"/>
+              <file-addition-one class="icon" theme="outline" size="20" fill="#000000" @click="addNode('file')" style="padding-right: 5px"/>
+              <folder-plus class="icon" theme="outline" size="20" fill="#000000" @click="addNode('dir')"/>
+            </div>
+
+            <el-tree :data="dataSource" :props="props"
+                     @node-click="selectNode"
+                     node-key="id"
+                     style="font-size: 16px; font-weight: bold">
+              <template #default="{ node, data }">
               <span>
                 <folder-open v-if="data.children" theme="outline" size="16" fill="#333" style="margin-right: 5px"/>
                 <notes v-else theme="outline" size="16" fill="#a5d63f" style="margin-right: 5px"/>
                 <span>{{ node.label }}</span>
               </span>
-            </template>
-          </el-tree>
+              </template>
+            </el-tree>
+          </div>
         </el-main>
       </el-container>
 
@@ -212,8 +253,6 @@
     width: 0;
     background-color: white;
     height: 100%;
-    font-size: 16px;
-    font-weight: bold;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
     transition: width 0.2s linear;
     overflow: hidden;
@@ -238,5 +277,12 @@
     margin-left: 10px;
     font-size: 16px;
     font-weight: bold;
+  }
+
+  #operationBar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px 10px 5px 0;
+    border-bottom: 1px solid #e9e9e9;
   }
 </style>
