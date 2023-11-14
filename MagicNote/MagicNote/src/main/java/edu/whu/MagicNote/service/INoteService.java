@@ -21,7 +21,7 @@ public interface INoteService extends IService<Note> {
     //根据id删除笔记
     public boolean removeNote(int id);
     //根据name删除笔记
-    public boolean removeNote(String fileP);
+    public boolean removeNote(String name);
     //修改笔记
     public boolean updateNote(Note myNote);
     //根据id查询笔记
