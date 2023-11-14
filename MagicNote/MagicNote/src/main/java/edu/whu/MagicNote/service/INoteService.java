@@ -19,11 +19,11 @@ public interface INoteService extends IService<Note> {
     //添加笔记
     public Note addNote(Note myNote);
     //根据id删除笔记
-    public void removeNote(int id);
-    //根据文件路径删除笔记
-    public void removeNote(String filePath);
+    public boolean removeNote(int id);
+    //根据name删除笔记
+    public boolean removeNote(String name);
     //修改笔记
-    public void updateNote(Note myNote);
+    public boolean updateNote(Note myNote);
     //根据id查询笔记
     public Note getNote(int id);
     //根据name查询笔记
