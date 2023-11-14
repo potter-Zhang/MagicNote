@@ -53,7 +53,7 @@ public class CodeGenerator {
         //设置作者
         globalConfig.setAuthor("susong");
         //设置是否覆盖原始生成的文件
-        globalConfig.setFileOverride(true);
+        globalConfig.setFileOverride(false);
         //设置数据层接口名，%s为占位符，指代模块名称
         globalConfig.setMapperName("%sDao");
         //设置Id生成策略

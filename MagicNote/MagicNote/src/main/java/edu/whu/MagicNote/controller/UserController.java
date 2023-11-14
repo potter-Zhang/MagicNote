@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     IUserService userService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<User> getUserById(@PathVariable int id){
         User user = userService.getUserById(id);
         if(user == null)
@@ -33,7 +33,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("")
+    @GetMapping("/get")
     public ResponseEntity<User> getUserByName(String name){
         User user = userService.getUserByName(name);
         if(user == null)
@@ -42,7 +42,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("")
+    @PostMapping("/add")
     public ResponseEntity<User> addUser(@RequestBody User user){
         User usr = userService.addUser(user);
         if(usr == null)
@@ -51,7 +51,7 @@ public class UserController {
         return ResponseEntity.ok(usr);
     }
 
-    @PutMapping("")
+    @PutMapping("/update")
     public ResponseEntity<Void> updateUser(@RequestBody User user){
         if(userService.updateUser(user))
             return ResponseEntity.ok().build();
@@ -60,7 +60,7 @@ public class UserController {
             return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id){
         if(userService.deleteUser(id))
             return ResponseEntity.ok().build();
