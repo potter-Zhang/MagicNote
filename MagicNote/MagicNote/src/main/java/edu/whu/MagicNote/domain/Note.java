@@ -24,9 +24,13 @@ public class Note implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    private String name;
+
     private Integer user_id;
 
     private String content;
+
+    private String directory;
 
     private LocalDateTime createTime;
 
