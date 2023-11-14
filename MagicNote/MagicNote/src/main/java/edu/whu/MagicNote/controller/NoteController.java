@@ -34,21 +34,21 @@ public class NoteController {
     //根据id删除笔记
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> removeNoteById(@PathVariable int id){
-        if(noteService.removeNote(id)) return ResponseEntity.ok().build();
-        else return ResponseEntity.notFound().build();
+        noteService.removeNote(id);
+        return ResponseEntity.ok().build();
     }
     //根据文件名删除笔记
     @DeleteMapping("/delete/{name}")
     public ResponseEntity<Void> removeNoteByName(@PathVariable String name){
-        if(noteService.removeNote(name)) return ResponseEntity.ok().build();
-        else return ResponseEntity.notFound().build();
+        noteService.removeNote(name);
+        return ResponseEntity.ok().build();
     }
 
     //更新笔记
     @PostMapping("/update")
     public ResponseEntity<Void> updateNote(@RequestBody Note myNote){
-        if(noteService.updateNote(myNote)) return ResponseEntity.ok().build();
-        else return ResponseEntity.notFound().build();
+        noteService.updateNote(myNote);
+        return ResponseEntity.ok().build();
     }
     //根据id查询笔记
     @GetMapping("/get/{id}")

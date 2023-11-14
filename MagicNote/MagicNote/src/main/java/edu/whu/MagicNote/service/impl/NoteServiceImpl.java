@@ -1,6 +1,5 @@
 package edu.whu.MagicNote.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import edu.whu.MagicNote.domain.Note;
 import edu.whu.MagicNote.dao.NoteDao;
 import edu.whu.MagicNote.service.INoteService;
@@ -30,20 +29,18 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements INote
     }
     //根据id删除笔记
     @Override
-    public boolean removeNote(int id) {
-       return this.removeById(id);
+    public void removeNote(int id) {
+        myNoteDao.deleteById(id);
     }
     //根据文件名删除笔记
     @Override
-    public boolean removeNote(String name) {
-        LambdaQueryWrapper<Note> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Note::getName,name);
-        return this.remove(lqw);
+    public void removeNote(String name) {
+        myNoteDao.DeleteNoteByName(name);
     }
     //更新笔记
     @Override
-    public boolean updateNote(Note myNote) {
-        return this.updateById(myNote);
+    public void updateNote(Note myNote) {
+        myNoteDao.updateById(myNote);
     }
     //根据id查询笔记
     @Override
@@ -53,9 +50,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements INote
     //根据文件名查询笔记
     @Override
     public Note getNote(String name) {
-        LambdaQueryWrapper<Note> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Note::getName,name);
-        return myNoteDao.selectOne(lqw);
+        return myNoteDao.FindNoteByName(name);
     }
 
     @Override
