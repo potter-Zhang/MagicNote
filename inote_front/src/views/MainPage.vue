@@ -10,8 +10,17 @@
   import folderPlus from "@icon-park/vue-next/lib/icons/FolderPlus"
   import deleteOne from "@icon-park/vue-next/lib/icons/DeleteOne"
 
+  import helpInfo from "../components/HelpInfo.vue"
+  import editor from "../components/Editor.vue"
+
   import type Node from 'element-plus/es/components/tree/src/model/node'
   import {ref} from 'vue';
+
+  const currentTab = ref("editor"); // 当前展示在workspace的组件
+
+  const changeTab = (tab: string) => {
+    currentTab.value = tab;
+  }
 
   function boggleDrawer() {
     const drawer = document.getElementById("tree-view");
@@ -42,6 +51,7 @@
     label: "label"
   }
 
+  // 树形控件数据来源
   const dataSource = ref<Tree[]>([
     {
       id: 0,
@@ -162,7 +172,7 @@
               <template #title><span class="menu-title">展开与收起</span></template>
             </el-menu-item>
             <el-menu-item index="2" v-on:click="boggleDrawer">
-              <notebook class="icon" theme="outline" size="24" fill="#333"/>
+              <notebook class="icon" theme="outline" size="24" fill="#333" @click="changeTab('editor')"/>
               <template #title><span class="menu-title">我的笔记</span></template>
             </el-menu-item>
             <el-menu-item index="3">
@@ -170,20 +180,19 @@
               <template #title><span class="menu-title">AI</span></template>
             </el-menu-item>
           </div>
-          <el-menu-item index="4">
+          <el-menu-item index="4" @click="changeTab('helpInfo')">
             <help class="icon" theme="outline" size="24" fill="#333"/>
             <template #title><span class="menu-title">帮助</span></template>
           </el-menu-item>
         </el-menu>
 
-        <el-main id="workspace" style="padding: 0">
+        <el-main style="padding: 0; display: flex">
           <div id="tree-view">
             <div id="operationBar">
               <delete-one class="icon" theme="outline" size="20" fill="#000000" style="padding-right: 5px" @click="delNode"/>
               <file-addition-one class="icon" theme="outline" size="20" fill="#000000" @click="addNode('file')" style="padding-right: 5px"/>
               <folder-plus class="icon" theme="outline" size="20" fill="#000000" @click="addNode('dir')"/>
             </div>
-
             <el-tree :data="dataSource" :props="props"
                      @node-click="selectNode"
                      node-key="id"
@@ -196,6 +205,11 @@
               </span>
               </template>
             </el-tree>
+          </div>
+
+          <div id="workspace">
+            <editor v-if="currentTab==='editor'"/>
+            <help-info v-else-if="currentTab==='helpInfo'"/>
           </div>
         </el-main>
       </el-container>
@@ -258,10 +272,6 @@
     overflow: hidden;
   }
 
-  #workspace {
-    font-size: 100px;
-  }
-
   #side-bar {
     display: flex;
     flex-direction: column;
@@ -284,5 +294,10 @@
     justify-content: flex-end;
     padding: 5px 10px 5px 0;
     border-bottom: 1px solid #e9e9e9;
+  }
+
+  #workspace {
+    flex: 1;
+    display: flex;
   }
 </style>
