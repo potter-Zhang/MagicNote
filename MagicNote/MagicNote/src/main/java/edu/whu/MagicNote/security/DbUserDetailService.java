@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DbUserDetailService implements UserDetailsService {
 
-
     @Autowired
     IUserService userService;
 
