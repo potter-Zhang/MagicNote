@@ -41,7 +41,7 @@ public class NoteController {
         return ResponseEntity.ok(result);
     }
     //根据id删除笔记
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete1/{id}")
     public ResponseEntity<Void> removeNoteById(@PathVariable int id){
         Note myNote = noteService.getNote(id);
         Log myLog = new Log();
@@ -56,7 +56,7 @@ public class NoteController {
         else return ResponseEntity.notFound().build();
     }
     //根据文件名删除笔记
-    @DeleteMapping("/delete/{name}")
+    @DeleteMapping("/delete2/{name}")
     public ResponseEntity<Void> removeNoteByName(@PathVariable String name){
         Note myNote = noteService.getNote(name);
         Log myLog = new Log();
@@ -86,13 +86,13 @@ public class NoteController {
         else return ResponseEntity.notFound().build();
     }
     //根据id查询笔记
-    @GetMapping("/get/{id}")
+    @GetMapping("/get1/{id}")
     public ResponseEntity<Note> getNoteById(@PathVariable int id){
         Note result = noteService.getNote(id);
         return result==null? ResponseEntity.noContent().build():ResponseEntity.ok(result);
     }
     //根据文件名查询笔记
-    @GetMapping("/get/{name}")
+    @GetMapping("/get2/{name}")
     public ResponseEntity<Note> getNoteByName(@PathVariable String name){
         Note result = noteService.getNote(name);
         return result==null? ResponseEntity.noContent().build():ResponseEntity.ok(result);
