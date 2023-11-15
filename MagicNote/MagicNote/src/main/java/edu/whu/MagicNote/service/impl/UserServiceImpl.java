@@ -5,6 +5,7 @@ import edu.whu.MagicNote.domain.User;
 import edu.whu.MagicNote.dao.UserDao;
 import edu.whu.MagicNote.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,6 +34,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Override
     public User addUser(User user){
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         this.baseMapper.insert(user);
         return user;
     }
