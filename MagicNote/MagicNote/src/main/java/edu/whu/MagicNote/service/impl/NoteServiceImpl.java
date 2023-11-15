@@ -1,11 +1,10 @@
 package edu.whu.MagicNote.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import edu.whu.MagicNote.domain.Note;
-import edu.whu.MagicNote.dao.NoteDao;
-import edu.whu.MagicNote.domain.User;
-import edu.whu.MagicNote.service.INoteService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import edu.whu.MagicNote.dao.NoteDao;
+import edu.whu.MagicNote.domain.Note;
+import edu.whu.MagicNote.service.INoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
