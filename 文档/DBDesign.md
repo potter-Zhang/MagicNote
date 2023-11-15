@@ -2,6 +2,7 @@
 ## user
 + id(PK)
 + name
++ email(还没加*)
 + password
 + photo(file path?)
 + 
