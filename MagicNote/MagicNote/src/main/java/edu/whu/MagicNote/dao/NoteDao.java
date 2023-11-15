@@ -20,6 +20,6 @@ import java.util.List;
 @Mapper
 public interface NoteDao extends BaseMapper<Note> {
     //根据用户id查询所有笔记
-    @Select("SELECT FROM note WHERE note.userid = #{userid}")
-    List<Note> FindAllNoteByUserId(int id);
+    @Select("SELECT note.* FROM note WHERE note.userid = #{userid}")
+    List<Note> FindAllNoteByUserId(int userid);
 }

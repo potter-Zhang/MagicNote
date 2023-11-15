@@ -19,6 +19,6 @@ import java.util.List;
 
 @Mapper
 public interface LogDao extends BaseMapper<Log> {
-    @Select("SELECT FROM Log WHERE Log.userid = #{userid}")
-    List<Log> FindAllLogByUserId(int user_id);
+    @Select("SELECT log.* FROM log WHERE Log.userid = #{userid}")
+    List<Log> FindAllLogByUserId(int userid);
 }
