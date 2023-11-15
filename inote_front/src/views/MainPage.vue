@@ -9,12 +9,14 @@
   import fileAdditionOne from "@icon-park/vue-next/lib/icons/FileAdditionOne"
   import folderPlus from "@icon-park/vue-next/lib/icons/FolderPlus"
   import deleteOne from "@icon-park/vue-next/lib/icons/DeleteOne"
+  import edit from "@icon-park/vue-next/lib/icons/Edit"
 
   import helpInfo from "../components/HelpInfo.vue"
   import editor from "../components/Editor.vue"
 
   import type Node from 'element-plus/es/components/tree/src/model/node'
   import {ref} from 'vue';
+  import { ElMessage, ElMessageBox } from 'element-plus'
 
   const currentTab = ref("editor"); // 当前展示在workspace的组件
 
@@ -131,6 +133,24 @@
     selectedNodeParent = node.parent.data;
   }
 
+  const renameNode = () => {
+    if (selectedNode == null)
+      return;
+    ElMessageBox.prompt('请输入新的文件名', '重命名', {
+      confirmButtonText: '完成',
+      cancelButtonText: '取消',
+      inputPattern: /^.+$/,
+      inputErrorMessage: '请输入新的名称',
+    })
+      .then(({ value }) => {
+        selectedNode.label = value;
+        ElMessage({
+          type: 'success',
+          message: `重命名成功`,
+        })
+      })
+  }
+
   const addNode = (type: string) => {
     if (selectedNode == null || selectedNode.children == null)
       return;
@@ -189,9 +209,18 @@
         <el-main style="padding: 0; display: flex">
           <div id="tree-view">
             <div id="operationBar">
-              <delete-one class="icon" theme="outline" size="20" fill="#000000" style="padding-right: 5px" @click="delNode"/>
-              <file-addition-one class="icon" theme="outline" size="20" fill="#000000" @click="addNode('file')" style="padding-right: 5px"/>
-              <folder-plus class="icon" theme="outline" size="20" fill="#000000" @click="addNode('dir')"/>
+              <el-tooltip effect="dark" content="重命名" placement="bottom">
+                <edit class="icon" theme="outline" size="20" fill="#333" style="padding-right: 5px" @click="renameNode"/>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="删除" placement="bottom">
+                <delete-one class="icon" theme="outline" size="20" fill="#000000" style="padding-right: 5px" @click="delNode"/>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="新增文件" placement="bottom">
+                <file-addition-one class="icon" theme="outline" size="20" fill="#000000" @click="addNode('file')" style="padding-right: 5px"/>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="新增文件夹" placement="bottom">
+                <folder-plus class="icon" theme="outline" size="20" fill="#000000" @click="addNode('dir')"/>
+              </el-tooltip>
             </div>
             <el-tree :data="dataSource" :props="props"
                      @node-click="selectNode"
