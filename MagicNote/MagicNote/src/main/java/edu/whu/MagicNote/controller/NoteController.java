@@ -33,7 +33,7 @@ public class NoteController {
     public ResponseEntity<Note> addNote(@ApiParam("请求体")@RequestBody Note myNote){
         Note result=noteService.addNote(myNote);
         Log myLog = new Log();
-        myLog.setUser_id(myNote.getUser_id());
+        myLog.setUser_id(myNote.getUserid());
         myLog.setNote_name(myNote.getName());
         myLog.setTimestamp(LocalDateTime.now());
         myLog.setOperation("add");
@@ -45,7 +45,7 @@ public class NoteController {
     public ResponseEntity<Void> removeNoteById(@PathVariable int id){
         Note myNote = noteService.getNote(id);
         Log myLog = new Log();
-        myLog.setUser_id(myNote.getUser_id());
+        myLog.setUser_id(myNote.getUserid());
         myLog.setNote_name(myNote.getName());
         myLog.setTimestamp(LocalDateTime.now());
         myLog.setOperation("delete");
@@ -60,7 +60,7 @@ public class NoteController {
     public ResponseEntity<Void> removeNoteByName(@PathVariable String name){
         Note myNote = noteService.getNote(name);
         Log myLog = new Log();
-        myLog.setUser_id(myNote.getUser_id());
+        myLog.setUser_id(myNote.getUserid());
         myLog.setNote_name(myNote.getName());
         myLog.setTimestamp(LocalDateTime.now());
         myLog.setOperation("delete");
@@ -75,7 +75,7 @@ public class NoteController {
     @PostMapping("/update")
     public ResponseEntity<Void> updateNote(@RequestBody Note myNote){
         Log myLog = new Log();
-        myLog.setUser_id(myNote.getUser_id());
+        myLog.setUser_id(myNote.getUserid());
         myLog.setNote_name(myNote.getName());
         myLog.setTimestamp(LocalDateTime.now());
         myLog.setOperation("update");
