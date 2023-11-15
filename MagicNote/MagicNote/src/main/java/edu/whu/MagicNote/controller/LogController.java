@@ -3,6 +3,7 @@ package edu.whu.MagicNote.controller;
 
 import edu.whu.MagicNote.domain.Log;
 import edu.whu.MagicNote.service.impl.LogServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/log")
 public class LogController {
+    @Autowired
     LogServiceImpl logService;
     @GetMapping("/getall/{id}")
     public ResponseEntity<List<Log>> getAllNotesByUserId(@PathVariable int id){
