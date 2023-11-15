@@ -27,13 +27,13 @@ public class Note implements Serializable {
 
     private String name;
 
-    private Integer user_id;
+    private Integer userid;
 
     private String content;
 
     private String directory;
 
-    private LocalDateTime create_time;
+    private LocalDateTime createtime;
 
 
 }
