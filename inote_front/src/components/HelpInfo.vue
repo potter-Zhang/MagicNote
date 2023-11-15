@@ -37,16 +37,10 @@
 </style>
 
 <style>
-  .el-tabs__item.is-active {
-    color: #a5d63f !important;
+  .el-tabs {
+    --el-tabs-header-height: 60px !important;
   }
   .el-tabs__item {
-    font-size: 20px;
-  }
-  .el-tabs__item:hover {
-    color: #a5d63f !important;
-  }
-  .el-tabs__active-bar {
-    background-color: #a5d63f !important;
+    font-size: 18px !important;
   }
 </style>

@@ -175,7 +175,7 @@
       <el-header id="header">
         <div id="icon-and-name" style="display: flex; align-items: center">
           <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
-          <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">iNote</span>
+          <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
         </div>
         <div id="user-zone">
           <router-link to="/userInfo"><user theme="outline" size="24" fill="#333"/></router-link>
@@ -191,8 +191,8 @@
               <transfer-data theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">展开与收起</span></template>
             </el-menu-item>
-            <el-menu-item index="2" v-on:click="boggleDrawer">
-              <notebook class="icon" theme="outline" size="24" fill="#333" @click="changeTab('editor')"/>
+            <el-menu-item index="2" v-on:click="boggleDrawer(); changeTab('editor')">
+              <notebook class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">我的笔记</span></template>
             </el-menu-item>
             <el-menu-item index="3">
