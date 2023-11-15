@@ -27,6 +27,7 @@ public class DbUserDetailService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(username)
                 .password(user.getPassword())
+                .roles("USER")
                 .build();
     }
 
