@@ -1,15 +1,16 @@
 package edu.whu.MagicNote.controller;
 
 
+import edu.whu.MagicNote.domain.Log;
 import edu.whu.MagicNote.domain.Note;
+import edu.whu.MagicNote.service.impl.LogServiceImpl;
 import edu.whu.MagicNote.service.impl.NoteServiceImpl;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -25,29 +26,63 @@ import java.util.List;
 public class NoteController {
     @Autowired
     NoteServiceImpl noteService;
+    @Autowired
+    LogServiceImpl logService;
     //添加笔记
     @PostMapping("/add")
     public ResponseEntity<Note> addNote(@ApiParam("请求体")@RequestBody Note myNote){
         Note result=noteService.addNote(myNote);
+        Log myLog = new Log();
+        myLog.setUser_id(myNote.getUser_id());
+        myLog.setNote_name(myNote.getName());
+        myLog.setTimestamp(LocalDateTime.now());
+        myLog.setOperation("add");
+        logService.addLog(myLog);
         return ResponseEntity.ok(result);
     }
     //根据id删除笔记
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> removeNoteById(@PathVariable int id){
-        if(noteService.removeNote(id)) return ResponseEntity.ok().build();
+        Note myNote = noteService.getNote(id);
+        Log myLog = new Log();
+        myLog.setUser_id(myNote.getUser_id());
+        myLog.setNote_name(myNote.getName());
+        myLog.setTimestamp(LocalDateTime.now());
+        myLog.setOperation("delete");
+        if(noteService.removeNote(id)) {
+            logService.addLog(myLog);
+            return ResponseEntity.ok().build();
+        }
         else return ResponseEntity.notFound().build();
     }
     //根据文件名删除笔记
     @DeleteMapping("/delete/{name}")
     public ResponseEntity<Void> removeNoteByName(@PathVariable String name){
-        if(noteService.removeNote(name)) return ResponseEntity.ok().build();
+        Note myNote = noteService.getNote(name);
+        Log myLog = new Log();
+        myLog.setUser_id(myNote.getUser_id());
+        myLog.setNote_name(myNote.getName());
+        myLog.setTimestamp(LocalDateTime.now());
+        myLog.setOperation("delete");
+        if(noteService.removeNote(name)) {
+            logService.addLog(myLog);
+            return ResponseEntity.ok().build();
+        }
         else return ResponseEntity.notFound().build();
     }
 
     //更新笔记
     @PostMapping("/update")
     public ResponseEntity<Void> updateNote(@RequestBody Note myNote){
-        if(noteService.updateNote(myNote)) return ResponseEntity.ok().build();
+        Log myLog = new Log();
+        myLog.setUser_id(myNote.getUser_id());
+        myLog.setNote_name(myNote.getName());
+        myLog.setTimestamp(LocalDateTime.now());
+        myLog.setOperation("update");
+        if(noteService.updateNote(myNote)) {
+            logService.addLog(myLog);
+            return ResponseEntity.ok().build();
+        }
         else return ResponseEntity.notFound().build();
     }
     //根据id查询笔记
