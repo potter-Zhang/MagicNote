@@ -26,7 +26,7 @@ public class CodeGenerator {
 
     private static StrategyConfig strategyConfig() {
         StrategyConfig strategyConfig = new StrategyConfig();
-        strategyConfig.setInclude("user","note");
+        strategyConfig.setInclude("log");
         strategyConfig.setRestControllerStyle(true);
         strategyConfig.setEntityLombokModel(true);
         return strategyConfig;
@@ -51,7 +51,7 @@ public class CodeGenerator {
         //设置生成完毕后是否打开生成代码所在的目录
         globalConfig.setOpen(false);
         //设置作者
-        globalConfig.setAuthor("susong");
+        globalConfig.setAuthor("Jerome");
         //设置是否覆盖原始生成的文件
         globalConfig.setFileOverride(false);
         //设置数据层接口名，%s为占位符，指代模块名称
