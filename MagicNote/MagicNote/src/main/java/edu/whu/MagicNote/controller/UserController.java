@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
+//import javax.xml.ws.Response;
 
 /**
  * <p>
@@ -19,7 +19,7 @@ import javax.xml.ws.Response;
  */
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class git UserController {
 
     @Autowired
     IUserService userService;
