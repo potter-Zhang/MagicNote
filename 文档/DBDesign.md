@@ -13,7 +13,7 @@
 + user_id(Foreign Key)
 + name
 + content(文字、图片、文件)（*）
-+ createTime
++ create_time
 + directory
 
 ## log
