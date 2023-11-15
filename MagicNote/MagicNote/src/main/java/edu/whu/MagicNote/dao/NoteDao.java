@@ -1,14 +1,9 @@
 package edu.whu.MagicNote.dao;
 
-import edu.whu.MagicNote.domain.Note;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-
-import org.apache.ibatis.annotations.Delete;
+import edu.whu.MagicNote.domain.Note;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -25,6 +20,6 @@ import java.util.List;
 @Mapper
 public interface NoteDao extends BaseMapper<Note> {
     //根据用户id查询所有笔记
-    @Select("SELECT FROM note WHERE note.user_id = #{user_id}")
+    @Select("SELECT FROM note WHERE note.userid = #{userid}")
     List<Note> FindAllNoteByUserId(int id);
 }
