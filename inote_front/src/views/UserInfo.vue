@@ -82,7 +82,7 @@
     align-items: center;
     background-color: #a5d63f;
     width: 100%;
-    height: 60px;
+    height: var(--header-height);
     --el-header-padding: 0;
   }
 
