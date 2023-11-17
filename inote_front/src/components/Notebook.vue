@@ -128,10 +128,14 @@
               <edit class="icon" theme="outline" size="20" fill="#000000"/>
               <div style="margin-left: 0.5rem">重命名</div>
             </div>
-            <div class="popover-item">
-              <delete-one class="icon" theme="outline" size="20" fill="#000000"/>
-              <div style="margin-left: 0.5rem">删除</div>
-            </div>
+            <el-popconfirm width="100" confirm-button-text="确定" cancel-button-text="取消" title="确认删除？">
+              <template #reference>
+                <div class="popover-item">
+                  <delete-one class="icon" theme="outline" size="20" fill="#000000"/>
+                  <div style="margin-left: 0.5rem">删除</div>
+                </div>
+              </template>
+            </el-popconfirm>
           </template>
           <template #reference>
             <more theme="outline" size="16" fill="#333" @click=""/>
@@ -151,10 +155,14 @@
               <edit class="icon" theme="outline" size="20" fill="#000000"/>
               <div style="margin-left: 0.5rem">重命名</div>
             </div>
-            <div class="popover-item">
-              <delete-one class="icon" theme="outline" size="20" fill="#000000"/>
-              <div style="margin-left: 0.5rem">删除</div>
-            </div>
+            <el-popconfirm width="100" confirm-button-text="确定" cancel-button-text="取消" title="确认删除？">
+              <template #reference>
+                <div class="popover-item">
+                  <delete-one class="icon" theme="outline" size="20" fill="#000000"/>
+                  <div style="margin-left: 0.5rem">删除</div>
+                </div>
+              </template>
+            </el-popconfirm>
           </template>
           <template #reference>
             <more theme="outline" size="16" fill="#333" @click=""/>
