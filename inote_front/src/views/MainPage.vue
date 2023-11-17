@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import user from "@icon-park/vue-next/lib/icons/User";
-  import robotOne from "@icon-park/vue-next/lib/icons/RobotOne";
+  import allApplication from "@icon-park/vue-next/lib/icons/AllApplication"
   import transferData from "@icon-park/vue-next/lib/icons/TransferData";
   import help from "@icon-park/vue-next/lib/icons/Help";
   import receive from "@icon-park/vue-next/lib/icons/Receive";
@@ -8,6 +8,7 @@
   import helpInfo from "../components/HelpInfo.vue"
   import editor from "../components/Editor.vue"
   import notebook from "../components/Notebook.vue"
+  import floatBall from "../components/FloatBall.vue"
   import {ref} from 'vue';
 
   const currentTab = ref("editor"); // 当前展示在workspace的组件
@@ -65,14 +66,15 @@
               <transfer-data theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">展开与收起</span></template>
             </el-menu-item>
-            <el-menu-item index="2" v-on:click="boggleDrawer(); changeTab('editor')">
+            <el-menu-item index="2">
+              <all-application class="icon" theme="outline" size="24" fill="#333"/>
+              <template #title><span class="menu-title">开始</span></template>
+            </el-menu-item>
+            <el-menu-item index="3" v-on:click="boggleDrawer(); changeTab('editor')">
               <receive class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">我的笔记本</span></template>
             </el-menu-item>
-            <el-menu-item index="3">
-              <robot-one class="icon" theme="outline" size="24" fill="#333"/>
-              <template #title><span class="menu-title">AI</span></template>
-            </el-menu-item>
+
           </div>
           <el-menu-item index="4" @click="changeTab('helpInfo')">
             <help class="icon" theme="outline" size="24" fill="#333"/>
@@ -81,6 +83,7 @@
         </el-menu>
 
         <el-main style="padding: 0; display: flex">
+          <float-ball/>
           <div id="tree-view">
             <notebook :data-source="libraries" style="height: 100%"/>
           </div>
