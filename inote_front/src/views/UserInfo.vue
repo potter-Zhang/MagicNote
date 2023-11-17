@@ -8,7 +8,7 @@
   const activities = [
     {
       content: '创建了...',
-      timestamp: date.toDateString(),
+      timestamp: date.toLocaleDateString(),
       type: 'add'
     },
     {
