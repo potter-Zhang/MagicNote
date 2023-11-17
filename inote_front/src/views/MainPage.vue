@@ -9,16 +9,21 @@
   import editor from "../components/Editor.vue"
   import notebook from "../components/Notebook.vue"
   import floatBall from "../components/FloatBall.vue"
+  import startTab from "../components/StartTab.vue"
   import {ref} from 'vue';
 
-  const currentTab = ref("editor"); // 当前展示在workspace的组件
+  const currentTab = ref("start"); // 当前展示在workspace的组件
 
   const changeTab = (tab: string) => {
     currentTab.value = tab;
+    if (tab != "editor") {
+      const drawer = document.getElementById("notebook");
+      drawer.style.width = "0";
+    }
   }
 
   function boggleDrawer() {
-    const drawer = document.getElementById("tree-view");
+    const drawer = document.getElementById("notebook");
     const width = drawer.style.width;
     const openWidth = "250px";
     if (width === openWidth) {
@@ -67,7 +72,7 @@
               <template #title><span class="menu-title">展开与收起</span></template>
             </el-menu-item>
             <el-menu-item index="2">
-              <all-application class="icon" theme="outline" size="24" fill="#333"/>
+              <all-application class="icon" theme="outline" size="24" fill="#333" @click="changeTab('start');"/>
               <template #title><span class="menu-title">开始</span></template>
             </el-menu-item>
             <el-menu-item index="3" v-on:click="boggleDrawer(); changeTab('editor')">
@@ -84,12 +89,13 @@
 
         <el-main style="padding: 0; display: flex">
           <float-ball/>
-          <div id="tree-view">
+          <div id="notebook">
             <notebook :data-source="libraries" style="height: 100%"/>
           </div>
 
           <div id="workspace">
-            <editor v-if="currentTab==='editor'"/>
+            <start-tab v-if="currentTab==='start'"/>
+            <editor v-else-if="currentTab==='editor'"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
           </div>
         </el-main>
@@ -136,7 +142,7 @@
     background-color: rgb(240, 240, 245, 0.5);
   }
 
-  #tree-view {
+  #notebook {
     width: 0;
     height: calc(100vh - var(--header-height));
     background-color: white;
@@ -165,5 +171,6 @@
   #workspace {
     flex: 1;
     display: flex;
+    height: calc(100vh - var(--header-height));
   }
 </style>

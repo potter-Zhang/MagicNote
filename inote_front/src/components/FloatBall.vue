@@ -60,6 +60,9 @@
   #ball {
     cursor: pointer;
     position: absolute;
+    top: 85vh;
+    left: 90vw;
+    z-index: 10;
     height: 50px;
     width: 50px;
     background-color: #a5d63f;
