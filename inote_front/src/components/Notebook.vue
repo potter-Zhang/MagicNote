@@ -9,11 +9,19 @@
   import noteIcon from "@icon-park/vue-next/lib/icons/Notes"
   import more from "@icon-park/vue-next/lib/icons/More"
 
+  import {ElMessageBox, ElMessage} from "element-plus";
+
   const props = defineProps({
-    dataSource: Array
+    notebooks: Array
   })
 
-  const notes = ref([
+  interface Note {
+    id: number,
+    name: string
+  }
+
+  // 用于显示的笔记(根据选择的笔记本从数据库中取出)
+  const notes = ref<Note[]>([
     {
       id: 0,
       name: "文件1"
@@ -93,6 +101,61 @@
   const changeMode = (type: string) =>{
     currentMode.value = type;
   }
+
+  function rename(element) {
+    let newName: string = null;
+    ElMessageBox.prompt('新的名称', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      inputPattern: /.+/,
+      inputErrorMessage: '请输入新的名称！',
+    })
+        .then(({ value }) => {
+          element.name = value;
+        })
+  }
+
+  const delNotebook = (notebook) => {
+    const id = props.notebooks.indexOf(notebook);
+    props.notebooks.splice(id, 1)
+  }
+
+  const addNotebook = () => {
+    ElMessageBox.prompt('新笔记本的名称', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      inputPattern: /.+/,
+      inputErrorMessage: '请输入名称！',
+    })
+        .then(({ value }) => {
+          props.notebooks.push({id: -1, name: value});
+          ElMessage({
+            type: 'success',
+            message: `创建成功`,
+          })
+        })
+  }
+
+  const delNote = (note: Note) => {
+    const id = notes.value.indexOf(note);
+    notes.value.splice(id, 1);
+  }
+
+  const addNote = () => {
+    ElMessageBox.prompt('新笔记的名称', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      inputPattern: /.+/,
+      inputErrorMessage: '请输入名称！',
+    })
+      .then(({ value }) => {
+        notes.value.push({id: -1, name: value});
+        ElMessage({
+          type: 'success',
+          message: `创建成功`,
+        })
+      })
+  }
 </script>
 
 <template>
@@ -100,7 +163,7 @@
     <!-- 显示笔记本的操作栏 -->
     <div v-if="currentMode==='notebook'" class="operationBar">
       <el-tooltip effect="dark" content="新增笔记本" placement="bottom">
-        <folder-plus class="icon" theme="outline" size="20" fill="#000000"/>
+        <folder-plus class="icon" theme="outline" size="20" fill="#000000" @click="addNotebook"/>
       </el-tooltip>
     </div>
     <!-- 显示笔记的操作栏 -->
@@ -111,24 +174,25 @@
         </el-tooltip>
       </div>
       <el-tooltip effect="dark" content="新增笔记" placement="bottom">
-        <file-addition-one class="icon" theme="outline" size="20" fill="#000000"/>
+        <file-addition-one class="icon" theme="outline" size="20" fill="#000000" @click="addNote"/>
       </el-tooltip>
     </div>
 
     <div id="content">
       <!-- 显示笔记本 -->
-      <div v-if="currentMode==='notebook'"  v-for="notebook in dataSource" class="display-item">
+      <div v-if="currentMode==='notebook'"  v-for="notebook in notebooks" class="display-item">
         <div class="display-item-icon-and-text"  @click="changeMode('note')">
           <notebook class="icon" theme="outline" size="16" fill="#333"/>
           <div style="margin-left: 0.5rem; font-size: 0.8rem; font-weight: bold">{{notebook.name}}</div>
         </div>
+        <!-- 弹出框进行重命名和删除操作 -->
         <el-popover placement="bottom-start" :width="100" trigger="click" hide-after="0">
           <template #default>
-            <div class="popover-item">
+            <div class="popover-item" @click="rename(notebook)">
               <edit class="icon" theme="outline" size="20" fill="#000000"/>
               <div style="margin-left: 0.5rem">重命名</div>
             </div>
-            <el-popconfirm width="100" confirm-button-text="确定" cancel-button-text="取消" title="确认删除？">
+            <el-popconfirm width="100" confirm-button-text="确定" cancel-button-text="取消" title="确认删除？"  @confirm="delNotebook(notebook)">
               <template #reference>
                 <div class="popover-item">
                   <delete-one class="icon" theme="outline" size="20" fill="#000000"/>
@@ -149,13 +213,14 @@
          <note-icon class="icon" theme="outline" size="16" fill="#333"/>
          <div style="margin-left: 5%; font-size: 0.8rem; font-weight: bold">{{note.name}}</div>
         </div>
+        <!-- 弹出框进行重命名和删除操作 -->
         <el-popover placement="bottom-start" :width="100" trigger="click" hide-after="0">
           <template #default>
-            <div class="popover-item">
+            <div class="popover-item" @click="rename(note)">
               <edit class="icon" theme="outline" size="20" fill="#000000"/>
               <div style="margin-left: 0.5rem">重命名</div>
             </div>
-            <el-popconfirm width="100" confirm-button-text="确定" cancel-button-text="取消" title="确认删除？">
+            <el-popconfirm width="100" confirm-button-text="确定" cancel-button-text="取消" title="确认删除？" @confirm="delNote(note)">
               <template #reference>
                 <div class="popover-item">
                   <delete-one class="icon" theme="outline" size="20" fill="#000000"/>
@@ -165,7 +230,7 @@
             </el-popconfirm>
           </template>
           <template #reference>
-            <more theme="outline" size="16" fill="#333" @click=""/>
+            <more theme="outline" size="16" fill="#333"/>
           </template>
         </el-popover>
       </div>

@@ -38,7 +38,7 @@
   // 侧边菜单是否折叠
   const isCollapse = ref(true);
 
-  const libraries = ref([
+  const notebooks = ref([
       {
         id: 0,
         name: "生活"
@@ -71,8 +71,8 @@
               <transfer-data theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">展开与收起</span></template>
             </el-menu-item>
-            <el-menu-item index="2">
-              <all-application class="icon" theme="outline" size="24" fill="#333" @click="changeTab('start');"/>
+            <el-menu-item index="2" @click="changeTab('start');">
+              <all-application class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">开始</span></template>
             </el-menu-item>
             <el-menu-item index="3" v-on:click="boggleDrawer(); changeTab('editor')">
@@ -90,7 +90,7 @@
         <el-main style="padding: 0; display: flex">
           <float-ball/>
           <div id="notebook">
-            <notebook :data-source="libraries" style="height: 100%"/>
+            <notebook :notebooks="notebooks" style="height: 100%"/>
           </div>
 
           <div id="workspace">
