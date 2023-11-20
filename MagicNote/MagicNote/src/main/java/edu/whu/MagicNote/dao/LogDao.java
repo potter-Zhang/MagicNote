@@ -1,0 +1,24 @@
+package edu.whu.MagicNote.dao;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import edu.whu.MagicNote.domain.Log;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+
+/**
+ * <p>
+ *  Mapper 接口
+ * </p>
+ *
+ * @author Jerome
+ * @since 2023-11-15
+ */
+
+@Mapper
+public interface LogDao extends BaseMapper<Log> {
+    @Select("SELECT log.* FROM log WHERE Log.userid = #{userid}")
+    List<Log> FindAllLogByUserId(int userid);
+}
