@@ -26,7 +26,7 @@ public class LogController {
     @Autowired
     LogServiceImpl logService;
     @GetMapping("/getall/{id}")
-    public ResponseEntity<List<Log>> getAllNotesByUserId(@PathVariable int id){
+    public ResponseEntity<List<Log>> getAllLogsByUserId(@PathVariable int id){
         List<Log> result = logService.getAllLogByUserId(id);
         return result==null? ResponseEntity.noContent().build():ResponseEntity.ok(result);
     }
