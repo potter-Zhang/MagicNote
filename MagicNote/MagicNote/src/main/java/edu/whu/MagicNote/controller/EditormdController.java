@@ -1,9 +1,7 @@
 package edu.whu.MagicNote.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,8 +13,9 @@ import java.util.UUID;
 @RequestMapping("/editor")
 public class EditormdController {
 
-    //博客图片上传问题
+    // 处理上传文件操作，将上传文件保存
     @RequestMapping("/file/upload")
+    @ResponseBody
     public JSONObject fileUpload(@RequestParam(value = "editormd-image-file", required = true) MultipartFile file, HttpServletRequest request) throws IOException {
         //上传路径保存设置
 
