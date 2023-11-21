@@ -5,6 +5,7 @@
   import help from "@icon-park/vue-next/lib/icons/Help";
   import receive from "@icon-park/vue-next/lib/icons/Receive";
 
+  import {currentUser} from "@/global"
   import helpInfo from "../components/HelpInfo.vue"
   import editor from "../components/Editor.vue"
   import notebook from "../components/Notebook.vue"
@@ -41,13 +42,28 @@
   const notebooks = ref([
       {
         id: 0,
-        name: "生活"
+        name: "默认"
       },
       {
         id: 1,
+        name: "生活"
+      },
+      {
+        id: 2,
         name: "知识"
       }
   ]);
+
+  const login = () => {
+    currentUser.value.id = 1;
+    currentUser.value.name = "test";
+  }
+
+  const logout = () => {
+    currentUser.value.id = -1;
+    currentUser.value.name = "";
+  }
+
 </script>
 
 <template>
@@ -57,10 +73,15 @@
           <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
           <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
         </div>
-        <div id="user-zone">
+        <div class="user-zone" v-if="currentUser.id == -1">
           <router-link to="/userInfo"><user theme="outline" size="24" fill="#333"/></router-link>
-          <router-link to="/login" class="user-zone-font">登录</router-link>
+          <router-link to="/login" class="user-zone-font" @click="login">登录</router-link>
           <router-link to="/login" class="user-zone-font">注册</router-link>
+        </div>
+        <div class="user-zone" v-else>
+          <router-link to="/userInfo"><user theme="outline" size="24" fill="#333"/></router-link>
+          <div class="user-zone-font">{{currentUser.name}}</div>
+          <el-button type="danger" style="padding: 0 5px 0 5px" @click="logout">退出登录</el-button>
         </div>
       </el-header>
 
@@ -116,7 +137,7 @@
     --el-header-padding: 0;
   }
 
-  #user-zone {
+  .user-zone {
     display: flex;
     justify-content: space-between;
     align-items: center;
