@@ -15,17 +15,20 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
 import com.alibaba.dashscope.utils.JsonUtils;
+import edu.whu.MagicNote.service.impl.AIFunctionService;
+import io.reactivex.Flowable;
 
+import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 public class apiTest {
 
-    static String s1 = "接下来我会给出我的笔记，你需要帮助我整理我的笔记，\n" +
-            "你需要提炼笔记的主要内容，并且输出为markdown格式，并将其中的重要信息加粗，标题居中显示.\n" +
+    static String s1 = "接下来我会给出我的笔记，你需要缩写我的笔记，只留下关键信息。\n" +
+            "同时你需要将其中的最重要的那些信息进行加粗，最终输出为markdown格式。最后只需要输出markdown。\n" +
             //"你需要扩写笔记内容，输出为markdown格式，markdown笔记格式丰富一些，多进行字体加粗、字体色彩、分段等。\n" +
             //"然后你需要根据续写的笔记内容生成思维导图，也输出为markdown格式，\n" +
             //"你需要根据笔记内容生成markdown形式思维导图，加粗‘阿根廷’字样，数字用红色字体。\n" +
-            "给出的笔记是:\n";
+            "给出的笔记是：\n";
 
     static String s2 = "现年52岁的米莱，经济学家出身，是阿根廷“自由前进党”的创建者和主要领导人。\n" +
             "此次阿根廷总统选举得到外界普遍关注，其中一个重要原因是极端右翼政客米莱的参选。由于阿根廷通货膨胀率已经达到142.7%，且该国多年来经济增长严重放缓，米莱主张全面美元化。据参考消息8月15日报道，米莱的竞选承诺是要“炸掉”阿根廷央行，还提议大幅削减税收和公共开支。\n" +
@@ -87,6 +90,36 @@ public class apiTest {
             "曾经在中超北京国安效力的金玟哉表示，“距离我上一场来中国已经过去很久了，如教练所说，在中国对阵中国队不会容易，但希望可以拿到3分，我们球队做好了准备。”\n" +
             "对于是否会和队友分享一些中国队的信息，金玟哉说，“明天比赛球队的目标是不丢球，建立稳固的防守最差结果也是拿1分，首先要零封对手，这是目标。”";
 
+    static String s6 =  "# <center>Chapter3  Spring Core</center>\n" +
+            "## 1. Introduction to Spring\n" +
+            "1. Spring Framework(the core framework,the basis)\n" +
+            "2. SpringBoot(重点，简化开发)\n" +
+            "3. SpringCloud\n" +
+            "\n" +
+            "## 2. Spring IOC（控制反转）\n" +
+            "\n" +
+            "## 3. Spring\n" +
+            "\n" +
+            "## 4. Lifecycle of Beans\n" +
+            "1. Scope of Beans\n" +
+            "2. Instantiation with Factory（使用工厂进行实例化）\n" +
+            "3. init-method and destroy-method\n" +
+            "4. Initializing and DisposableBean\n" +
+            "\n" +
+            "## 5. Dependency Injection\n" +
+            "1. Dependency Injection with Setter\n" +
+            "2. Dependency Injection with Constructor\n" +
+            "3. Injection for Collections\n" +
+            "4. Autowired Injection By Type\n" +
+            "5. Autowired Injection By Name\n" +
+            "\n" +
+            "## 6. IOC Containers\n" +
+            "\n" +
+            "## 7. Spring Annotations\n";
+
+    static String s7 = "Spring boot;" + "Spring Core;" + "Maven";
+
+
     public static void quickStart() throws ApiException, NoApiKeyException, InputRequiredException {
 
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
@@ -106,7 +139,7 @@ public class apiTest {
         String PROMPT = s1 + s5;
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
         Generation gen = new Generation();
-        QwenParam param = QwenParam.builder().model("qwen-plus").prompt(PROMPT)
+        QwenParam param = QwenParam.builder().model("qwen-max").prompt(PROMPT)
                 .topP(0.8).build();
         GenerationResult result = gen.call(param);
         System.out.println(result.getOutput().getText());
@@ -124,7 +157,7 @@ public class apiTest {
         msgManager.add(systemMsg);
         msgManager.add(userMsg);
         QwenParam param =
-                QwenParam.builder().model("qwen-plus").messages(msgManager.get())
+                QwenParam.builder().model("qwen-max").messages(msgManager.get())
                         .resultFormat(QwenParam.ResultFormat.MESSAGE)
                         .topP(0.8)
                         .enableSearch(true)
@@ -135,10 +168,11 @@ public class apiTest {
 
     public static void main(String[] args) {
         try {
-            //quickStart();
-            qwenQuickStart();
-            //qwenQuickStartCallback();
-            //callWithMessage();
+            AIFunctionService aiFunctionService = new AIFunctionService();
+            //aiFunctionService.abstractNote(s5);
+            //aiFunctionService.expandNote(s6);
+            //aiFunctionService.generateNote(s7, 2000);
+            aiFunctionService.segmentNote(s5);
         } catch (ApiException | NoApiKeyException | InputRequiredException e) {
             System.out.println(String.format("Exception %s", e.getMessage()));
         }

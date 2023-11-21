@@ -25,5 +25,7 @@ public class Notebook implements Serializable {
 
     private String name;
 
+    private Integer userid;
+
 
 }
