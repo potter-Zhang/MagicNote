@@ -3,6 +3,9 @@
   import me from "@icon-park/vue-next/lib/icons/Me"
   import setting from "@icon-park/vue-next/lib/icons/Setting";
 
+  import {ref} from 'vue';
+  import {ElMessageBox} from "element-plus";
+
   const date = new Date();
   // 用于展示在时间线里的数据
   const activities = [
@@ -22,6 +25,39 @@
       type: 'delete'
     }
   ]
+
+  const settingDialogVisible = ref(false);
+
+  let userInfo = ref({
+    id: 0,
+    name: "test",
+    description: "test test test"
+  });
+
+  let newUserInfo = ref({
+    name: userInfo.value.name,
+    description: userInfo.value.description
+  });
+
+  const cancelSetting = () => {
+    settingDialogVisible.value = false;
+    newUserInfo.value.name = userInfo.value.name;
+    newUserInfo.value.description = userInfo.value.description;
+  }
+
+  const confirmSetting = () => {
+    settingDialogVisible.value = false;
+
+    if (newUserInfo.value.name === "") {
+      ElMessageBox.alert("用户名不能为空！");
+      newUserInfo.value.name = userInfo.value.name;
+      newUserInfo.value.description = userInfo.value.description;
+      return;
+    }
+    userInfo.value.name = newUserInfo.value.name;
+    userInfo.value.description = newUserInfo.value.description;
+  }
+
 </script>
 
 <template>
@@ -29,7 +65,7 @@
     <el-header id="header">
       <div id="icon-and-name" style="display: flex; align-items: center">
         <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
-        <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">iNote</span>
+        <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
       </div>
     </el-header>
 
@@ -40,14 +76,33 @@
           <div id="userInfoCard">
             <me theme="outline" size="128" fill="#333" style="margin-left: 5%"/>
             <div id="info">
-              <div>用户名：test</div>
-              <div>个人介绍：test test test</div>
+              <div>用户名：{{ userInfo.name }}</div>
+              <div>个人介绍：{{userInfo.description}}</div>
             </div>
-            <div id="settingButton">
+            <div id="settingButton" @click="settingDialogVisible=true">
               <setting theme="outline" size="24" fill="#000000"/>
               <span style="margin-left: 5px">个人设置</span>
             </div>
           </div>
+
+          <el-dialog v-model="settingDialogVisible" title="个人设置" width="30%"
+                     :close-on-click-modal="false" :close-on-press-escape="false"
+                     :show-close="false" style="border-radius: 10px">
+            <div style="display: flex; align-items: center">
+              <me theme="outline" size="96" fill="#333"/>
+              <el-upload action="localhost:8080/upload" style="margin-left: 10%">
+                <el-button type="primary">上传头像</el-button>
+              </el-upload>
+            </div>
+            <div style="margin-bottom: 5px; margin-top: 20px">昵称</div>
+            <el-input v-model="newUserInfo.name" style="margin-bottom: 20px"/>
+            <div style="margin-bottom: 5px">个人介绍</div>
+            <el-input v-model="newUserInfo.description"/>
+            <template #footer>
+              <el-button type="danger" @click="cancelSetting">取消</el-button>
+              <el-button type="primary" @click="confirmSetting">确定</el-button>
+            </template>
+          </el-dialog>
 
           <div id="beneath" style="width: 55%; margin-top: 10px">
             <div style="font-size: 20px">动态</div>

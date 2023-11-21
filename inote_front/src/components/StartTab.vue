@@ -87,7 +87,7 @@
 
     <!--历史文档区-->
     <div class="title" style="margin-top: 1rem">最近</div>
-    <div style="display: flex; flex-direction: column">
+    <div v-if="historyNotes.length > 0" style="display: flex; flex-direction: column">
       <div v-for="history in historyNotes" style="cursor: default">
         <div class="history-card">
           <div style="display: flex; align-items: center; cursor: pointer">
@@ -99,6 +99,7 @@
         </div>
       </div>
     </div>
+    <el-empty v-else description="暂无"/>
   </div>
 </template>
 

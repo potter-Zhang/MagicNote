@@ -74,13 +74,13 @@
           <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
         </div>
         <div class="user-zone" v-if="currentUser.id == -1">
-          <router-link to="/userInfo"><user theme="outline" size="24" fill="#333"/></router-link>
+          <user theme="outline" size="24" fill="#333"/>
           <router-link to="/login" class="user-zone-font" @click="login">登录</router-link>
           <router-link to="/login" class="user-zone-font">注册</router-link>
         </div>
         <div class="user-zone" v-else>
           <router-link to="/userInfo"><user theme="outline" size="24" fill="#333"/></router-link>
-          <div class="user-zone-font">{{currentUser.name}}</div>
+          <router-link to="/userInfo" class="user-zone-font">{{currentUser.name}}</router-link>
           <el-button type="danger" style="padding: 0 5px 0 5px" @click="logout">退出登录</el-button>
         </div>
       </el-header>
