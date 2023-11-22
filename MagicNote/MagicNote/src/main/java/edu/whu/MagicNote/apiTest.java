@@ -23,6 +23,13 @@ import java.util.concurrent.Semaphore;
 
 public class apiTest {
 
+    static String s0 = "接下来我会给出我的笔记，你需要根据我的笔记生成flow格式的markdown格式的流程图。\n" +
+            //"同时你需要将其中的最重要的那些信息进行加粗，最终输出为markdown格式。最后只需要输出markdown。\n" +
+            //"你需要扩写笔记内容，输出为markdown格式，markdown笔记格式丰富一些，多进行字体加粗、字体色彩、分段等。\n" +
+            //"然后你需要根据续写的笔记内容生成思维导图，也输出为markdown格式，\n" +
+            //"你需要根据笔记内容生成markdown形式思维导图，加粗‘阿根廷’字样，数字用红色字体。\n" +
+            "给出的笔记是：\n";
+
     static String s1 = "接下来我会给出我的笔记，你需要缩写我的笔记，只留下关键信息。\n" +
             "同时你需要将其中的最重要的那些信息进行加粗，最终输出为markdown格式。最后只需要输出markdown。\n" +
             //"你需要扩写笔记内容，输出为markdown格式，markdown笔记格式丰富一些，多进行字体加粗、字体色彩、分段等。\n" +
@@ -136,7 +143,7 @@ public class apiTest {
 
     public static void qwenQuickStart()
             throws NoApiKeyException, ApiException, InputRequiredException {
-        String PROMPT = s1 + s5;
+        String PROMPT = s0 + s4;
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
         Generation gen = new Generation();
         QwenParam param = QwenParam.builder().model("qwen-max").prompt(PROMPT)
@@ -166,14 +173,43 @@ public class apiTest {
         System.out.println(result.getOutput().getChoices().get(0).getMessage().getContent());
     }
 
-    public static void main(String[] args) {
+    public static void streamCallWithMessage()
+            throws NoApiKeyException, ApiException, InputRequiredException {
+        Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
+        String prompt = s1 + s5;
+        Generation gen = new Generation();
+        Message userMsg = Message
+                .builder()
+                .role(Role.USER.getValue())
+                .content(prompt)
+                .build();
+        QwenParam param =
+                QwenParam.builder().model("qwen-max").messages(Arrays.asList(userMsg))
+                        .resultFormat(QwenParam.ResultFormat.MESSAGE)
+                        .topP(0.8)
+                        .enableSearch(true)
+                        .incrementalOutput(true) // get streaming output incrementally
+                        .build();
+        Flowable<GenerationResult> result = gen.streamCall(param);
+        StringBuilder fullContent = new StringBuilder();
+        result.blockingForEach(message -> {
+            fullContent.append(message.getOutput().getChoices().get(0).getMessage().getContent());
+            System.out.println(message.getOutput().getChoices().get(0).getMessage().getContent());
+        });
+        System.out.println("Full content: \n" + fullContent.toString());
+    }
+
+
+    public static void main(String[] args) throws NoApiKeyException, InputRequiredException {
         try {
             AIFunctionService aiFunctionService = new AIFunctionService();
             //aiFunctionService.abstractNote(s5);
             //aiFunctionService.expandNote(s6);
             //aiFunctionService.generateNote(s7, 2000);
-            aiFunctionService.segmentNote(s5);
-        } catch (ApiException | NoApiKeyException | InputRequiredException e) {
+            //aiFunctionService.segmentNote(s5);
+            //callWithMessage();
+            qwenQuickStart();
+        } catch (ApiException e) {
             System.out.println(String.format("Exception %s", e.getMessage()));
         }
         System.exit(0);
