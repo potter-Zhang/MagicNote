@@ -9,7 +9,11 @@ export const registerAPI = (registerData) =>{
     return request.post('/register', params.toString());
 }
 
-// 掉用登录接口的函数
+//  调用登录接口的函数
 export const loginAPI = (loginData) => {
+    return request.post('/login', loginData);
+}
+
+export const loginByEmailAPI = (loginData) => {
     return request.post('/login', loginData);
 }

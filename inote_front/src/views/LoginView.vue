@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from 'vue'
   import CustomInput from '@/components/CustomInput.vue'
-  import {loginAPI} from "@/api/user";
+  import {loginAPI, loginByEmailAPI} from "@/api/user";
 
   const status = ref('sign up')
   const buttonText = ref('登录/注册')
@@ -42,10 +42,10 @@
     import("@/router/index")
         .then(async (module) => {
           const data = {
-            "name": inputs.value[0]['value'],
+            "email": inputs.value[0]['value'],
             "password": inputs.value[1]['value']
           };
-          const result = await loginAPI(data)
+          const result = await loginByEmailAPI(data)
               .then((response) => {
                 module.default.push("/dashboard");
               });
