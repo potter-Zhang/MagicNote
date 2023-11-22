@@ -4,6 +4,7 @@ import edu.whu.MagicNote.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +20,16 @@ public class AuthenticationController {
     private DbUserDetailService userDetailsService;
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getName());
-        if (passwordEncoder.matches(user.getPassword(),userDetails.getPassword())) {
-            final String token = jwtTokenUtil.generateToken(userDetails);
-            return ResponseEntity.ok(token);
-        } else {
-            return ResponseEntity.badRequest().body("用户认证未通过");
+        try {
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getName());
+            if (passwordEncoder.matches(user.getPassword(), userDetails.getPassword())) {
+                final String token = jwtTokenUtil.generateToken(userDetails);
+                return ResponseEntity.ok(token);
+            } else {
+                return ResponseEntity.badRequest().body("用户认证未通过");
+            }
+        }catch (UsernameNotFoundException e){
+            return ResponseEntity.badRequest().body("用户不存在");
         }
     }
 

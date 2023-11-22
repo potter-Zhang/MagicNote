@@ -2,7 +2,6 @@ package edu.whu.MagicNote.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.sql.Blob;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,12 +11,12 @@ import lombok.EqualsAndHashCode;
  * 
  * </p>
  *
- * @author susong
- * @since 2023-11-14
+ * @author Jerome
+ * @since 2023-11-20
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class User implements Serializable {
+public class Notebook implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,11 +25,7 @@ public class User implements Serializable {
 
     private String name;
 
-    private String password;
-
-    private Blob photo;
-
-    private String email;
+    private Integer userid;
 
 
 }
