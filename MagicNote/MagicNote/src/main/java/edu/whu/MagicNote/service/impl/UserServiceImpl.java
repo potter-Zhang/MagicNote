@@ -33,6 +33,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     }
 
     @Override
+    public User getUserByEmail(String Email) {
+        LambdaQueryWrapper<User> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(User::getEmail, Email);
+        User user = this.baseMapper.selectOne(lqw);
+        return user;
+    }
+
+    @Override
     public User addUser(User user){
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         this.baseMapper.insert(user);
