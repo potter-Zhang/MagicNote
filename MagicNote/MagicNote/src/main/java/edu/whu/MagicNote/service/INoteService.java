@@ -32,4 +32,7 @@ public interface INoteService extends IService<Note> {
     public List<Note> getAllNoteByUserId(int id);
     //根据笔记本id查询所有笔记
     public List<Note> getAllNoteByNotebookId(int id);
+
+    // 根据搜素关键词搜索笔记
+    public List<Note> searchNotesByWords(int userid, String words);
 }
