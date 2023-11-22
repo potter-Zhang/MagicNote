@@ -72,7 +72,7 @@ public class NoteController {
     }
 
     //更新笔记
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<Void> updateNote(@RequestBody Note myNote){
         Log myLog = new Log();
         myLog.setUserid(myNote.getUserid());
