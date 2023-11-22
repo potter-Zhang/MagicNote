@@ -1,6 +1,8 @@
 <script setup>
   import notebook from "@icon-park/vue-next/lib/icons/Notebook"
   import noteIcon from "@icon-park/vue-next/lib/icons/Notes"
+  import {addNotebookAPI} from "@/api/notebook";
+  import {currentUser} from "@/global";
 
   import {ref} from 'vue'
 
@@ -55,6 +57,15 @@
       timestamp: date.toLocaleDateString()
     }
   ])
+
+  const addNotebook = async (notebookName) => {
+    const data = {
+      userid: currentUser.value.id,
+      name: notebookName
+    }
+    const result = await addNotebookAPI(notebookName);
+    const notebookId = result['data']['id'];
+  }
 </script>
 
 <template>
