@@ -6,10 +6,10 @@ export const registerAPI = (registerData) =>{
     for (let key in registerData) {
         params.append(key, registerData[key]);
     }
-    return request.post('/user/register', params.toString());
+    return request.post('/register', params.toString());
 }
 
 // 掉用登录接口的函数
 export const loginAPI = (loginData) => {
-    return request.get('/user/login', loginData);
+    return request.get('/login', {data: loginData.toString()});
 }

@@ -1,57 +1,56 @@
 <script setup>
-import { ref } from 'vue'
-import CustomInput from '@/components/CustomInput.vue'
-//import '../assets/LoginPage.css'
+  import { ref } from 'vue'
+  import CustomInput from '@/components/CustomInput.vue'
+  import {loginAPI} from "@/api/user";
 
-const status = ref('sign up')
-const prompt = ref('not registed yet?')
-const buttonText = ref('Log In')
+  const status = ref('sign up')
+  const buttonText = ref('登录/注册')
 
-const inputs = ref([
-  {
-    label: 'Your Email',
-    value: '',
-    type: 'email',
-    class: 'login__input'
-  },
-  {
-    label: 'Your Password',
-    value: '',
-    type: 'password',
-    class: 'login__input'
+  const inputs = ref([
+    {
+      label: '邮箱地址',
+      value: '',
+      type: 'email',
+      class: 'login__input'
+    },
+    {
+      label: '密码',
+      value: '',
+      type: 'password',
+      class: 'login__input'
+    }
+  ])
+
+  const toggle = function () {
+    console.log(inputs.value[0].value, inputs.value[1].value)
   }
-])
 
-const toggle = function () {
-  console.log(inputs.value[0].value, inputs.value[1].value)
-}
-
-const addInput = function () {
-  inputs.value.push({
-    label: 'Your Code',
-    value: '',
-    type: 'text',
-    class: 'login__input'
-  })
-}
-
-const removeInput = function () {
-  inputs.value.pop()
-}
-
-const change = function () {
-  if (status.value === 'sign up') {
-    status.value = 'log in'
-    prompt.value = 'already had an account?'
-    buttonText.value = 'Sign Up'
-    addInput()
-  } else {
-    status.value = 'sign up'
-    prompt.value = 'not registered yet?'
-    buttonText.value = 'Log In'
-    removeInput()
+  const addInput = function () {
+    inputs.value.push({
+      label: 'Your Code',
+      value: '',
+      type: 'text',
+      class: 'login__input'
+    })
   }
-}
+
+  const removeInput = function () {
+    inputs.value.pop()
+  }
+
+  const login = async () => {
+    import("@/router/index")
+        .then(async (module) => {
+          const data = {
+            email: inputs.value[0]['value'],
+            password: inputs.value[1]['value']
+          };
+          const result = await loginAPI(data);
+          if (result['status'] === 200) {
+           await module.default.push("/dashboard");
+          }
+        });
+  }
 
 </script>
 
@@ -67,14 +66,11 @@ const change = function () {
               :type="input.type"
               v-model="input.value"
               />
-          <button v-on:click="toggle" class="button login__submit">
+          <button v-on:click="login" class="button login__submit">
             <span class="button__text">{{ buttonText }}</span>
             <i class="button__icon fas fa-chevron-right"></i>
           </button>
       </form>
-      <div style="display: flex; justify-content: center;">
-        <span>{{ prompt }} <router-link to="/login" v-on:click="change">{{ status }}</router-link> now!</span>
-      </div>
       </div>
       <div class="screen__background">
         <span class="screen__background__shape screen__background__shape4"></span>

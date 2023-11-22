@@ -60,8 +60,8 @@ const messages = ref([
 
 <template>
   <div class="panel">
-  <div class="panel-header"  @mousemove="drag" @mousedown="dragStart" @mouseup="dragEnd" @mouseleave="dragEnd">
-    <h1>Chat</h1>
+    <div class="panel-header"  @mousemove="drag" @mousedown="dragStart" @mouseup="dragEnd" @mouseleave="dragEnd">
+      <h1 style="margin: 5px 0 5px 0">Chat</h1>
     </div>
     <div class="chat-container">
       <CustomDialog v-for="(message, idx) in messages"
@@ -69,97 +69,93 @@ const messages = ref([
           :role="message.role"
           :content="message.content"
           ></CustomDialog>
-        </div>
-      <div class="send-comp">
-        <input class="send-text" v-model="userMsg">
-        <button class="send-button" @click="sendMessage(userMsg)">Send</button>
-      </div>
+    </div>
+    <div class="send-comp">
+      <input class="send-text" v-model="userMsg">
+      <button class="send-button" @click="sendMessage(userMsg)">Send</button>
+    </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 
-.send-comp {
-  position: absolute;
-  bottom: 0;
-  left: 10px;
-  margin-bottom: 20px;
-  height: 50px;
-  margin-left: 0%;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-}
-.send-button {
-  font-size: medium;
-  font-weight: 100;
-  margin-left: 5px;
-  width: 15%;
-  background-color: aquamarine;
-  border-radius: 0.75em;
-  border: #333;
-}
-.send-text {
-  font-size: medium;
-  font-weight: 100;
-  padding: 0.75em;
-  width: 80%;
-  border-radius: 0.75em;
-  border: #333;
-}
-
-.user {
-    width: 80%;
-    background-color:white;
-    float:right;
-    text-align:left;
-    margin-right: 5px;
-    word-wrap: break-word;
-}
-
-.assistant {
-    width: 80%;
-    background-color:rgb(12, 183, 27);
-    float:left;
-    text-align:left;
-    margin-left: 5px;
-}
-
-.chat-container {
-  overflow-y: scroll;
-  height: 80%;
-}
-
-.chat-container::-webkit-scrollbar {
-    display: none;
-}
-
-.panel {
-    position: absolute;
-    width: 400px;
-    height: 500px;
-    top: v-bind(topPx);
-    left: v-bind(leftPx);
-    background-color: aliceblue;
-    border: 1px solid green ;
-    border-radius: 0.75em;
-}
-
-.panel-header {
+  .send-comp {
+    height: 50px;
+    margin-left: 0%;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  .send-button {
+    cursor: pointer;
+    font-size: medium;
     font-weight: 100;
-    cursor: move;
-    user-select: none;
-}
-
-.message {
+    margin-left: 5px;
+    width: 15%;
+    background-color: var(--el-color-primary-light-3);
+    border-radius: 0.75em;
+    border: #333;
+  }
+  .send-text {
+    font-size: medium;
+    font-weight: 100;
     padding: 0.75em;
-    margin-top:10px;
-    border-radius: 1em;
-    border: 1px solid green;
-    box-shadow: 0px 4px 6px #333;
-   -moz-box-shadow: 0px 4px 6px #333;
-   -webkit-box-shadow: 0px 4px 6px #333;
+    width: 80%;
+    border-radius: 0.75em;
+    border: var(--el-color-primary-light-7);
+  }
+
+  .user {
+      width: 80%;
+      background-color:white;
+      float:right;
+      text-align:left;
+      margin-right: 5px;
+      word-wrap: break-word;
+  }
+
+  .assistant {
+      width: 80%;
+      background-color: var(--el-color-primary);
+      float:left;
+      text-align:left;
+      margin-left: 5px;
+  }
+
+  .chat-container {
+    overflow-y: scroll;
+    height: 80%;
+  }
+
+  .chat-container::-webkit-scrollbar {
+      display: none;
+  }
+
+  .panel {
     display: flex;
     flex-direction: column;
-}
+    width: 95%;
+    height: 400px;
+    background-color: aliceblue;
+    border: 1px solid  var(--el-color-primary-light-7);
+    border-radius: 0.75em;
+    padding: 5px;
+  }
+
+  .panel-header {
+      font-weight: 100;
+      user-select: none;
+  }
+
+  .message {
+      padding: 0.75em;
+      margin-top:10px;
+      border-radius: 1em;
+      border: 1px solid var(--el-color-primary-light-7);
+      box-shadow: 0px 4px 6px #333;
+     -moz-box-shadow: 0px 4px 6px #333;
+     -webkit-box-shadow: 0px 4px 6px #333;
+      display: flex;
+      flex-direction: column;
+  }
 </style>
