@@ -1,6 +1,7 @@
 package edu.whu.MagicNote.security;
 
 import edu.whu.MagicNote.domain.User;
+import edu.whu.MagicNote.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,13 +22,16 @@ public class AuthenticationController {
     PasswordEncoder passwordEncoder;
     @Autowired
     private DbUserDetailService userDetailsService;
+    @Autowired
+    private UserServiceImpl userService;
     @PostMapping("/login")
-    public ResponseEntity<Map<String,String>> login(@RequestBody User user) {
+    public ResponseEntity<Map<String,String>> login(@RequestBody User myuser) {
         try {
-            final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getName());
-            if (passwordEncoder.matches(user.getPassword(), userDetails.getPassword())) {
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(myuser.getName());
+            if (passwordEncoder.matches(myuser.getPassword(), userDetails.getPassword())) {
                 final String token = jwtTokenUtil.generateToken(userDetails);
                 Map<String,String> result = new HashMap<>();
+                User user = userService.getUserByName(myuser.getName());
                 result.put("id",String.valueOf(user.getId()));
                 result.put("name",user.getName());
                 result.put("email",user.getEmail());
@@ -46,12 +50,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/loginByEmail")
-    public ResponseEntity<Map<String,String>> loginByEmail(@RequestBody User user) {
+    public ResponseEntity<Map<String,String>> loginByEmail(@RequestBody User myuser) {
         try {
-            final UserDetails userDetails = userDetailsService.loadUserByUserEmail(user.getEmail());
-            if (passwordEncoder.matches(user.getPassword(), userDetails.getPassword())) {
+            final UserDetails userDetails = userDetailsService.loadUserByUserEmail(myuser.getEmail());
+            if (passwordEncoder.matches(myuser.getPassword(), userDetails.getPassword())) {
                 final String token = jwtTokenUtil.generateToken(userDetails);
                 Map<String,String> result = new HashMap<>();
+                User user = userService.getUserByEmail(myuser.getEmail());
                 result.put("id",String.valueOf(user.getId()));
                 result.put("name",user.getName());
                 result.put("email",user.getEmail());
