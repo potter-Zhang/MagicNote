@@ -15,5 +15,4 @@ public class TodoException extends Exception{
         super(message);
         this.code=code;
     }
-
 }

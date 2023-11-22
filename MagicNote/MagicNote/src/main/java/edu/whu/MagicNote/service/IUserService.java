@@ -1,8 +1,7 @@
 package edu.whu.MagicNote.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import edu.whu.MagicNote.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import edu.whu.MagicNote.domain.User;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,6 +17,8 @@ public interface IUserService extends IService<User> {
     public User getUserById(int id);
 
     public User getUserByName(String name);
+
+    public User getUserByEmail(String Email);
 
     public User addUser(User user);
 
