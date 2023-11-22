@@ -8,7 +8,8 @@ instance.interceptors.response.use(
         return result.data;
     },
     error => {
-        alert("服务异常！");
+        // alert("服务异常！");
+        console.log(error);
         return Promise.reject(error); // 异步状态转变为失败状态
     }
 )

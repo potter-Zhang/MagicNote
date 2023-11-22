@@ -11,5 +11,5 @@ export const registerAPI = (registerData) =>{
 
 // 掉用登录接口的函数
 export const loginAPI = (loginData) => {
-    return request.get('/login', {data: loginData.toString()});
+    return request.post('/login', loginData);
 }
