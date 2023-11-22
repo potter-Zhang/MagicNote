@@ -42,13 +42,13 @@
     import("@/router/index")
         .then(async (module) => {
           const data = {
-            email: inputs.value[0]['value'],
-            password: inputs.value[1]['value']
+            "name": inputs.value[0]['value'],
+            "password": inputs.value[1]['value']
           };
-          const result = await loginAPI(data);
-          if (result['status'] === 200) {
-           await module.default.push("/dashboard");
-          }
+          const result = await loginAPI(data)
+              .then((response) => {
+                module.default.push("/dashboard");
+              });
         });
   }
 
@@ -68,7 +68,6 @@
               />
           <button v-on:click="login" class="button login__submit">
             <span class="button__text">{{ buttonText }}</span>
-            <i class="button__icon fas fa-chevron-right"></i>
           </button>
       </form>
       </div>

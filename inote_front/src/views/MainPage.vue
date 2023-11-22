@@ -78,7 +78,7 @@
         </div>
         <div class="user-zone" v-if="currentUser.id == -1">
           <user theme="outline" size="24" fill="#333" style="margin-right: 10%"/>
-          <router-link to="/login" class="user-zone-font" @click="login">登录</router-link>
+          <router-link to="/" class="user-zone-font">登录</router-link>
         </div>
         <div class="user-zone" v-else>
           <router-link to="/userInfo"><user theme="outline" size="24" fill="#333"/></router-link>
