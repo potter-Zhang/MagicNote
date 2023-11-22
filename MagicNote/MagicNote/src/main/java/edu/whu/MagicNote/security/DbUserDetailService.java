@@ -29,7 +29,18 @@ public class DbUserDetailService implements UserDetailsService {
                 .roles("USER")
                 .build();
     }
-
+    //根据邮箱登录
+    public UserDetails loadUserByUserEmail(String email) throws UsernameNotFoundException {
+        User user = userService.getUserByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("User with email " + email + " is not found");
+        }
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(email) // 使用邮箱作为用户名
+                .password(user.getPassword())
+                .roles("USER")
+                .build();
+    }
     //检查用户名是否存在
     public boolean isUserExists(String username) {
         User user = userService.getUserByName(username);
