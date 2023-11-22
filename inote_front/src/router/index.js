@@ -7,7 +7,7 @@
 
 import {createRouter, createWebHistory} from "vue-router";
 
-import LoginVue from '@/views/Login.vue'
+import LoginVue from '@/views/LoginView.vue'
 import MainPageVue from '@/views/MainPage.vue'
 import UserInfoVue from "@/views/UserInfo.vue"
 

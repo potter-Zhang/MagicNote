@@ -29,3 +29,23 @@ const inputValue = computed({
         <input v-model="inputValue" :type="props.type" :class="props.inputClass" :placeholder="props.label">
     </div>
 </template>
+
+<style scoped>
+.login__input {
+	border: none;
+	border-bottom: 2px solid #D1D1D4;
+	background: none;
+	padding: 10px;
+	padding-left: 24px;
+	font-weight: 700;
+	width: 75%;
+	transition: .2s;
+}
+
+.login__input:active,
+.login__input:focus,
+.login__input:hover {
+	outline: none;
+	border-bottom-color: #6A679E;
+}
+</style>
