@@ -65,6 +65,7 @@
   const logout = () => {
     currentUser.value.id = -1;
     currentUser.value.name = "";
+    currentUser.value.token = "";
   }
 
 </script>
@@ -81,8 +82,8 @@
           <router-link to="/" class="user-zone-font">登录</router-link>
         </div>
         <div class="user-zone" v-else>
-          <router-link to="/userInfo"><user theme="outline" size="24" fill="#333"/></router-link>
-          <router-link to="/userInfo" class="user-zone-font">{{currentUser.name}}</router-link>
+          <router-link to="/userInfo"><user theme="outline" size="24" fill="#333" style="margin-right: 8px"/></router-link>
+          <router-link to="/userInfo" class="user-zone-font" style="margin-right: 8px">{{currentUser.name}}</router-link>
           <el-button type="danger" style="padding: 0 5px 0 5px" @click="logout">退出登录</el-button>
         </div>
       </el-header>

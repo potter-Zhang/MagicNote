@@ -2,6 +2,7 @@
   import { ref } from 'vue'
   import CustomInput from '@/components/CustomInput.vue'
   import {loginAPI, loginByEmailAPI} from "@/api/user";
+  import {currentUser} from "@/global";
 
   const status = ref('sign up')
   const buttonText = ref('登录/注册')
@@ -47,6 +48,9 @@
           };
           const result = await loginByEmailAPI(data)
               .then((response) => {
+                currentUser.value.id = response.id;
+                currentUser.value.name = response.name;
+                currentUser.value.token = response.token;
                 module.default.push("/dashboard");
               });
         });
