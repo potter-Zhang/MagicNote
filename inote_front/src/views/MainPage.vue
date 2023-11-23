@@ -12,7 +12,7 @@
   import notebook from "../components/Notebook.vue"
   import floatBall from "../components/FloatBall.vue"
   import startTab from "../components/StartTab.vue"
-  import {ref} from 'vue';
+  import {ref, onMounted} from 'vue';
 
   const currentTab = ref("start"); // 当前展示在workspace的组件
 
@@ -40,27 +40,28 @@
   // 侧边菜单是否折叠
   const isCollapse = ref(true);
 
-  // const notebooks = ref(getNotebooksAPI(currentUser.value.id));
+  let notebooks = [];
 
-  const notebooks = ref([
-      {
-        id: 0,
-        name: "默认"
-      },
-      {
-        id: 1,
-        name: "生活"
-      },
-      {
-        id: 2,
-        name: "知识"
-      }
-  ]);
+  onMounted(async () => {
+    const response = await getNotebooksAPI(currentUser.value.id);
+    notebooks = ref(response);
+    console.log(notebooks);
+  });
 
-  const login = () => {
-    currentUser.value.id = 1;
-    currentUser.value.name = "test";
-  }
+  // const notebooks = ref([
+  //     {
+  //       id: 0,
+  //       name: "默认"
+  //     },
+  //     {
+  //       id: 1,
+  //       name: "生活"
+  //     },
+  //     {
+  //       id: 2,
+  //       name: "知识"
+  //     }
+  // ]);
 
   const logout = () => {
     currentUser.value.id = -1;

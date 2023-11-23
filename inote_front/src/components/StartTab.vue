@@ -5,11 +5,16 @@
   import {logAPI} from "@/api/log";
   import {currentUser} from "@/global";
 
-  import {ref} from 'vue'
+  import {ref, onMounted} from 'vue'
 
   const date = new Date();
 
-  const historyNotes = ref(logAPI(currentUser.value.id));
+  let historyNotes = ref([]);
+
+  onMounted(async () => {
+    const response = await logAPI(currentUser.value.id);
+    historyNotes = ref(response);
+  });
   // const historyNotes = ref([
   //   {
   //     id: 0,

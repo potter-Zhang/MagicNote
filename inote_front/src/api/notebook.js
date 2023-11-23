@@ -13,5 +13,5 @@ export const updateNotebookAPI = (data) => {
 }
 
 export const getNotebooksAPI = (userid) => {
-    return request.get("/notebook/get/" + userid);
+    return request.get("/notebook/getByUser/" + userid);
 }
