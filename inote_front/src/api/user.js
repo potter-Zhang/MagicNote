@@ -15,5 +15,5 @@ export const loginAPI = (loginData) => {
 }
 
 export const loginByEmailAPI = (loginData) => {
-    return request.post('/login', loginData);
+    return request.post('/loginByEmail', loginData);
 }
