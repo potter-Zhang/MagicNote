@@ -67,4 +67,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements INote
     public List<Note> getAllNoteByNotebookId(int id) {
         return myNoteDao.FindAllNoteByNotebookId(id);
     }
+
+    // 根据搜素关键词搜索笔记
+    @Override
+    public List<Note> searchNotesByWords(int userid, String words){
+        words = words + "*";
+        return myNoteDao.SearchNotesByKeywords(userid, words);
+    }
 }

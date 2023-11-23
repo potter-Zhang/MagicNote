@@ -46,7 +46,7 @@ public class NotebookController {
         else return ResponseEntity.notFound().build();
     }
     //更新笔记本
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<Void> updateNotebook(@RequestBody Notebook myNotebook){
         if(ns.updateNotebook(myNotebook)) {
             return ResponseEntity.ok().build();
