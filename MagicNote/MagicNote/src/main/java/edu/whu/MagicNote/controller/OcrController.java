@@ -44,4 +44,17 @@ public class OcrController {
         }
         return ResponseEntity.ok(result);
     }
+
+    //识别ppt
+    @PostMapping(value = "/ppt", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> recognizePPT(@RequestParam("file") MultipartFile file) {
+        // 调用OcrService中的方法进行文字识别
+        String result;
+        try {
+            result = ocrService.recognizePPT(file);
+        } catch (TodoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok(result);
+    }
 }
