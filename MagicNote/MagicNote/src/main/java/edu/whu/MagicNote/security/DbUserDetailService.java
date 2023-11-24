@@ -41,10 +41,11 @@ public class DbUserDetailService implements UserDetailsService {
                 .roles("USER")
                 .build();
     }
-    //检查用户名是否存在
-    public boolean isUserExists(String username) {
-        User user = userService.getUserByName(username);
-        return user != null;
+    //检查用户是否存在
+    public boolean isUserExists(String nameOrEmail) {
+        User user1 = userService.getUserByName(nameOrEmail);
+        User user2 = userService.getUserByEmail(nameOrEmail);
+        return user1 != null || user2 != null;
     }
     //检查密码强度
     public String getPasswordStrengthErrorMessage(String password) {
