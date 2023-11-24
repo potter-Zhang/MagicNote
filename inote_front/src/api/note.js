@@ -12,8 +12,8 @@ export const addNoteAPI = (data) => {
     return request.post("/note/add", data);
 }
 
-export const delNoteAPI = (data) => {
-    return request.delete("/note/delete", data);
+export const delNoteByIdAPI = (id) => {
+    return request.delete("/note/delete1/" + id);
 }
 
 export const updateNoteAPI = (data) => {

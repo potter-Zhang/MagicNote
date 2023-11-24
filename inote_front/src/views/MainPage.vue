@@ -44,6 +44,7 @@
 
   onMounted(async () => {
     const response = await getNotebooksAPI(currentUser.value.id);
+    // 由于后端直接返回列表，因此该处报错不影响运行
     notebooks = ref(response);
     console.log(notebooks);
   });

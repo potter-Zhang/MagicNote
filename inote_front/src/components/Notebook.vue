@@ -10,42 +10,44 @@
   import more from "@icon-park/vue-next/lib/icons/More"
 
   import {ElMessageBox, ElMessage} from "element-plus";
-  import {getAllNotesAPI} from "@/api/note"
+  import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI} from "@/api/note"
+  import {addNotebookAPI, updateNotebookAPI, delNotebookByIdAPI} from "@/api/notebook"
+  import {currentUser} from "@/global"
 
   const props = defineProps({
     notebooks: Array
   })
 
-  // 用于显示的笔记(根据选择的笔记本从数据库中取出)
-  // const notes = ref([
-  //   {
-  //     id: 0,
-  //     name: "文件1"
-  //   }
-  // ])
-
   const currentMode = ref('notebook'); // 显示笔记本或者笔记本中的文档
+  const currentNotebook = ref(-1);  // 当前正在浏览的笔记本id，在笔记本中新增笔记时需要使用
 
   const changeMode = (type: string) =>{
     currentMode.value = type;
   }
 
-  function rename(element) {
-    let newName: string = null;
+  const displayNotes = async (notebookId) => {
+    await getNotes(notebookId);
+    changeMode("note");
+  }
+
+  const renameNotebook = (notebook) => {
     ElMessageBox.prompt('新的名称', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
       inputPattern: /.+/,
       inputErrorMessage: '请输入新的名称！',
     })
-        .then(({ value }) => {
-          element.name = value;
+        .then(async ({ value }) => {
+          notebook.name = value;
+          console.log(notebook);
+          await updateNotebookAPI(notebook);
         })
   }
 
-  const delNotebook = (notebook) => {
-    const id = props.notebooks.indexOf(notebook);
-    props.notebooks.splice(id, 1)
+  const delNotebook = async (notebook) => {
+    await delNotebookByIdAPI(notebook.id);
+    const listId = props.notebooks.indexOf(notebook);
+    props.notebooks.splice(listId, 1);
   }
 
   const addNotebook = () => {
@@ -55,8 +57,10 @@
       inputPattern: /.+/,
       inputErrorMessage: '请输入名称！',
     })
-        .then(({ value }) => {
-          props.notebooks.push({id: -1, name: value});
+        .then(async ({ value }) => {
+          const data = {"name": value, "userid": currentUser.value.id};
+          const newNotebook = await addNotebookAPI(data);
+          props.notebooks.push(newNotebook);
           ElMessage({
             type: 'success',
             message: `创建成功`,
@@ -66,16 +70,30 @@
 
   let notes = ref([]);
 
-  const getNotes = (notebookId) => {
-    getAllNotesAPI(notebookId)
+  const getNotes = async (notebookId) => {
+    await getAllNotesAPI(notebookId)
         .then((response) => {
           notes = ref(response);
         })
   }
 
-  const delNote = (note) => {
-    const id = notes.value.indexOf(note);
-    notes.value.splice(id, 1);
+  const renameNote = (note) => {
+    ElMessageBox.prompt('新的名称', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      inputPattern: /.+/,
+      inputErrorMessage: '请输入新的名称！',
+    })
+        .then(async ({ value }) => {
+          note.name = value;
+          await updateNoteAPI(note);
+        })
+  }
+
+  const delNote = async (note) => {
+    await delNoteByIdAPI(note.id);
+    const listId = notes.value.indexOf(note);
+    notes.value.splice(listId, 1);
   }
 
   const addNote = () => {
@@ -85,8 +103,14 @@
       inputPattern: /.+/,
       inputErrorMessage: '请输入名称！',
     })
-      .then(({ value }) => {
-        notes.value.push({id: -1, name: value});
+      .then(async ({ value }) => {
+        const newNote = await addNoteAPI({
+          "userid": currentUser.value.id;
+          "content": "",
+          "name": value,
+          "notebookid": currentNotebook
+        });
+        notes.value.push(newNote);
         ElMessage({
           type: 'success',
           message: `创建成功`,
@@ -118,14 +142,14 @@
     <div id="content">
       <!-- 显示笔记本 -->
       <div v-if="currentMode==='notebook'"  v-for="notebook in notebooks" class="display-item">
-        <div class="display-item-icon-and-text"  @click="getNotes(notebook.id); changeMode('note')">
+        <div class="display-item-icon-and-text"  @click="currentNotebook=notebook.id; displayNotes(notebook.id);">
           <notebook class="icon" theme="outline" size="16" fill="#333"/>
           <div style="margin-left: 0.5rem; font-size: 0.8rem; font-weight: bold">{{notebook.name}}</div>
         </div>
         <!-- 弹出框进行重命名和删除操作 -->
         <el-popover placement="bottom-start" :width="100" trigger="click" hide-after="0">
           <template #default>
-            <div class="popover-item" @click="rename(notebook)">
+            <div class="popover-item" @click="renameNotebook(notebook)">
               <edit class="icon" theme="outline" size="20" fill="#000000"/>
               <div style="margin-left: 0.5rem">重命名</div>
             </div>
@@ -153,7 +177,7 @@
         <!-- 弹出框进行重命名和删除操作 -->
         <el-popover placement="bottom-start" :width="100" trigger="click" hide-after="0">
           <template #default>
-            <div class="popover-item" @click="rename(note)">
+            <div class="popover-item" @click="renameNote(note)">
               <edit class="icon" theme="outline" size="20" fill="#000000"/>
               <div style="margin-left: 0.5rem">重命名</div>
             </div>

@@ -22,7 +22,7 @@ instance.interceptors.request.use(
         if (currentUser.value.token.length > 0 && config.headers.Authorization === undefined) {
             config.headers.Authorization = 'Bearer ' + currentUser.value.token;
         }
-        console.log(config);
+        // console.log(config);
         return config;
     }
 )
