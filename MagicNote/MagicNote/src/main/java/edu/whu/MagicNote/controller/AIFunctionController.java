@@ -3,6 +3,7 @@ package edu.whu.MagicNote.controller;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
+import edu.whu.MagicNote.service.impl.QAndAService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AIFunctionController {
 
     @Autowired
-    AIFunctionService aiFunctionService;
+    private AIFunctionService aiFunctionService;
+
+    @Autowired
+    private QAndAService qAndAService;
+
 
     // 获取输入文字的摘要，或者说将输入文字精简、提取关键信息
     @GetMapping("/abstract")
@@ -47,6 +52,7 @@ public class AIFunctionController {
         return ResponseEntity.ok(result);
     }
 
+
     // 根据笔记的合适内容生成表格
     @GetMapping("/generateTable")
     public ResponseEntity<String> generateTable(String note) throws NoApiKeyException, InputRequiredException {
@@ -59,6 +65,20 @@ public class AIFunctionController {
     public ResponseEntity<String> generateFlowChart(String note) throws NoApiKeyException, InputRequiredException {
         String result = aiFunctionService.generateFlowChart(note);
         return ResponseEntity.ok(result);
+    }
+
+    // 初始化问答模型的接口，在进入某个笔记的编辑界面时调用，以初始化，以便之后进行多轮问答
+    @GetMapping("/init")
+    public ResponseEntity<Void> initQAndA(String note) throws NoApiKeyException, InputRequiredException {
+        qAndAService.init(note);
+        return ResponseEntity.ok().build();
+    }
+
+    // 回答问题时调用的接口
+    @GetMapping("/answer")
+    public ResponseEntity<String> getAnswer(String question) throws NoApiKeyException, InputRequiredException {
+        String answer = qAndAService.answer(question);
+        return ResponseEntity.ok(answer);
     }
 
 }
