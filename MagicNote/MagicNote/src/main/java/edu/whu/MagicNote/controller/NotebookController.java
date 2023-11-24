@@ -38,9 +38,9 @@ public class NotebookController {
         else return ResponseEntity.notFound().build();
     }
     //根据文件名删除笔记本
-    @DeleteMapping("/delete2/{name}")
-    public ResponseEntity<Void> removeNotebookByName(@PathVariable String name){
-        if(ns.removeNotebook(name)) {
+    @DeleteMapping("/delete2")
+    public ResponseEntity<Void> removeNotebookByName(int userid, String name){
+        if(ns.removeNotebook(userid, name)) {
             return ResponseEntity.ok().build();
         }
         else return ResponseEntity.notFound().build();
