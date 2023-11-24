@@ -2,7 +2,9 @@ package edu.whu.MagicNote.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import edu.whu.MagicNote.dao.NoteDao;
 import edu.whu.MagicNote.dao.NotebookDao;
+import edu.whu.MagicNote.domain.Note;
 import edu.whu.MagicNote.domain.Notebook;
 import edu.whu.MagicNote.service.INotebookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,10 @@ import java.util.List;
 public class NotebookServiceImpl extends ServiceImpl<NotebookDao, Notebook> implements INotebookService {
     @Autowired
     NotebookDao nb;
+
+    @Autowired
+    NoteDao noteDao;
+
     @Override
     public Notebook addNotebook(Notebook myNotebook) {
         nb.insert(myNotebook);
@@ -30,14 +36,19 @@ public class NotebookServiceImpl extends ServiceImpl<NotebookDao, Notebook> impl
 
     @Override
     public boolean removeNotebook(int id) {
+        LambdaQueryWrapper<Note> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Note::getNotebookid,id);
+        noteDao.delete(lqw);
         return this.removeById(id);
     }
 
     @Override
-    public boolean removeNotebook(String name) {
-        LambdaQueryWrapper<Notebook> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Notebook::getName,name);
-        return this.remove(lqw);
+    public boolean removeNotebook(int userid, String name) {
+        int id = nb.GetNoteBookId(userid, name);
+        LambdaQueryWrapper<Note> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Note::getNotebookid,id);
+        noteDao.delete(lqw);
+        return this.removeNotebook(id);
     }
 
     @Override
