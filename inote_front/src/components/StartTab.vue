@@ -5,17 +5,39 @@
   import {logAPI} from "@/api/log";
   import {currentUser} from "@/global";
 
-  import {ref, onMounted} from 'vue'
-
-  const date = new Date();
+  import {ref, onBeforeMount} from 'vue'
+  import {ElMessage, ElMessageBox} from "element-plus";
 
   let historyNotes = ref([]);
 
   // 挂载时加载历史记录
-  onMounted(async () => {
+  onBeforeMount(async () => {
     const response = await logAPI(currentUser.value.id);
-    historyNotes = ref(response);
+    historyNotes.value = [];
+    historyNotes.value.push.apply(historyNotes.value, response);
+    historyNotes.value.reverse();
+    // 去除删除操作的日志
+    historyNotes.value = historyNotes.value.filter((item) => {
+      return item.operation !== 'delete';
+    });
   });
+
+  const addNotebook = () => {
+    ElMessageBox.prompt('新笔记本的名称', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      inputPattern: /.+/,
+      inputErrorMessage: '请输入名称！',
+    })
+        .then(async ({ value }) => {
+          const data = {"name": value, "userid": currentUser.value.id};
+          const newNotebook = await addNotebookAPI(data);
+          ElMessage({
+            type: 'success',
+            message: `创建成功`,
+          })
+        })
+  }
 
 </script>
 
@@ -25,7 +47,7 @@
 
     <!-- 按键功能区 -->
     <div style="display: flex;">
-      <el-button class="start-button">
+      <el-button class="start-button" @click="addNotebook">
         <template #default>
           <div class="button-content">
             <notebook class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
@@ -49,14 +71,14 @@
 
     <!--历史文档区-->
     <div class="title" style="margin-top: 1rem">最近</div>
-    <div v-if="historyNotes.length > 0" style="display: flex; flex-direction: column">
+    <div v-if="historyNotes.length>0">
       <div v-for="history in historyNotes" style="cursor: default">
         <div class="history-card">
           <div style="display: flex; align-items: center; cursor: pointer">
             <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
-            <div style="margin-left: 0.5rem">{{history.name}}</div>
+            <div style="margin-left: 0.5rem">{{history.notename}}</div>
           </div>
-          <div style="color: rgb(200,200,200); width: 20%">笔记本: {{history.notebookName}}</div>
+<!--          <div style="color: rgb(200,200,200); width: 20%">笔记本: {{history.notebookName}}</div>-->
           <div style="color: rgb(200,200,200); margin-right: 10%">{{history.timestamp}}</div>
         </div>
       </div>

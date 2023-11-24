@@ -6,7 +6,6 @@
   import receive from "@icon-park/vue-next/lib/icons/Receive";
 
   import {currentUser} from "@/global"
-  import {getNotebooksAPI} from "@/api/notebook"
   import helpInfo from "../components/HelpInfo.vue"
   import editor from "../components/Editor.vue"
   import notebook from "../components/Notebook.vue"
@@ -39,15 +38,6 @@
 
   // 侧边菜单是否折叠
   const isCollapse = ref(true);
-
-  let notebooks = [];
-
-  onMounted(async () => {
-    const response = await getNotebooksAPI(currentUser.value.id);
-    // 由于后端直接返回列表，因此该处报错不影响运行
-    notebooks = ref(response);
-    console.log(notebooks);
-  });
 
   const logout = () => {
     currentUser.value.id = -1;
@@ -101,12 +91,14 @@
         <el-main style="padding: 0; display: flex">
           <float-ball/>
           <div id="notebook">
-            <notebook :notebooks="notebooks" style="height: 100%"/>
+            <notebook style="height: 100%"/>
           </div>
 
-          <start-tab v-if="currentTab==='start'"/>
-          <editor v-else-if="currentTab==='editor'"/>
-          <help-info v-else-if="currentTab==='helpInfo'"/>
+          <div id="workspace">
+            <start-tab v-if="currentTab==='start'"/>
+            <editor v-else-if="currentTab==='editor'"/>
+            <help-info v-else-if="currentTab==='helpInfo'"/>
+          </div>
         </el-main>
       </el-container>
 
