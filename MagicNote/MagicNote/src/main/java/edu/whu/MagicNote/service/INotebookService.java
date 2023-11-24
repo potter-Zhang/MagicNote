@@ -20,7 +20,7 @@ public interface INotebookService extends IService<Notebook> {
     //根据id删除笔记本
     public boolean removeNotebook(int id);
     //根据name删除笔记本
-    public boolean removeNotebook(String name);
+    public boolean removeNotebook(int userid, String name);
     //修改笔记本
     public boolean updateNotebook(Notebook myNotebook);
     //根据id查询笔记本
