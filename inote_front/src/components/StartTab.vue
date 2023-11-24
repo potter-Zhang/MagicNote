@@ -11,6 +11,7 @@
 
   let historyNotes = ref([]);
 
+  // 挂载时加载历史记录
   onMounted(async () => {
     const response = await logAPI(currentUser.value.id);
     historyNotes = ref(response);
