@@ -10,91 +10,19 @@
   import more from "@icon-park/vue-next/lib/icons/More"
 
   import {ElMessageBox, ElMessage} from "element-plus";
+  import {getAllNotesAPI} from "@/api/note"
 
   const props = defineProps({
     notebooks: Array
   })
 
-  interface Note {
-    id: number,
-    name: string
-  }
-
   // 用于显示的笔记(根据选择的笔记本从数据库中取出)
-  const notes = ref<Note[]>([
-    {
-      id: 0,
-      name: "文件1"
-    },
-    {
-      id: 1,
-      name: "文件2"
-    },
-    {
-      id: 2,
-      name: "文件3"
-    },
-    {
-      id: 0,
-      name: "文件1"
-    },
-    {
-      id: 1,
-      name: "文件2"
-    },
-    {
-      id: 2,
-      name: "文件3"
-    },
-    {
-      id: 0,
-      name: "文件1"
-    },
-    {
-      id: 1,
-      name: "文件2"
-    },
-    {
-      id: 2,
-      name: "文件3"
-    },
-    {
-      id: 0,
-      name: "文件1"
-    },
-    {
-      id: 1,
-      name: "文件2"
-    },
-    {
-      id: 2,
-      name: "文件3"
-    },
-    {
-      id: 0,
-      name: "文件1"
-    },
-    {
-      id: 1,
-      name: "文件2"
-    },
-    {
-      id: 2,
-      name: "文件3"
-    },
-    {
-      id: 0,
-      name: "文件1"
-    },
-    {
-      id: 1,
-      name: "文件2"
-    },
-    {
-      id: 2,
-      name: "文件3"
-    }
-  ])
+  // const notes = ref([
+  //   {
+  //     id: 0,
+  //     name: "文件1"
+  //   }
+  // ])
 
   const currentMode = ref('notebook'); // 显示笔记本或者笔记本中的文档
 
@@ -136,7 +64,16 @@
         })
   }
 
-  const delNote = (note: Note) => {
+  let notes = ref([]);
+
+  const getNotes = (notebookId) => {
+    getAllNotesAPI(notebookId)
+        .then((response) => {
+          notes = ref(response);
+        })
+  }
+
+  const delNote = (note) => {
     const id = notes.value.indexOf(note);
     notes.value.splice(id, 1);
   }
@@ -181,7 +118,7 @@
     <div id="content">
       <!-- 显示笔记本 -->
       <div v-if="currentMode==='notebook'"  v-for="notebook in notebooks" class="display-item">
-        <div class="display-item-icon-and-text"  @click="changeMode('note')">
+        <div class="display-item-icon-and-text"  @click="getNotes(notebook.id); changeMode('note')">
           <notebook class="icon" theme="outline" size="16" fill="#333"/>
           <div style="margin-left: 0.5rem; font-size: 0.8rem; font-weight: bold">{{notebook.name}}</div>
         </div>

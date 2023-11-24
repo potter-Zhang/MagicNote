@@ -1,7 +1,7 @@
 import request from "@/util/request";
 
-export const getAllNotesAPI = (data) => {
-    return request.get("/note/getall", data);
+export const getAllNotesAPI = (notebookId) => {
+    return request.get("/note/getByNotebook/" + notebookId);
 }
 
 export const getNoteAPI = (data) => {

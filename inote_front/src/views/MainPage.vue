@@ -48,21 +48,6 @@
     console.log(notebooks);
   });
 
-  // const notebooks = ref([
-  //     {
-  //       id: 0,
-  //       name: "默认"
-  //     },
-  //     {
-  //       id: 1,
-  //       name: "生活"
-  //     },
-  //     {
-  //       id: 2,
-  //       name: "知识"
-  //     }
-  // ]);
-
   const logout = () => {
     currentUser.value.id = -1;
     currentUser.value.name = "";
