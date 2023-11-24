@@ -71,7 +71,7 @@
 
     <el-main id="body" style="height: 100%; padding: 0">
       <div style="display: flex; justify-content: center">
-        <router-link to="/"><back id="backIcon" theme="outline" size="24" fill="#ffffff"/></router-link>
+        <router-link to="/dashboard"><back id="backIcon" theme="outline" size="24" fill="#ffffff"/></router-link>
         <div style="display: flex; flex-direction: column; flex: 1; align-items: center">
           <div id="userInfoCard">
             <me theme="outline" size="128" fill="#333" style="margin-left: 5%"/>

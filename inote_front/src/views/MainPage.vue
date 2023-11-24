@@ -118,11 +118,9 @@
             <notebook :notebooks="notebooks" style="height: 100%"/>
           </div>
 
-          <div id="workspace">
-            <start-tab v-if="currentTab==='start'"/>
-            <editor v-else-if="currentTab==='editor'"/>
-            <help-info v-else-if="currentTab==='helpInfo'"/>
-          </div>
+          <start-tab v-if="currentTab==='start'"/>
+          <editor v-else-if="currentTab==='editor'"/>
+          <help-info v-else-if="currentTab==='helpInfo'"/>
         </el-main>
       </el-container>
 

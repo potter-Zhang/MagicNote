@@ -1,8 +1,9 @@
 <script setup>
   import { ref } from 'vue'
   import CustomInput from '@/components/CustomInput.vue'
-  import {loginAPI, loginByEmailAPI} from "@/api/user";
+  import {loginAPI, loginByEmailAPI, registerAPI, registerByEmailAPI} from "@/api/user";
   import {currentUser} from "@/global";
+  import {ElMessage} from "element-plus";
 
   const status = ref('sign up')
   const buttonText = ref('登录/注册')
@@ -39,21 +40,118 @@
     inputs.value.pop()
   }
 
-  const login = async () => {
+  const isEmail = (str) => {
+    const pattern = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+    const reg = new RegExp(pattern);
+    return reg.test(str);
+  }
+
+  const setCurrentUser = (apiResponse) => {
+    currentUser.value.id = apiResponse.id;
+    currentUser.value.name = apiResponse.name;
+    currentUser.value.token = apiResponse.token;
+  }
+
+  const successMsg = (content) => {
+    ElMessage.success(content);
+  }
+
+  const failMsg = (content) => {
+    ElMessage.error(content);
+  }
+
+  const loginByUsername = () => {
+    import("@/router/index")
+        .then(async (module) => {
+          const data = {
+            "name": inputs.value[0]['value'],
+            "password": inputs.value[1]['value']
+          };
+          loginAPI(data)
+              .then((response) => {
+                setCurrentUser(response);
+                module.default.push("/dashboard");
+                successMsg("登录成功");
+              })
+              .catch((err) => {
+                // 登录失败则注册
+                register();
+              })
+        });
+  }
+
+  const loginByEmail = () => {
     import("@/router/index")
         .then(async (module) => {
           const data = {
             "email": inputs.value[0]['value'],
             "password": inputs.value[1]['value']
           };
-          const result = await loginByEmailAPI(data)
+          loginByEmailAPI(data)
               .then((response) => {
-                currentUser.value.id = response.id;
-                currentUser.value.name = response.name;
-                currentUser.value.token = response.token;
+                setCurrentUser(response);
                 module.default.push("/dashboard");
-              });
+                successMsg("登录成功");
+              })
+              .catch((err) => {
+                // 登录失败则注册
+                register();
+              })
         });
+  }
+
+  const login = () => {
+    if (isEmail(inputs.value[0]['value'])) {
+      loginByEmail();
+    } else {
+      loginByUsername();
+    }
+  }
+
+  const registerByUsername = () => {
+    import("@/router/index")
+        .then(async (module) => {
+          const data = {
+            "name": inputs.value[0]['value'],
+            "password": inputs.value[1]['value']
+          };
+          registerAPI(data)
+              .then((response) => {
+                setCurrentUser(response);
+                module.default.push("/dashboard");
+                successMsg("注册成功");
+              })
+              .catch((err) => {
+                failMsg(err);
+              })
+        });
+  }
+
+  const registerByEmail = () => {
+    import("@/router/index")
+        .then(async (module) => {
+          const data = {
+            "email": inputs.value[0]['value'],
+            "password": inputs.value[1]['value']
+          };
+          registerByEmailAPI(data)
+              .then((response) => {
+                setCurrentUser(response);
+                module.default.push("/dashboard");
+                successMsg("注册成功");
+              })
+              .catch((err) => {
+                failMsg(err);
+              })
+        });
+  }
+
+  const register = () => {
+    if (isEmail(inputs.value[0]['value'])) {
+      registerByEmail();
+    } else {
+      registerByUsername();
+    }
   }
 
 </script>
