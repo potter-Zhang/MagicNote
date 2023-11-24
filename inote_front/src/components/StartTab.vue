@@ -16,65 +16,7 @@
     const response = await logAPI(currentUser.value.id);
     historyNotes = ref(response);
   });
-  // const historyNotes = ref([
-  //   {
-  //     id: 0,
-  //     name: "文档1",
-  //     notebookName: "生活",
-  //     timestamp: date.toLocaleDateString()
-  //   },
-  //   {
-  //     id: 1,
-  //     name: "文档2",
-  //     notebookName: "知识",
-  //     timestamp: date.toLocaleDateString()
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "文档3",
-  //     notebookName: "知识",
-  //     timestamp: date.toLocaleDateString()
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "文档4",
-  //     notebookName: "知识",
-  //     timestamp: date.toLocaleDateString()
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "文档5",
-  //     notebookName: "知识",
-  //     timestamp: date.toLocaleDateString()
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "文档6",
-  //     notebookName: "知识",
-  //     timestamp: date.toLocaleDateString()
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "文档7",
-  //     notebookName: "知识",
-  //     timestamp: date.toLocaleDateString()
-  //   },
-  //   {
-  //     id: 7,
-  //     name: "文档8",
-  //     notebookName: "知识",
-  //     timestamp: date.toLocaleDateString()
-  //   }
-  // ])
 
-  const addNotebook = async (notebookName) => {
-    const data = {
-      userid: currentUser.value.id,
-      name: notebookName
-    }
-    const result = await addNotebookAPI(notebookName);
-    const notebookId = result['data']['id'];
-  }
 </script>
 
 <template>

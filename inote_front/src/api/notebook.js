@@ -4,8 +4,8 @@ export const addNotebookAPI = (data) => {
     return request.post("/notebook/add", data);
 }
 
-export const delNotebookAPI = (data) => {
-    return request.delete("/notebook/delete", data);
+export const delNotebookByIdAPI = (id) => {
+    return request.delete("/notebook/delete1/" + id);
 }
 
 export const updateNotebookAPI = (data) => {
