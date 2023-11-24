@@ -31,6 +31,7 @@ public class NoteController {
     //添加笔记
     @PostMapping("/add")
     public ResponseEntity<Note> addNote(@ApiParam("请求体")@RequestBody Note myNote){
+        myNote.setCreatetime(LocalDateTime.now());
         Note result=noteService.addNote(myNote);
         Log myLog = new Log();
         myLog.setUserid(myNote.getUserid());
