@@ -2,11 +2,16 @@ package edu.whu.MagicNote.service.impl;
 
 import edu.whu.MagicNote.exception.TodoException;
 import lombok.AllArgsConstructor;
+import lombok.Cleanup;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +21,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class OcrService {
@@ -31,6 +38,7 @@ public class OcrService {
         String result;
         try {
             // 将图片转变为字节流
+            @Cleanup
             InputStream sbs = new ByteArrayInputStream(imageFile.getBytes());
             BufferedImage bufferedImage = ImageIO.read(sbs);
             // 对图片进行文字识别
@@ -49,6 +57,7 @@ public class OcrService {
         StringBuilder result;
         try {
             //加载PDF文件
+            @Cleanup
             InputStream sbs = pdfFile.getInputStream();
             doc = PDDocument.load(sbs);
             PDFRenderer renderer = new PDFRenderer(doc);
@@ -76,11 +85,32 @@ public class OcrService {
         return result.toString();
     }
 
-
-
-
-
-
-
+    public String recognizePPT(MultipartFile pptFile) throws TodoException {
+        String result = new String();
+        try {
+            // 加载ppt文件
+            @Cleanup
+            InputStream sbs = pptFile.getInputStream();
+            XMLSlideShow ppt = new XMLSlideShow(sbs);
+            List<XSLFSlide> slides = ppt.getSlides();
+            // 提取文字
+            for (XSLFSlide slide : slides) {
+                List<XSLFShape> shapes = slide.getShapes();
+                for (XSLFShape shape : shapes) {
+                    // 检查是否文字
+                    if (shape instanceof XSLFTextShape) {
+                        XSLFTextShape textShape = (XSLFTextShape) shape;
+                        String text = textShape.getText();
+                        result+= text+"\n";
+                    }
+                }
+            }
+            // 关闭文件
+            ppt.close();
+        } catch (IOException e) {
+            throw new TodoException(TodoException.OCR_ERROR,"ppt提取文字失败");
+        }
+        return result;
+    }
 }
 
