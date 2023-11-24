@@ -21,4 +21,7 @@ public interface NotebookDao extends BaseMapper<Notebook> {
     //根据用户id查询所有notebook
     @Select("SELECT notebook.* FROM notebook WHERE notebook.userid = #{userid}")
     List<Notebook> FindAllNoteBooksByUserId(int userid);
+
+    @Select("SELECT notebook.id FROM notebook WHERE notebook.userid = #{userid}) AND notebook.name = #{name}")
+    int GetNoteBookId(int userid, String name);
 }

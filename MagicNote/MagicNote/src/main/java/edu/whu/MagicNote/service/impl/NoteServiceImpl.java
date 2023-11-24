@@ -33,6 +33,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements INote
     public boolean removeNote(int id) {
        return this.removeById(id);
     }
+
     //根据文件名删除笔记
     @Override
     public boolean removeNote(String name) {
