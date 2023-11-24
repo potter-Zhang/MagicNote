@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {ref} from 'vue'
+  import {ref, onBeforeMount} from 'vue'
   import notebook from "@icon-park/vue-next/lib/icons/Notebook"
   import edit from "@icon-park/vue-next/lib/icons/Edit";
   import deleteOne from "@icon-park/vue-next/lib/icons/DeleteOne";
@@ -11,11 +11,14 @@
 
   import {ElMessageBox, ElMessage} from "element-plus";
   import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI} from "@/api/note"
-  import {addNotebookAPI, updateNotebookAPI, delNotebookByIdAPI} from "@/api/notebook"
+  import {getNotebooksAPI, addNotebookAPI, updateNotebookAPI, delNotebookByIdAPI} from "@/api/notebook"
   import {currentUser} from "@/global"
 
-  const props = defineProps({
-    notebooks: Array
+  const notebooks = ref([]);
+
+  onBeforeMount(async () => {
+    const response = await getNotebooksAPI(currentUser.value.id);
+    notebooks.value.push.apply(notebooks.value, response);
   })
 
   const currentMode = ref('notebook'); // 显示笔记本或者笔记本中的文档
@@ -46,8 +49,8 @@
 
   const delNotebook = async (notebook) => {
     await delNotebookByIdAPI(notebook.id);
-    const listId = props.notebooks.indexOf(notebook);
-    props.notebooks.splice(listId, 1);
+    const listId = notebooks.value.indexOf(notebook);
+    notebooks.value.splice(listId, 1);
   }
 
   const addNotebook = () => {
@@ -105,10 +108,10 @@
     })
       .then(async ({ value }) => {
         const newNote = await addNoteAPI({
-          "userid": currentUser.value.id;
+          "userid": currentUser.value.id,
           "content": "",
           "name": value,
-          "notebookid": currentNotebook
+          "notebookid": currentNotebook.value
         });
         notes.value.push(newNote);
         ElMessage({
