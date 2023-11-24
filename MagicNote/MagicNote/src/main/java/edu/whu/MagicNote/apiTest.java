@@ -8,18 +8,15 @@ import com.alibaba.dashscope.aigc.generation.GenerationResult;
 import com.alibaba.dashscope.aigc.generation.models.QwenParam;
 import com.alibaba.dashscope.common.Message;
 import com.alibaba.dashscope.common.MessageManager;
-import com.alibaba.dashscope.common.ResultCallback;
 import com.alibaba.dashscope.common.Role;
 import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
-import com.alibaba.dashscope.utils.JsonUtils;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
 import io.reactivex.Flowable;
 
 import java.util.Arrays;
-import java.util.concurrent.Semaphore;
 
 public class apiTest {
 
@@ -207,8 +204,10 @@ public class apiTest {
             //aiFunctionService.expandNote(s6);
             //aiFunctionService.generateNote(s7, 2000);
             //aiFunctionService.segmentNote(s5);
+            //aiFunctionService.generateTable(s2);
+            aiFunctionService.generateFlowChart(s2);
             //callWithMessage();
-            qwenQuickStart();
+            //qwenQuickStart();
         } catch (ApiException e) {
             System.out.println(String.format("Exception %s", e.getMessage()));
         }

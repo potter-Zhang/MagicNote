@@ -2,12 +2,10 @@ package edu.whu.MagicNote.controller;
 
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
-import edu.whu.MagicNote.domain.User;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,6 +44,20 @@ public class AIFunctionController {
     @GetMapping("/generate")
     public ResponseEntity<String> generateNote(String words, int num) throws NoApiKeyException, InputRequiredException {
         String result = aiFunctionService.generateNote(words, num);
+        return ResponseEntity.ok(result);
+    }
+
+    // 根据笔记的合适内容生成表格
+    @GetMapping("/generateTable")
+    public ResponseEntity<String> generateTable(String note) throws NoApiKeyException, InputRequiredException {
+        String result = aiFunctionService.generateTable(note);
+        return ResponseEntity.ok(result);
+    }
+
+    // 根据笔记的合适内容生成流程图
+    @GetMapping("/generateFlowChart")
+    public ResponseEntity<String> generateFlowChart(String note) throws NoApiKeyException, InputRequiredException {
+        String result = aiFunctionService.generateFlowChart(note);
         return ResponseEntity.ok(result);
     }
 
