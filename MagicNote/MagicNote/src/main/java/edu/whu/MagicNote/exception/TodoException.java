@@ -9,7 +9,7 @@ public class TodoException extends Exception{
     public final static int UPDATE_ERROR = 101;
     public final static int DELETE_ERROR = 102;
     public final static int GET_ERROR = 103;
-
+    public final static int OCR_ERROR = 104;
     int code; //自定义的错误代码
     public TodoException(int code,String message){
         super(message);

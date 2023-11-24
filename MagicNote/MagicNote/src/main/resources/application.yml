@@ -16,8 +16,14 @@ spring:
       name: admin
       password: admin
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
 # 生成openssl rand -hex 64
 jwt:
   secret: f2522288621c04bf9b182a129a19853080112a2b805973060684fb6484cb537c750596109d844a62f683a187d54c3cb5d54e8301530de30a43fb870b5dbf27f7
 
-
+tess4j:
+  datapath: D:/Dataset/tessdata
