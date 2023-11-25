@@ -2,6 +2,7 @@ package edu.whu.MagicNote.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import edu.whu.MagicNote.domain.Note;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -27,6 +28,9 @@ public interface NoteDao extends BaseMapper<Note> {
     // 根据笔记本id查询所有笔记
     @Select("SELECT note.* FROM note WHERE note.notebookid = #{notebookid}")
     List<Note> FindAllNoteByNotebookId(int notebookid);
+
+    @Delete("DELETE FROM note WHERE note.userid = #{userid}")
+    void DeleteAllNoteByUserId(int userid);
 
     // 根据搜索关键词搜索含有关键词的笔记（查找笔记名称或者笔记内容（包括笔记内容中的图片中的文字）中含有关键词的笔记）
     // 这里分三个方法，分别为查找出笔记name中含有关键词、笔记content中含有关键词、笔记内容中的图片中含有关键词的结果，三者搜索结果显示优先级依次递减
