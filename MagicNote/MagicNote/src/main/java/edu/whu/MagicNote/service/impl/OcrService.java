@@ -45,7 +45,7 @@ public class OcrService {
             BufferedImage bufferedImage = ImageIO.read(sbs);
             // 对图片进行文字识别
             result = tesseract.doOCR(bufferedImage);
-            result = result.replaceAll(" +","");     // 将所有空格替换为空字符串，一是规范化数据，二是方便之后的根据图片内容进行笔记搜索
+            result = result.replaceAll(" +","");     // 将所有空格替换为空字符串，一是规范化数据，二是方便之后的根据图片中信息进行笔记搜索
         } catch (IOException e) {
             throw new TodoException(TodoException.OCR_ERROR, "图片转换失败");
         } catch (TesseractException e) {
@@ -85,6 +85,8 @@ public class OcrService {
                 throw new TodoException(TodoException.OCR_ERROR,"文档关闭失败");
             }
         }
+        String resultStr = result.toString();
+        resultStr = resultStr.replaceAll(" +","");
         return result.toString();
     }
 
@@ -113,6 +115,7 @@ public class OcrService {
         } catch (IOException e) {
             throw new TodoException(TodoException.OCR_ERROR,"ppt提取文字失败");
         }
+        result = result.replaceAll(" +","");
         return result;
     }
 }
