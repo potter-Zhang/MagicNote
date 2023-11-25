@@ -14,12 +14,16 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
+import edu.whu.MagicNote.service.impl.OcrService;
 import edu.whu.MagicNote.service.impl.QAndAService;
 import io.reactivex.Flowable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 
+
 public class apiTest {
+
 
     static String s0 = "接下来我会给出我的笔记，你需要根据我的笔记生成flow格式的markdown格式的流程图。\n" +
             //"同时你需要将其中的最重要的那些信息进行加粗，最终输出为markdown格式。最后只需要输出markdown。\n" +
@@ -125,6 +129,9 @@ public class apiTest {
     static String s7 = "Spring boot;" + "Spring Core;" + "Maven";
 
     static String s8 = "接下来我会给出一篇笔记，你需要根据这篇笔记的内容回答我接下来的多个问题。这篇笔记为：";
+
+    @Autowired
+    OcrService ocrService;
 
 
     public static void quickStart() throws ApiException, NoApiKeyException, InputRequiredException {
@@ -257,7 +264,7 @@ public class apiTest {
             //aiFunctionService.generateNote(s7, 2000);
             //aiFunctionService.segmentNote(s5);
             //aiFunctionService.generateTable(s2);
-            aiFunctionService.generateFlowChart(s2);
+            //aiFunctionService.generateFlowChart(s2);
             //callWithMessage();
             //qwenQuickStart();
             //NotOneConversationsTest2("国足这次的对手是谁");
@@ -266,11 +273,12 @@ public class apiTest {
             //NotOneConversationsTest2("中国队的教练是谁");
             //NotOneConversationsTest2("重新回答我的上一个问题");
             //Generation gen = new Generation();
-            QAndAService qAndAService = new QAndAService();
-            qAndAService.init(s2);
-            qAndAService.answer("阿根廷总统选举的重要人物是谁");
+            //QAndAService qAndAService = new QAndAService();
+            //qAndAService.init(s2);
+            //qAndAService.answer("阿根廷总统选举的重要人物是谁");
             //qAndAService.answer("阿根廷总统选举的关键人物是谁");
             //qAndAService.answer("阿根廷的新总统是谁");
+
         } catch (ApiException e) {
             System.out.println(String.format("Exception %s", e.getMessage()));
         }
