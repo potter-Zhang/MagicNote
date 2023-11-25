@@ -7,6 +7,7 @@
 
   import {ref, onBeforeMount} from 'vue'
   import {ElMessage, ElMessageBox} from "element-plus";
+  import {globalEventBus} from "@/util/eventBus";
 
   let historyNotes = ref([]);
 
@@ -16,9 +17,17 @@
     historyNotes.value = [];
     historyNotes.value.push.apply(historyNotes.value, response);
     historyNotes.value.reverse();
-    // 去除删除操作的日志
-    historyNotes.value = historyNotes.value.filter((item) => {
-      return item.operation !== 'delete';
+
+    // 找出已经被删除了的笔记名称
+    const deletedNotes = historyNotes.value
+        .filter((item) => { return item.operation === "delete"; })
+        .map((item) => item.notename);
+    historyNotes.value = historyNotes.value.filter((item, index, self) => {
+      // 裁切时间
+      item.timestamp = item.timestamp.split("T")[0];
+      const firstIndex = self.findIndex((t) => t.notename === item.notename)
+      // 去除被删除的日志、同时按照笔记名字来进行去重
+      return !deletedNotes.includes(item.notename) && index === firstIndex;
     });
   });
 
@@ -31,11 +40,15 @@
     })
         .then(async ({ value }) => {
           const data = {"name": value, "userid": currentUser.value.id};
-          const newNotebook = await addNotebookAPI(data);
-          ElMessage({
-            type: 'success',
-            message: `创建成功`,
-          })
+          await addNotebookAPI(data)
+              .then(() => {
+                // 发出事件通知Notebook.vue组件更新要展示的笔记本
+                globalEventBus.emit("addNotebook");
+                ElMessage({
+                  type: 'success',
+                  message: `创建成功`,
+                })
+              });
         })
   }
 
@@ -110,6 +123,12 @@
     height: 9rem;
     width: 9rem;
     padding-top: 2rem;
+  }
+  .start-button, .start-button:focus:not(.start-button:hover){
+    /*点击后自动失焦*/
+    color: var(--el-button-text-color);
+    background-color: var(--el-button-bg-color);
+    border-color: var(--el-button-border-color);
   }
 
   .button-content {
