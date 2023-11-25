@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {ref, onBeforeMount} from 'vue'
+  import {ref, onBeforeMount, onBeforeUnmount} from 'vue'
   import notebook from "@icon-park/vue-next/lib/icons/Notebook"
   import edit from "@icon-park/vue-next/lib/icons/Edit";
   import deleteOne from "@icon-park/vue-next/lib/icons/DeleteOne";
@@ -13,12 +13,27 @@
   import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI} from "@/api/note"
   import {getNotebooksAPI, addNotebookAPI, updateNotebookAPI, delNotebookByIdAPI} from "@/api/notebook"
   import {currentUser} from "@/global"
+  import {globalEventBus} from "@/util/eventBus"
 
   const notebooks = ref([]);
 
-  onBeforeMount(async () => {
+  const getAllNotebooks = async () => {
+    notebooks.value.splice(0, notebooks.value.length);
     const response = await getNotebooksAPI(currentUser.value.id);
     notebooks.value.push.apply(notebooks.value, response);
+  }
+
+  onBeforeMount(async () => {
+    await getAllNotebooks();
+
+    // StartTab新增Notebook时需要更新notebooks
+    globalEventBus.on("addNotebook", async () => {
+      await getAllNotebooks();
+    })
+  })
+
+  onBeforeUnmount(() => {
+    globalEventBus.off("addNotebook");
   })
 
   const currentMode = ref('notebook'); // 显示笔记本或者笔记本中的文档
@@ -63,7 +78,7 @@
         .then(async ({ value }) => {
           const data = {"name": value, "userid": currentUser.value.id};
           const newNotebook = await addNotebookAPI(data);
-          props.notebooks.push(newNotebook);
+          notebooks.value.push(newNotebook);
           ElMessage({
             type: 'success',
             message: `创建成功`,
