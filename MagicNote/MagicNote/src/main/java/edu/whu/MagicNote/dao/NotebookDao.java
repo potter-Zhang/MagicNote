@@ -2,6 +2,7 @@ package edu.whu.MagicNote.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import edu.whu.MagicNote.domain.Notebook;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -24,4 +25,7 @@ public interface NotebookDao extends BaseMapper<Notebook> {
 
     @Select("SELECT notebook.id FROM notebook WHERE notebook.userid = #{userid}) AND notebook.name = #{name}")
     int GetNoteBookId(int userid, String name);
+
+    @Delete("DELETE FROM notebook WHERE notebook.userid = #{userid}")
+    void DeleteAllNotebookByUserId(int userid);
 }

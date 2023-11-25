@@ -2,6 +2,7 @@ package edu.whu.MagicNote.controller;
 
 
 import edu.whu.MagicNote.domain.Notebook;
+import edu.whu.MagicNote.service.impl.LogServiceImpl;
 import edu.whu.MagicNote.service.impl.NotebookServiceImpl;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,10 @@ import java.util.List;
 public class NotebookController {
     @Autowired
     NotebookServiceImpl ns;
+
+    @Autowired
+    LogServiceImpl logService;
+
     //添加笔记本
     @PostMapping("/add")
     public ResponseEntity<Notebook> addNotebook(@ApiParam("请求体")@RequestBody Notebook myNotebook){

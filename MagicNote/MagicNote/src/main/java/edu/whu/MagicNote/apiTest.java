@@ -8,20 +8,22 @@ import com.alibaba.dashscope.aigc.generation.GenerationResult;
 import com.alibaba.dashscope.aigc.generation.models.QwenParam;
 import com.alibaba.dashscope.common.Message;
 import com.alibaba.dashscope.common.MessageManager;
-import com.alibaba.dashscope.common.ResultCallback;
 import com.alibaba.dashscope.common.Role;
 import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
-import com.alibaba.dashscope.utils.JsonUtils;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
+import edu.whu.MagicNote.service.impl.OcrService;
+import edu.whu.MagicNote.service.impl.QAndAService;
 import io.reactivex.Flowable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
-import java.util.concurrent.Semaphore;
+
 
 public class apiTest {
+
 
     static String s0 = "接下来我会给出我的笔记，你需要根据我的笔记生成flow格式的markdown格式的流程图。\n" +
             //"同时你需要将其中的最重要的那些信息进行加粗，最终输出为markdown格式。最后只需要输出markdown。\n" +
@@ -126,6 +128,11 @@ public class apiTest {
 
     static String s7 = "Spring boot;" + "Spring Core;" + "Maven";
 
+    static String s8 = "接下来我会给出一篇笔记，你需要根据这篇笔记的内容回答我接下来的多个问题。这篇笔记为：";
+
+    @Autowired
+    OcrService ocrService;
+
 
     public static void quickStart() throws ApiException, NoApiKeyException, InputRequiredException {
 
@@ -199,6 +206,55 @@ public class apiTest {
         System.out.println("Full content: \n" + fullContent.toString());
     }
 
+    public static void NotOneConversationsTest(String question)
+            throws NoApiKeyException, ApiException, InputRequiredException {
+        Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
+        String prompt = s8 + s5;
+        Generation gen = new Generation();
+        MessageManager msgManager = new MessageManager(10);
+        Message systemMsg =
+                Message.builder().role(Role.SYSTEM.getValue()).content("你是智能助手机器人。").build();
+        Message userMsg = Message.builder().role(Role.USER.getValue()).content(prompt).build();
+        msgManager.add(systemMsg);
+        msgManager.add(userMsg);
+        QwenParam param =
+                QwenParam.builder().model("qwen-max").messages(msgManager.get())
+                        .resultFormat(QwenParam.ResultFormat.MESSAGE)
+                        .topP(0.8)
+                        .enableSearch(false)    //只让其根据笔记内容回答问题，不可通过其他渠道进行搜索
+                        .build();
+        GenerationResult result = gen.call(param);
+        //System.out.println(result);
+        msgManager.add(result);
+        //System.out.println(result.getOutput().getChoices().get(0).getMessage().getContent());
+        param.setPrompt(question);
+        param.setMessages(msgManager.get());
+        result = gen.call(param);
+        //System.out.println(result);
+        System.out.println(result.getOutput().getChoices().get(0).getMessage().getContent());
+    }
+
+    public static void NotOneConversationsTest2(String question)
+            throws NoApiKeyException, ApiException, InputRequiredException {
+        Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
+        String prompt = s8 + s5 + question;
+        Generation gen = new Generation();
+        MessageManager msgManager = new MessageManager(10);
+        Message systemMsg =
+                Message.builder().role(Role.SYSTEM.getValue()).content("你是智能助手机器人。").build();
+        Message userMsg = Message.builder().role(Role.USER.getValue()).content(prompt).build();
+        msgManager.add(systemMsg);
+        msgManager.add(userMsg);
+        QwenParam param =
+                QwenParam.builder().model("qwen-max").messages(msgManager.get())
+                        .resultFormat(QwenParam.ResultFormat.MESSAGE)
+                        .topP(0.8)
+                        .enableSearch(false)    //只让其根据笔记内容回答问题，不可通过其他渠道进行搜索
+                        .build();
+        GenerationResult result = gen.call(param);
+        System.out.println(result.getOutput().getChoices().get(0).getMessage().getContent());
+    }
+
 
     public static void main(String[] args) throws NoApiKeyException, InputRequiredException {
         try {
@@ -207,8 +263,22 @@ public class apiTest {
             //aiFunctionService.expandNote(s6);
             //aiFunctionService.generateNote(s7, 2000);
             //aiFunctionService.segmentNote(s5);
+            //aiFunctionService.generateTable(s2);
+            //aiFunctionService.generateFlowChart(s2);
             //callWithMessage();
-            qwenQuickStart();
+            //qwenQuickStart();
+            //NotOneConversationsTest2("国足这次的对手是谁");
+            //NotOneConversationsTest2("韩国这次的核心人物是谁");
+            //NotOneConversationsTest2("韩国的教练是谁");
+            //NotOneConversationsTest2("中国队的教练是谁");
+            //NotOneConversationsTest2("重新回答我的上一个问题");
+            //Generation gen = new Generation();
+            //QAndAService qAndAService = new QAndAService();
+            //qAndAService.init(s2);
+            //qAndAService.answer("阿根廷总统选举的重要人物是谁");
+            //qAndAService.answer("阿根廷总统选举的关键人物是谁");
+            //qAndAService.answer("阿根廷的新总统是谁");
+
         } catch (ApiException e) {
             System.out.println(String.format("Exception %s", e.getMessage()));
         }
