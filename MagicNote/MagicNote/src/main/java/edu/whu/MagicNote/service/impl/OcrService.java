@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Cleanup;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -26,6 +27,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class OcrService {
+
     @Autowired
     private final Tesseract tesseract;
 
@@ -43,6 +45,7 @@ public class OcrService {
             BufferedImage bufferedImage = ImageIO.read(sbs);
             // 对图片进行文字识别
             result = tesseract.doOCR(bufferedImage);
+            result = result.replaceAll(" +","");     // 将所有空格替换为空字符串，一是规范化数据，二是方便之后的根据图片内容进行笔记搜索
         } catch (IOException e) {
             throw new TodoException(TodoException.OCR_ERROR, "图片转换失败");
         } catch (TesseractException e) {

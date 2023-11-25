@@ -116,11 +116,18 @@
 		</dependency>
 
 		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-open-ai</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.1.0</version>
 		</dependency>
 	</dependencies>
+
 
 	<build>
 		<plugins>

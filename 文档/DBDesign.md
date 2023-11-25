@@ -2,10 +2,9 @@
 ## user
 + id(PK)
 + name
-+ email(还没加*)
 + password
 + photo(file path?)
-+ 
++ email
 
 
 ## note
@@ -13,7 +12,7 @@
 + user_id(Foreign Key)
 + name
 + content(文字、图片、文件)（*）
-+ create_time
++ createTime
 + directory
 
 ## log
@@ -22,3 +21,16 @@
 + note_name
 + timestamp
 + operation
+
+
+## photo
++ id(PK)
++ noteid(Foreign Key)
++ userid(FK)
++ content
++ path(可能需要)
+
+## notebook
++ id(PK)
++ name
++ userid(FK)

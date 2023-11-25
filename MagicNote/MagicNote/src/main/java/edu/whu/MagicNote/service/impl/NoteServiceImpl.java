@@ -8,6 +8,7 @@ import edu.whu.MagicNote.service.INoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -73,6 +74,12 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements INote
     @Override
     public List<Note> searchNotesByWords(int userid, String words){
         words = words + "*";
-        return myNoteDao.SearchNotesByKeywords(userid, words);
+        List<Note> result = new ArrayList<>();
+        // 这里返回的结果中，先返回笔记名称中有关键词，之后是笔记文本内容中有关键词的，最后是笔记中图片总文本中有关键词的
+        result.addAll(myNoteDao.SearchNoteNameByKeywords(userid, words));
+        result.addAll(myNoteDao.SearchNoteContentByKeywords(userid, words));
+        result.addAll(myNoteDao.SearchNotePhotoByKeywords(userid, words));
+
+        return result;
     }
 }
