@@ -3,46 +3,60 @@
   import me from "@icon-park/vue-next/lib/icons/Me"
   import setting from "@icon-park/vue-next/lib/icons/Setting";
 
-  import {ref} from 'vue';
+  import {onBeforeMount, ref} from 'vue';
   import {ElMessageBox} from "element-plus";
+  import {logAPI} from "@/api/log";
+  import {updateUserAPI} from "@/api/user"
+  import {currentUser} from "@/global";
 
-  const date = new Date();
-  // 用于展示在时间线里的数据
-  const activities = [
-    {
-      content: '创建了...',
-      timestamp: date.toLocaleDateString(),
-      type: 'add'
-    },
-    {
-      content: '修改了...',
-      timestamp: '2018-04-13',
-      type: 'update'
-    },
-    {
-      content: '删除了...',
-      timestamp: '2018-04-11',
-      type: 'delete'
-    }
-  ]
+  const logs = ref([]);
+  const loadLog = async () => {
+    const response = await logAPI(currentUser.value.id);
+    logs.value = [];
+    logs.value.push.apply(logs.value, response.splice(10));
+    logs.value.reverse();
+    logs.value = logs.value.filter((item) => {
+      // 生成展示内容
+      switch (item.operation) {
+        case "add":
+          item.content = "添加了笔记：" + item.notename;
+          item.color = "#a5d63f"
+          break;
+        case "delete":
+          item.content = "删除了笔记：" + item.notename;
+          item.color = "#ca5863"
+          break;
+        case "update":
+          item.content = "更新了笔记：" + item.notename;
+          item.color = "#0080ff"
+          break;
+      }
+      // 生成时间间隔
+      const logDate = new Date(item.timestamp);
+      const timeDiff = Date.now() - logDate.getTime();
+      const dayDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      item.dayDiff = dayDiff > 0 ? dayDiff + "天前" : "今天";
+      // 裁切时间
+      item.timestamp = item.timestamp.split("T")[0];
+      return true;
+    });
+  }
+
+  onBeforeMount(async () => {
+    await loadLog();
+  })
 
   const settingDialogVisible = ref(false);
 
-  let userInfo = ref({
-    id: 0,
-    name: "test",
-    description: "test test test"
-  });
-
   let newUserInfo = ref({
-    name: userInfo.value.name,
-    description: userInfo.value.description
+    name: currentUser.value.name,
+    // description: currentUser.value.description
   });
 
   const cancelSetting = () => {
     settingDialogVisible.value = false;
-    newUserInfo.value.name = userInfo.value.name;
-    newUserInfo.value.description = userInfo.value.description;
+    newUserInfo.value.name = currentUser.value.name;
+    // newUserInfo.value.description = userInfo.value.description;
   }
 
   const confirmSetting = () => {
@@ -50,12 +64,12 @@
 
     if (newUserInfo.value.name === "") {
       ElMessageBox.alert("用户名不能为空！");
-      newUserInfo.value.name = userInfo.value.name;
-      newUserInfo.value.description = userInfo.value.description;
+      newUserInfo.value.name = currentUser.value.name;
+      // newUserInfo.value.description = currentUser.value.description;
       return;
     }
-    userInfo.value.name = newUserInfo.value.name;
-    userInfo.value.description = newUserInfo.value.description;
+    currentUser.value.name = newUserInfo.value.name;
+    // currentUser.value.description = newUserInfo.value.description;
   }
 
 </script>
@@ -70,14 +84,17 @@
     </el-header>
 
     <el-main id="body" style="height: 100%; padding: 0">
+
+      <!-- 用户信息卡片 -->
       <div style="display: flex; justify-content: center">
         <router-link to="/dashboard"><back id="backIcon" theme="outline" size="24" fill="#ffffff"/></router-link>
         <div style="display: flex; flex-direction: column; flex: 1; align-items: center">
           <div id="userInfoCard">
             <me theme="outline" size="128" fill="#333" style="margin-left: 5%"/>
             <div id="info">
-              <div>用户名：{{ userInfo.name }}</div>
-              <div>个人介绍：{{userInfo.description}}</div>
+              <div>用户名：{{ currentUser.name }}</div>
+<!--              <div>个人介绍：{{userInfo.description}}</div>-->
+              <div>个人介绍：</div>
             </div>
             <div id="settingButton" @click="settingDialogVisible=true">
               <setting theme="outline" size="24" fill="#000000"/>
@@ -104,17 +121,18 @@
             </template>
           </el-dialog>
 
+          <!-- 时间线 -->
           <div id="beneath" style="width: 55%; margin-top: 10px">
             <div style="font-size: 20px">动态</div>
             <el-timeline id="timeline">
-              <el-timeline-item v-for="(activity, index) in activities" :key="index" :timestamp="activity.timestamp" :placement="'top'">
+              <el-timeline-item v-for="(log, index) in logs" :key="index" :timestamp="log.timestamp" :placement="'top'" :color="log.color">
                 <el-card>
                   <template #header>
                     <div style="display: flex; justify-content: flex-end; font-size: 10px; color: rgb(0,0,0,0.3)">
-                      一天前
+                      {{ log.dayDiff }}
                     </div>
                   </template>
-                  {{activity.content}}
+                  {{log.content}}
                 </el-card>
               </el-timeline-item>
             </el-timeline>
