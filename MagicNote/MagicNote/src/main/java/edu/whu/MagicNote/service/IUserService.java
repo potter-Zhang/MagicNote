@@ -24,5 +24,9 @@ public interface IUserService extends IService<User> {
 
     public boolean updateUser(User user);
 
+    public boolean updateUserName(int id, String name);
+
+    public boolean updateUserProfile(int id, String profile);
+
     public boolean deleteUser(int id);
 }
