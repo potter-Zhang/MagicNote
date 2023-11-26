@@ -1,7 +1,8 @@
 <script setup>
   import notebook from "@icon-park/vue-next/lib/icons/Notebook"
   import noteIcon from "@icon-park/vue-next/lib/icons/Notes"
-  import {addNotebookAPI} from "@/api/notebook";
+  import {addNotebookAPI, getNotebooksAPI} from "@/api/notebook";
+  import {addNoteAPI} from "@/api/note";
   import {logAPI} from "@/api/log";
   import {currentUser} from "@/global";
 
@@ -11,8 +12,12 @@
 
   let historyNotes = ref([]);
 
-  // 挂载时加载历史记录
-  onBeforeMount(async () => {
+  const addNoteDialogVisible = ref(false);
+  const selectedNotebook = ref(""); // 新建笔记时选择的笔记本
+  const addNoteInput = ref("");  // 新建笔记的名称
+  const notebooks = ref([]);  // 用于新建笔记时选择笔记本
+
+  const loadLog = async () => {
     const response = await logAPI(currentUser.value.id);
     historyNotes.value = [];
     historyNotes.value.push.apply(historyNotes.value, response);
@@ -29,6 +34,18 @@
       // 去除被删除的日志、同时按照笔记名字来进行去重
       return !deletedNotes.includes(item.notename) && index === firstIndex;
     });
+  }
+
+  const loadNotebooks = async () => {
+    notebooks.value.splice(0, notebooks.value.length);
+    const response = await getNotebooksAPI(currentUser.value.id);
+    notebooks.value.push.apply(notebooks.value, response);
+  }
+
+  // 挂载时加载历史记录和笔记本
+  onBeforeMount(async () => {
+    await loadLog();
+    await loadNotebooks();
   });
 
   const addNotebook = () => {
@@ -52,11 +69,81 @@
         })
   }
 
+  const cancelAddNote = () => {
+    addNoteInput.value = "";
+    addNoteDialogVisible.value = false;
+    selectedNotebook.value = "";
+  }
+
+  const addNote = async () => {
+    addNoteDialogVisible.value = false;
+    const notebook = selectedNotebook.value;
+    const newNoteName = addNoteInput.value;
+    if (notebook === "") {
+      ElMessage.error("请选择笔记本！");
+      return;
+    }
+    if (newNoteName === "") {
+      ElMessage.error("请输入新笔记本的名称！");
+      return;
+    }
+    const data = {
+      "userid": currentUser.value.id,
+      "name": newNoteName,
+      "content": "",
+      "notebookid": notebook["id"]
+    }
+    await addNoteAPI(data)
+        .then(() => {
+          ElMessage.success("创建成功")
+        })
+        .catch(() => {
+          ElMessage.error("创建失败，服务错误")
+        })
+  }
+
 </script>
 
 <template>
   <div id="main">
     <div class="title">开始</div>
+
+    <!-- 添加笔记的对话框 -->
+    <el-dialog id="add-dialog"
+               v-model="addNoteDialogVisible"
+               title="新建笔记"
+               :align-center="true"
+               style="max-width: 420px;">
+      <template #default>
+        <el-row>
+          <el-col :span="8" style="justify-content: end; display: flex; align-items: center">
+            <div>笔记本：</div>
+          </el-col>
+          <el-col :span="12">
+            <el-select v-model="selectedNotebook" placeholder="请选择笔记本" style="width: 100%">
+              <el-option v-for="item in notebooks" :key="item.id" :label="item.name" :value="item">
+                <div style="display: flex; align-items: center">
+                  <notebook class="icon" theme="multi-color" size="18" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+                  <div style="margin-left: 5px; font-size: 16px">{{item.name}}</div>
+                </div>
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row style="margin-top: 5%">
+          <el-col :span="8" style="justify-content: end; display: flex; align-items: center">
+            <span>新笔记的名称：</span>
+          </el-col>
+          <el-col :span="12">
+            <el-input v-model="addNoteInput" style="width: 100%"/>
+          </el-col>
+        </el-row>
+      </template>
+      <template #footer>
+        <el-button @click="cancelAddNote">取消</el-button>
+        <el-button type="primary" @click="addNote">确认</el-button>
+      </template>
+    </el-dialog>
 
     <!-- 按键功能区 -->
     <div style="display: flex;">
@@ -70,7 +157,7 @@
           </div>
         </template>
       </el-button>
-      <el-button class="start-button">
+      <el-button class="start-button" @click="addNoteDialogVisible=true">
         <template #default>
           <div class="button-content">
             <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
@@ -105,6 +192,7 @@
     margin-top: 2px;
     margin-bottom: 2px;
   }
+
 
   #main {
     display: flex;

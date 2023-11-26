@@ -5,7 +5,6 @@
   import {currentUser} from "@/global";
   import {ElMessage} from "element-plus";
 
-  const status = ref('sign up')
   const buttonText = ref('登录/注册')
 
   const inputs = ref([
@@ -190,7 +189,7 @@
 * {
 	box-sizing: border-box;
 	margin: 0;
-	padding: 0;	
+	padding: 0;
 	font-family: Raleway, sans-serif;
 }
 body {
@@ -204,8 +203,8 @@ body {
 }
 
 .screen {		
-	background: linear-gradient(90deg, #A5D63F, #b3ca84);		
-	position: relative;	
+	background: linear-gradient(90deg, #A5D63F, #b3ca84);
+	position: relative;
 	height: 600px;
 	width: 360px;	
 	box-shadow: 0px 0px 24px #405318;
@@ -213,11 +212,11 @@ body {
 
 .screen__content {
 	z-index: 1;
-	position: relative;	
+	position: relative;
 	height: 100%;
 }
 
-.screen__background {		
+.screen__background {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -276,8 +275,8 @@ body {
 }
 
 .login__field {
-	padding: 20px 0px;	
-	position: relative;	
+	padding: 20px 0px;
+	position: relative;
 }
 
 .login__icon {
@@ -318,7 +317,7 @@ body {
 	color: #047830;
 }
 
-.social-login {	
+.social-login {
 	position: absolute;
 	height: 140px;
 	width: 160px;
@@ -337,12 +336,12 @@ body {
 .social-login__icon {
 	padding: 20px 10px;
 	color: #fff;
-	text-decoration: none;	
+	text-decoration: none;
 	text-shadow: 0px 0px 8px #7875B5;
 }
 
 .social-login__icon:hover {
-	transform: scale(1.5);	
+	transform: scale(1.5);
 }
 
 #app {

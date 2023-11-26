@@ -33,6 +33,7 @@
   })
 
   onBeforeUnmount(() => {
+    // 取消监听
     globalEventBus.off("addNotebook");
   })
 
@@ -142,7 +143,7 @@
     <!-- 显示笔记本的操作栏 -->
     <div v-if="currentMode==='notebook'" class="operationBar">
       <el-tooltip effect="dark" content="新增笔记本" placement="bottom">
-        <folder-plus class="icon" theme="outline" size="20" fill="#000000" @click="addNotebook"/>
+        <folder-plus class="icon" theme="outline" size="20" @click="addNotebook"/>
       </el-tooltip>
     </div>
     <!-- 显示笔记的操作栏 -->
@@ -153,7 +154,7 @@
         </el-tooltip>
       </div>
       <el-tooltip effect="dark" content="新增笔记" placement="bottom">
-        <file-addition-one class="icon" theme="outline" size="20" fill="#000000" @click="addNote"/>
+        <file-addition-one class="icon" theme="outline" size="20" @click="addNote"/>
       </el-tooltip>
     </div>
 
@@ -161,7 +162,7 @@
       <!-- 显示笔记本 -->
       <div v-if="currentMode==='notebook'"  v-for="notebook in notebooks" class="display-item">
         <div class="display-item-icon-and-text"  @click="currentNotebook=notebook.id; displayNotes(notebook.id);">
-          <notebook class="icon" theme="outline" size="16" fill="#333"/>
+          <notebook class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
           <div style="margin-left: 0.5rem; font-size: 0.8rem; font-weight: bold">{{notebook.name}}</div>
         </div>
         <!-- 弹出框进行重命名和删除操作 -->
@@ -189,7 +190,7 @@
       <!-- 显示笔记本中的笔记 -->
       <div v-else class="display-item" v-for="note in notes">
         <div class="display-item-icon-and-text">
-         <note-icon class="icon" theme="outline" size="16" fill="#333"/>
+         <note-icon class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
          <div style="margin-left: 5%; font-size: 0.8rem; font-weight: bold">{{note.name}}</div>
         </div>
         <!-- 弹出框进行重命名和删除操作 -->
