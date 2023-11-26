@@ -17,3 +17,7 @@ export const loginAPI = (loginData) => {
 export const loginByEmailAPI = (loginData) => {
     return request.post('/loginByEmail', loginData);
 }
+
+export const updateUserAPI = (data) => {
+    return request.put('/user/update', data);
+}
