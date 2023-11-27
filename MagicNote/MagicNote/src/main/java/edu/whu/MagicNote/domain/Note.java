@@ -31,7 +31,7 @@ public class Note implements Serializable {
 
     private String content;
 
-    private String directory;
+    private Integer notebookid;
 
     private LocalDateTime createtime;
 

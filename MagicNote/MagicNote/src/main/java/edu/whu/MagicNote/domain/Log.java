@@ -33,5 +33,7 @@ public class Log implements Serializable {
 
     private String operation;
 
+    private Integer noteid;
+
 
 }
