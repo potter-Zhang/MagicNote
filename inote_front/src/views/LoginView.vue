@@ -48,6 +48,7 @@
   const setCurrentUser = (apiResponse) => {
     currentUser.value.id = apiResponse.id;
     currentUser.value.name = apiResponse.name;
+    currentUser.value.profile = apiResponse.profile;
     currentUser.value.token = apiResponse.token;
   }
 
