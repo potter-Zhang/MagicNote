@@ -69,6 +69,32 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         return this.updateById(user);
     }
 
+    @Override
+    public boolean updateUserName(int id, String name){
+        User newUser = new User();
+        User oldUser = this.getById(id);
+        newUser.setId(oldUser.getId());
+        newUser.setName(name);
+        newUser.setPassword(oldUser.getPassword());
+        newUser.setPhoto(oldUser.getPhoto());
+        newUser.setEmail(oldUser.getEmail());
+        newUser.setProfile(oldUser.getProfile());
+        return this.updateById(newUser);
+    }
+
+    @Override
+    public boolean updateUserProfile(int id, String profile){
+        User newUser = new User();
+        User oldUser = this.getById(id);
+        newUser.setId(oldUser.getId());
+        newUser.setName(oldUser.getName());
+        newUser.setPassword(oldUser.getPassword());
+        newUser.setPhoto(oldUser.getPhoto());
+        newUser.setEmail(oldUser.getEmail());
+        newUser.setProfile(profile);
+        return this.updateById(newUser);
+    }
+
     // 删除用户，这里需要将用户的所有相关信息删除，包括笔记、笔记本信息等
     @Override
     public boolean deleteUser(int id){
