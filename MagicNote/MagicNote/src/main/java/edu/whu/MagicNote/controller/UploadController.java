@@ -36,8 +36,8 @@ public class UploadController {
         System.out.println(words);
 
         // 获得SpringBoot当前项目的路径：System.getProperty("user.dir")
-        String path = System.getProperty("user.dir")+"/upload/";
-        System.out.println(path);
+        String path = System.getProperty("user.dir")+"/MagicNote/upload/";
+        //System.out.println(path);
 
         File realPath = new File(path);
         if (!realPath.exists()){
