@@ -35,6 +35,7 @@ public class AuthenticationController {
                 result.put("id",String.valueOf(user.getId()));
                 result.put("name",user.getName());
                 result.put("email",user.getEmail());
+                result.put("profile", user.getProfile());
                 result.put("token",token);
                 return ResponseEntity.ok(result);
             } else {
@@ -60,6 +61,7 @@ public class AuthenticationController {
                 result.put("id",String.valueOf(user.getId()));
                 result.put("name",user.getName());
                 result.put("email",user.getEmail());
+                result.put("profile", user.getProfile());
                 result.put("token",token);
                 return ResponseEntity.ok(result);
             } else {
