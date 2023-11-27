@@ -19,9 +19,17 @@ export const loginByEmailAPI = (loginData) => {
 }
 
 export const updateUsernameAPI = (data) => {
-    return request.post('/user/updateName', data);
+    const params = new URLSearchParams();
+    for (var key in data) {
+        params.append(key, data[key]);
+    }
+    return request.put('/user/updateName', params);
 }
 
 export const updateProfileAPI = (data) => {
-    return request.post('/user/updateProfile', data);
+    const params = new URLSearchParams();
+    for (var key in data) {
+        params.append(key, data[key]);
+    }
+    return request.put('/user/updateProfile', params);
 }
