@@ -31,6 +31,7 @@ public class NoteController {
     //添加笔记
     @PostMapping("/add")
     public ResponseEntity<Note> addNote(@ApiParam("请求体")@RequestBody Note myNote){
+        myNote.setCreatetime(LocalDateTime.now());
         Note result=noteService.addNote(myNote);
         Log myLog = new Log();
         myLog.setUserid(myNote.getUserid());
@@ -72,7 +73,7 @@ public class NoteController {
     }
 
     //更新笔记
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<Void> updateNote(@RequestBody Note myNote){
         Log myLog = new Log();
         myLog.setUserid(myNote.getUserid());
@@ -98,9 +99,15 @@ public class NoteController {
         return result==null? ResponseEntity.noContent().build():ResponseEntity.ok(result);
     }
     //根据用户id查询所有笔记
-    @GetMapping("/getall/{id}")
+    @GetMapping("/getByUser/{id}")
     public ResponseEntity<List<Note>> getAllNotesByUserId(@PathVariable int id){
         List<Note> result = noteService.getAllNoteByUserId(id);
+        return result==null? ResponseEntity.noContent().build():ResponseEntity.ok(result);
+    }
+    //根据笔记本id查询所有笔记
+    @GetMapping("/getByNotebook/{id}")
+    public ResponseEntity<List<Note>> getAllNotesByNotebookId(@PathVariable int id){
+        List<Note> result = noteService.getAllNoteByNotebookId(id);
         return result==null? ResponseEntity.noContent().build():ResponseEntity.ok(result);
     }
 }

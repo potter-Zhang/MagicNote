@@ -29,11 +29,23 @@ public class DbUserDetailService implements UserDetailsService {
                 .roles("USER")
                 .build();
     }
-
-    //检查用户名是否存在
-    public boolean isUserExists(String username) {
-        User user = userService.getUserByName(username);
-        return user != null;
+    //根据邮箱登录
+    public UserDetails loadUserByUserEmail(String email) throws UsernameNotFoundException {
+        User user = userService.getUserByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("User with email " + email + " is not found");
+        }
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(email) // 使用邮箱作为用户名
+                .password(user.getPassword())
+                .roles("USER")
+                .build();
+    }
+    //检查用户是否存在
+    public boolean isUserExists(String nameOrEmail) {
+        User user1 = userService.getUserByName(nameOrEmail);
+        User user2 = userService.getUserByEmail(nameOrEmail);
+        return user1 != null || user2 != null;
     }
     //检查密码强度
     public String getPasswordStrengthErrorMessage(String password) {
