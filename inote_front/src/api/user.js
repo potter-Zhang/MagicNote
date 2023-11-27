@@ -18,6 +18,10 @@ export const loginByEmailAPI = (loginData) => {
     return request.post('/loginByEmail', loginData);
 }
 
-export const updateUserAPI = (data) => {
-    return request.put('/user/update', data);
+export const updateUsernameAPI = (data) => {
+    return request.post('/user/updateName', data);
+}
+
+export const updateProfileAPI = (data) => {
+    return request.post('/user/updateProfile', data);
 }
