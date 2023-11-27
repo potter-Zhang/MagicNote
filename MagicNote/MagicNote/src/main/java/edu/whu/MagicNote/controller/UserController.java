@@ -58,6 +58,26 @@ public class UserController {
             return ResponseEntity.noContent().build();
     }
 
+    // 只更新用户名称的接口
+    @PutMapping("/updateName")
+    public ResponseEntity<Void> updateUserName(int id, String name){
+        if(userService.updateUserName(id, name))
+            return ResponseEntity.ok().build();
+        else
+            //修改失败，不存在对应id的用户
+            return ResponseEntity.noContent().build();
+    }
+
+    // 只更新用户简介的接口
+    @PutMapping("/updateProfile")
+    public ResponseEntity<Void> updateUserProfile(int id, String profile){
+        if(userService.updateUserProfile(id, profile))
+            return ResponseEntity.ok().build();
+        else
+            //修改失败，不存在对应id的用户
+            return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id){
         if(userService.deleteUser(id))
