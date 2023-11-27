@@ -1,69 +1,153 @@
 <script setup>
   import notebook from "@icon-park/vue-next/lib/icons/Notebook"
   import noteIcon from "@icon-park/vue-next/lib/icons/Notes"
+  import {addNotebookAPI, getNotebooksAPI} from "@/api/notebook";
+  import {addNoteAPI} from "@/api/note";
+  import {logAPI} from "@/api/log";
+  import {currentUser} from "@/global";
 
-  import {ref} from 'vue'
+  import {ref, onBeforeMount} from 'vue'
+  import {ElMessage, ElMessageBox} from "element-plus";
+  import {globalEventBus} from "@/util/eventBus";
 
-  const date = new Date();
-  const historyNotes = ref([
-    {
-      id: 0,
-      name: "文档1",
-      notebookName: "生活",
-      timestamp: date.toLocaleDateString()
-    },
-    {
-      id: 1,
-      name: "文档2",
-      notebookName: "知识",
-      timestamp: date.toLocaleDateString()
-    },
-    {
-      id: 2,
-      name: "文档3",
-      notebookName: "知识",
-      timestamp: date.toLocaleDateString()
-    },
-    {
-      id: 3,
-      name: "文档4",
-      notebookName: "知识",
-      timestamp: date.toLocaleDateString()
-    },
-    {
-      id: 4,
-      name: "文档5",
-      notebookName: "知识",
-      timestamp: date.toLocaleDateString()
-    },
-    {
-      id: 5,
-      name: "文档6",
-      notebookName: "知识",
-      timestamp: date.toLocaleDateString()
-    },
-    {
-      id: 6,
-      name: "文档7",
-      notebookName: "知识",
-      timestamp: date.toLocaleDateString()
-    },
-    {
-      id: 7,
-      name: "文档8",
-      notebookName: "知识",
-      timestamp: date.toLocaleDateString()
+  let historyNotes = ref([]);
+
+  const addNoteDialogVisible = ref(false);
+  const selectedNotebook = ref(""); // 新建笔记时选择的笔记本
+  const addNoteInput = ref("");  // 新建笔记的名称
+  const notebooks = ref([]);  // 用于新建笔记时选择笔记本
+
+  const loadLog = async () => {
+    const response = await logAPI(currentUser.value.id);
+    historyNotes.value = [];
+    historyNotes.value.push.apply(historyNotes.value, response);
+    historyNotes.value.reverse();
+
+    // 找出已经被删除了的笔记名称
+    const deletedNotes = historyNotes.value
+        .filter((item) => { return item.operation === "delete"; })
+        .map((item) => item.notename);
+    historyNotes.value = historyNotes.value.filter((item, index, self) => {
+      // 裁切时间
+      item.timestamp = item.timestamp.split("T")[0];
+      const firstIndex = self.findIndex((t) => t.notename === item.notename)
+      // 去除被删除的日志、同时按照笔记名字来进行去重
+      return !deletedNotes.includes(item.notename) && index === firstIndex;
+    });
+  }
+
+  const loadNotebooks = async () => {
+    notebooks.value.splice(0, notebooks.value.length);
+    const response = await getNotebooksAPI(currentUser.value.id);
+    notebooks.value.push.apply(notebooks.value, response);
+  }
+
+  // 挂载时加载历史记录和笔记本
+  onBeforeMount(async () => {
+    await loadLog();
+    await loadNotebooks();
+  });
+
+  const addNotebook = () => {
+    ElMessageBox.prompt('新笔记本的名称', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      inputPattern: /.+/,
+      inputErrorMessage: '请输入名称！',
+    })
+        .then(async ({ value }) => {
+          const data = {"name": value, "userid": currentUser.value.id};
+          await addNotebookAPI(data)
+              .then(() => {
+                // 发出事件通知Notebook.vue组件更新要展示的笔记本
+                globalEventBus.emit("addNotebook");
+                ElMessage({
+                  type: 'success',
+                  message: `创建成功`,
+                })
+              });
+        })
+  }
+
+  const cancelAddNote = () => {
+    addNoteInput.value = "";
+    addNoteDialogVisible.value = false;
+    selectedNotebook.value = "";
+  }
+
+  const addNote = async () => {
+    addNoteDialogVisible.value = false;
+    const notebook = selectedNotebook.value;
+    const newNoteName = addNoteInput.value;
+    if (notebook === "") {
+      ElMessage.error("请选择笔记本！");
+      return;
     }
-  ])
+    if (newNoteName === "") {
+      ElMessage.error("请输入新笔记本的名称！");
+      return;
+    }
+    const data = {
+      "userid": currentUser.value.id,
+      "name": newNoteName,
+      "content": "",
+      "notebookid": notebook["id"]
+    }
+    await addNoteAPI(data)
+        .then(() => {
+          ElMessage.success("创建成功")
+        })
+        .catch(() => {
+          ElMessage.error("创建失败，服务错误")
+        })
+  }
+
 </script>
 
 <template>
   <div id="main">
     <div class="title">开始</div>
 
+    <!-- 添加笔记的对话框 -->
+    <el-dialog id="add-dialog"
+               v-model="addNoteDialogVisible"
+               title="新建笔记"
+               :align-center="true"
+               style="max-width: 420px;">
+      <template #default>
+        <el-row>
+          <el-col :span="8" style="justify-content: end; display: flex; align-items: center">
+            <div>笔记本：</div>
+          </el-col>
+          <el-col :span="12">
+            <el-select v-model="selectedNotebook" placeholder="请选择笔记本" style="width: 100%">
+              <el-option v-for="item in notebooks" :key="item.id" :label="item.name" :value="item">
+                <div style="display: flex; align-items: center">
+                  <notebook class="icon" theme="multi-color" size="18" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+                  <div style="margin-left: 5px; font-size: 16px">{{item.name}}</div>
+                </div>
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row style="margin-top: 5%">
+          <el-col :span="8" style="justify-content: end; display: flex; align-items: center">
+            <span>新笔记的名称：</span>
+          </el-col>
+          <el-col :span="12">
+            <el-input v-model="addNoteInput" style="width: 100%"/>
+          </el-col>
+        </el-row>
+      </template>
+      <template #footer>
+        <el-button @click="cancelAddNote">取消</el-button>
+        <el-button type="primary" @click="addNote">确认</el-button>
+      </template>
+    </el-dialog>
+
     <!-- 按键功能区 -->
     <div style="display: flex;">
-      <el-button class="start-button">
+      <el-button class="start-button" @click="addNotebook">
         <template #default>
           <div class="button-content">
             <notebook class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
@@ -73,7 +157,7 @@
           </div>
         </template>
       </el-button>
-      <el-button class="start-button">
+      <el-button class="start-button" @click="addNoteDialogVisible=true">
         <template #default>
           <div class="button-content">
             <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
@@ -87,14 +171,14 @@
 
     <!--历史文档区-->
     <div class="title" style="margin-top: 1rem">最近</div>
-    <div v-if="historyNotes.length > 0" style="display: flex; flex-direction: column">
+    <div v-if="historyNotes.length>0">
       <div v-for="history in historyNotes" style="cursor: default">
         <div class="history-card">
           <div style="display: flex; align-items: center; cursor: pointer">
             <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
-            <div style="margin-left: 0.5rem">{{history.name}}</div>
+            <div style="margin-left: 0.5rem">{{history.notename}}</div>
           </div>
-          <div style="color: rgb(200,200,200); width: 20%">笔记本: {{history.notebookName}}</div>
+<!--          <div style="color: rgb(200,200,200); width: 20%">笔记本: {{history.notebookName}}</div>-->
           <div style="color: rgb(200,200,200); margin-right: 10%">{{history.timestamp}}</div>
         </div>
       </div>
@@ -108,6 +192,7 @@
     margin-top: 2px;
     margin-bottom: 2px;
   }
+
 
   #main {
     display: flex;
@@ -126,6 +211,12 @@
     height: 9rem;
     width: 9rem;
     padding-top: 2rem;
+  }
+  .start-button, .start-button:focus:not(.start-button:hover){
+    /*点击后自动失焦*/
+    color: var(--el-button-text-color);
+    background-color: var(--el-button-bg-color);
+    border-color: var(--el-button-border-color);
   }
 
   .button-content {

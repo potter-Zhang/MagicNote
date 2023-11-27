@@ -1,6 +1,7 @@
 <script setup>
   import robotOne from "@icon-park/vue-next/lib/icons/RobotOne";
   import close from "@icon-park/vue-next/lib/icons/Close"
+  import aiDialog from "./DialogPanel.vue"
 
   import {ref} from 'vue'
 
@@ -43,16 +44,14 @@
 </script>
 
 <template>
-  <el-popover :visible="visible" placement="top-end" :width="200">
+  <el-popover :visible="visible" placement="top-end" :width="400" style="max-height: 400px">
     <template #reference>
       <div id="ball" @click="visible=!visible" @mousedown="dragElement">
         <robot-one v-if="!visible" class="icon" theme="outline" size="24" fill="#ffffff"/>
         <close v-else class="icon" theme="outline" size="20" fill="#ffffff"/>
       </div>
     </template>
-    <div>
-      AI对话框
-    </div>
+    <ai-dialog/>
   </el-popover>
 </template>
 
@@ -72,4 +71,5 @@
     flex-direction: column;
     justify-content: center;
   }
+
 </style>

@@ -30,5 +30,8 @@ public class User implements Serializable {
 
     private Blob photo;
 
+    private String email;
+
+    private String profile;
 
 }

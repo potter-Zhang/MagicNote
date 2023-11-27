@@ -7,7 +7,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <!--Editor.md-->
-
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <link rel="stylesheet" href="css/editormd.min.css"/>
     <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
 </head>
@@ -34,13 +34,17 @@
         </div>
     </div>
 </div>
+
 </body>
 
 <!--editormd-->
 
+<script src="./mermaid.min.js"></script>
 <script src="jquery.min.js"></script>
 <script src="editormd.min.js"></script>
 <script type="text/javascript">
+
+
     $(function() {
         var editor = editormd("editor", {
             width : "95%",
@@ -59,9 +63,17 @@
             imageUpload : true,
             imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
             imageUploadURL : "/upload/photo", //图片上传路径
+
             onload : function() {
                 console.log('onload', this);
+                mermaid.init();
+                initGraph();
             },
+            onchange : function() {
+                initGraph();
+                mermaid.init();
+            },
+
             /*指定需要显示的功能按钮*/
             toolbarIcons : function() {
                 return ["undo","redo","|",
@@ -79,8 +91,35 @@
                 releaseIcon : "<span bgcolor=\"gray\">发布</span>",
                 index : "<span bgcolor=\"red\">返回首页</span>",
             },
+            extensions: ["mermaid"],
+            mermaid: {
+                startOnLoad: true,
+                theme: "default",
+                htmlLabels: false
+            }
         });
     });
+    const mermaidHtml = (str) => {
+        return `<pre><code class="language-mermaid"><div class="mermaid">${str}</div></code></pre>`
+    }
+    const initGraph = () => {
+        $('.editormd-preview-container').find('pre').find('ol').find('.L0').find('.lang-mermaid').each(function() {
+            var buffer = new Array();
+            $(this).parent().parent().find('li').each(function() {
+                $(this).find('span').each(function() {
+                    buffer.push($(this).text());
+                })
+                buffer.push("\n");
+            })
+
+            var preDom = $(this).parent().parent().parent();
+            var contentBuffer = buffer.join("");
+            var content = mermaidHtml(contentBuffer);
+            console.log(content);
+            $(content).insertAfter(preDom);
+            $(preDom).remove();
+        })
+    }
 </script>
 
 </html>

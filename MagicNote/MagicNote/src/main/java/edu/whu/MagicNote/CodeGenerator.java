@@ -26,7 +26,7 @@ public class CodeGenerator {
 
     private static StrategyConfig strategyConfig() {
         StrategyConfig strategyConfig = new StrategyConfig();
-        strategyConfig.setInclude("log");
+        strategyConfig.setInclude("photo");
         strategyConfig.setRestControllerStyle(true);
         strategyConfig.setEntityLombokModel(true);
         return strategyConfig;

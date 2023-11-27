@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import user from "@icon-park/vue-next/lib/icons/User";
-  import allApplication from "@icon-park/vue-next/lib/icons/AllApplication"
+  import allApplication from "@icon-park/vue-next/lib/icons/AllApplication";
   import transferData from "@icon-park/vue-next/lib/icons/TransferData";
   import help from "@icon-park/vue-next/lib/icons/Help";
   import receive from "@icon-park/vue-next/lib/icons/Receive";
@@ -11,7 +11,7 @@
   import notebook from "../components/Notebook.vue"
   import floatBall from "../components/FloatBall.vue"
   import startTab from "../components/StartTab.vue"
-  import {ref} from 'vue';
+  import {ref, onMounted} from 'vue';
 
   const currentTab = ref("start"); // 当前展示在workspace的组件
 
@@ -39,29 +39,10 @@
   // 侧边菜单是否折叠
   const isCollapse = ref(true);
 
-  const notebooks = ref([
-      {
-        id: 0,
-        name: "默认"
-      },
-      {
-        id: 1,
-        name: "生活"
-      },
-      {
-        id: 2,
-        name: "知识"
-      }
-  ]);
-
-  const login = () => {
-    currentUser.value.id = 1;
-    currentUser.value.name = "test";
-  }
-
   const logout = () => {
     currentUser.value.id = -1;
     currentUser.value.name = "";
+    currentUser.value.token = "";
   }
 
 </script>
@@ -74,13 +55,12 @@
           <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
         </div>
         <div class="user-zone" v-if="currentUser.id == -1">
-          <user theme="outline" size="24" fill="#333"/>
-          <router-link to="/login" class="user-zone-font" @click="login">登录</router-link>
-          <router-link to="/login" class="user-zone-font">注册</router-link>
+          <user theme="outline" size="24" fill="#333" style="margin-right: 10%"/>
+          <router-link to="/" class="user-zone-font">登录</router-link>
         </div>
         <div class="user-zone" v-else>
-          <router-link to="/userInfo"><user theme="outline" size="24" fill="#333"/></router-link>
-          <router-link to="/userInfo" class="user-zone-font">{{currentUser.name}}</router-link>
+          <router-link to="/userInfo"><user theme="outline" size="24" fill="#333" style="margin-right: 8px"/></router-link>
+          <router-link to="/userInfo" class="user-zone-font" style="margin-right: 8px">{{currentUser.name}}</router-link>
           <el-button type="danger" style="padding: 0 5px 0 5px" @click="logout">退出登录</el-button>
         </div>
       </el-header>
@@ -111,7 +91,7 @@
         <el-main style="padding: 0; display: flex">
           <float-ball/>
           <div id="notebook">
-            <notebook :notebooks="notebooks" style="height: 100%"/>
+            <notebook style="height: 100%"/>
           </div>
 
           <div id="workspace">
@@ -139,7 +119,6 @@
 
   .user-zone {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     width: 10%;
     margin-right: 5%;
