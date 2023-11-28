@@ -62,7 +62,7 @@
           await updateNotebookAPI(notebook)
               .catch((err) => {
                 notebook.name = oldName;
-                ElMessage.error(err.response.data.message)
+                ElMessage.error(err.response.data)
               })
         })
   }
@@ -115,7 +115,7 @@
           await updateNoteAPI(note)
               .catch((err) => {
                 note.name = oldName;
-                ElMessage.error(err.response.data.message);
+                ElMessage.error(err.response.data);
               })
         })
   }
