@@ -80,7 +80,14 @@ public class NotebookServiceImpl extends ServiceImpl<NotebookDao, Notebook> impl
     }
 
     @Override
-    public boolean updateNotebook(Notebook myNotebook) {
+    public boolean updateNotebook(Notebook myNotebook) throws TodoException {
+        List<Notebook> notebooks= this.getALLNotebooksByName(myNotebook.getName());
+        if(notebooks !=null){
+            for(Notebook notebook:notebooks) {
+                if (Objects.equals(notebook.getUserid(), myNotebook.getUserid()))
+                    throw new TodoException(TodoException.INPUT_ERROR, "笔记本名称已存在");
+            }
+        }
         return this.updateById(myNotebook);
     }
 
