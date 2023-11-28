@@ -50,6 +50,7 @@ public class NoteController {
         try {
             Note result = noteService.addNote(myNote);
             Log myLog = generateLog(result, "add");
+            logService.addLog(myLog);
             map.put("id",String.valueOf(result.getId()));
             map.put("name",result.getName());
             map.put("userid",String.valueOf(result.getUserid()));
