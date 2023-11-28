@@ -88,17 +88,20 @@ public class NoteController {
 
     //更新笔记
     @PutMapping("/update")
-    public ResponseEntity<Void> updateNote(@RequestBody Note myNote){
-        Log myLog = new Log();
-        myLog.setUserid(myNote.getUserid());
-        myLog.setNotename(myNote.getName());
-        myLog.setTimestamp(LocalDateTime.now());
-        myLog.setOperation("update");
-        if(noteService.updateNote(myNote)) {
-            logService.addLog(myLog);
-            return ResponseEntity.ok().build();
+    public ResponseEntity<String> updateNote(@RequestBody Note myNote){
+        try {
+            Log myLog = new Log();
+            myLog.setUserid(myNote.getUserid());
+            myLog.setNotename(myNote.getName());
+            myLog.setTimestamp(LocalDateTime.now());
+            myLog.setOperation("update");
+            if (noteService.updateNote(myNote)) {
+                logService.addLog(myLog);
+                return ResponseEntity.ok().build();
+            } else return ResponseEntity.notFound().build();
+        } catch (TodoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        else return ResponseEntity.notFound().build();
     }
     //根据id查询笔记
     @GetMapping("/get1/{id}")
