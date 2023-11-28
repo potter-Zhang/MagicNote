@@ -31,6 +31,17 @@ public class NoteController {
     NoteServiceImpl noteService;
     @Autowired
     LogServiceImpl logService;
+
+    private Log generateLog(Note note, String operation) {
+        Log log = new Log();
+        log.setUserid(note.getUserid());
+        log.setNotename(note.getName());
+        log.setTimestamp(LocalDateTime.now());
+        log.setOperation(operation);
+        log.setNoteid(note.getId());
+        return log;
+    }
+
     //添加笔记
     @PostMapping("/add")
     public ResponseEntity<Map<String,String>> addNote(@ApiParam("请求体")@RequestBody Note myNote){
@@ -38,13 +49,7 @@ public class NoteController {
         myNote.setCreatetime(LocalDateTime.now());
         try {
             Note result = noteService.addNote(myNote);
-            Log myLog = new Log();
-            myLog.setUserid(myNote.getUserid());
-            myLog.setNotename(myNote.getName());
-            myLog.setTimestamp(LocalDateTime.now());
-            myLog.setOperation("add");
-            myLog.setNoteid(myNote.getId());
-            logService.addLog(myLog);
+            Log myLog = generateLog(result, "add");
             map.put("id",String.valueOf(result.getId()));
             map.put("name",result.getName());
             map.put("userid",String.valueOf(result.getUserid()));
@@ -61,12 +66,7 @@ public class NoteController {
     @DeleteMapping("/delete1/{id}")
     public ResponseEntity<Void> removeNoteById(@PathVariable int id){
         Note myNote = noteService.getNote(id);
-        Log myLog = new Log();
-        myLog.setUserid(myNote.getUserid());
-        myLog.setNotename(myNote.getName());
-        myLog.setTimestamp(LocalDateTime.now());
-        myLog.setOperation("delete");
-        myLog.setNoteid(myNote.getId());
+        Log myLog = generateLog(myNote, "delete");
         if(noteService.removeNote(id)) {
             logService.addLog(myLog);
             return ResponseEntity.ok().build();
@@ -93,12 +93,7 @@ public class NoteController {
     @PutMapping("/update")
     public ResponseEntity<String> updateNote(@RequestBody Note myNote){
         try {
-            Log myLog = new Log();
-            myLog.setUserid(myNote.getUserid());
-            myLog.setNotename(myNote.getName());
-            myLog.setTimestamp(LocalDateTime.now());
-            myLog.setOperation("update");
-            myLog.setNoteid(myNote.getId());
+            Log myLog = generateLog(myNote, "update");
             if (noteService.updateNote(myNote)) {
                 logService.addLog(myLog);
                 return ResponseEntity.ok().build();
