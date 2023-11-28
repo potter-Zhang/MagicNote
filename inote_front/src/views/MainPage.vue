@@ -4,6 +4,7 @@
   import transferData from "@icon-park/vue-next/lib/icons/TransferData";
   import help from "@icon-park/vue-next/lib/icons/Help";
   import receive from "@icon-park/vue-next/lib/icons/Receive";
+  import router from "@/router/index"
 
   import {currentUser} from "@/global"
   import helpInfo from "../components/HelpInfo.vue"
@@ -43,6 +44,7 @@
     currentUser.value.id = -1;
     currentUser.value.name = "";
     currentUser.value.token = "";
+    router.push("/");
   }
 
 </script>

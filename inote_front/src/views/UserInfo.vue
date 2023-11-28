@@ -162,7 +162,7 @@
           <!-- 时间线 -->
           <div id="beneath" style="width: 55%; margin-top: 10px">
             <div style="font-size: 20px">动态</div>
-            <el-timeline id="timeline">
+            <el-timeline v-if="logs.length > 0" id="timeline">
               <el-timeline-item v-for="(log, index) in logs" :key="index" :timestamp="log.timestamp" :placement="'top'" :color="log.color">
                 <el-card>
                   <template #header>
@@ -174,6 +174,7 @@
                 </el-card>
               </el-timeline-item>
             </el-timeline>
+            <el-empty v-else description="暂无"/>
           </div>
         </div>
       </div>
