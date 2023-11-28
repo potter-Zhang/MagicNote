@@ -27,4 +27,5 @@ public interface PhotoDao extends BaseMapper<Photo> {
 
     @Delete("DELETE FROM photo WHERE photo.userid = #{userid}")
     void DeleteAllPhotoByUserId(int userid);
+
 }
