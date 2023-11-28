@@ -23,16 +23,19 @@
     historyNotes.value.push.apply(historyNotes.value, response);
     historyNotes.value.reverse();
 
-    // 找出已经被删除了的笔记名称
+    // 找出已经被删除了的笔记id
     const deletedNotes = historyNotes.value
         .filter((item) => { return item.operation === "delete"; })
-        .map((item) => item.notename);
+        .map((item) => item.noteid);
     historyNotes.value = historyNotes.value.filter((item, index, self) => {
       // 裁切时间
       item.timestamp = item.timestamp.split("T")[0];
-      const firstIndex = self.findIndex((t) => t.notename === item.notename)
-      // 去除被删除的日志、同时按照笔记名字来进行去重
-      return !deletedNotes.includes(item.notename) && index === firstIndex;
+      // 先根据笔记名称去重(主要是排除对同一笔记的增删改日志)
+      const nameIndex = self.findIndex((t) => t.notename === item.notename)
+      // 日志中可能会出现noteid相同但是notename不同(重命名的笔记)，因此还需要根据noteid来进行一次去重
+      const idIndex = self.findIndex((t) => t.noteid === item.noteid)
+      // 去除被删除的日志、同时按照笔记名字和id来进行去重
+      return !deletedNotes.includes(item.noteid) && index === nameIndex && index === idIndex;
     });
   }
 

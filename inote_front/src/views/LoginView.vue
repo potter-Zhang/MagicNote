@@ -11,7 +11,7 @@
     {
       label: '邮箱地址',
       value: '',
-      type: 'email',
+      type: '',
       class: 'login__input'
     },
     {
@@ -132,6 +132,7 @@
         .then(async (module) => {
           const data = {
             "email": inputs.value[0]['value'],
+            "name": inputs.value[0]['value'],
             "password": inputs.value[1]['value']
           };
           registerByEmailAPI(data)

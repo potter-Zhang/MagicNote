@@ -8,6 +8,7 @@
   import returnIcon from "@icon-park/vue-next/lib/icons/Return"
   import noteIcon from "@icon-park/vue-next/lib/icons/Notes"
   import more from "@icon-park/vue-next/lib/icons/More"
+  import plus from "@icon-park/vue-next/lib/icons/Plus"
 
   import {ElMessageBox, ElMessage} from "element-plus";
   import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI} from "@/api/note"
@@ -173,7 +174,13 @@
 
     <div id="content">
       <!-- 显示笔记本 -->
-      <div v-if="currentMode==='notebook'"  v-for="notebook in notebooks" class="display-item">
+      <div v-if="currentMode==='notebook' && notebooks.length === 0">
+        <div class="addBtn" @click="addNotebook">
+          <plus theme="outline" size="24" fill="#c8c8c8"/>
+          <div>新建笔记本</div>
+        </div>
+      </div>
+      <div v-else-if="currentMode==='notebook' && notebooks.length > 0"  v-for="notebook in notebooks" class="display-item">
         <div class="display-item-icon-and-text"  @click="currentNotebook=notebook.id; displayNotes(notebook.id);">
           <notebook class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
           <div style="margin-left: 0.5rem; font-size: 0.8rem; font-weight: bold">{{notebook.name}}</div>
@@ -201,7 +208,13 @@
       </div>
 
       <!-- 显示笔记本中的笔记 -->
-      <div v-else class="display-item" v-for="note in notes">
+      <div v-else-if="currentMode==='note' && notes.length === 0">
+        <div class="addBtn" @click="addNote">
+          <plus theme="outline" size="24" fill="#c8c8c8"/>
+          <div>新建笔记</div>
+        </div>
+      </div>
+      <div v-else-if="currentMode==='note' && notes.length > 0" class="display-item" v-for="note in notes">
         <div class="display-item-icon-and-text">
          <note-icon class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
          <div style="margin-left: 5%; font-size: 0.8rem; font-weight: bold">{{note.name}}</div>
@@ -250,6 +263,21 @@
     padding: 5px 10px 5px 0;
     border-bottom: 1px solid #e9e9e9;
     background-color: white;
+  }
+
+  .addBtn {
+    border: 2px dashed rgb(160, 160, 160);
+    border-radius: 5px;
+    margin: 10px 10% 0 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    color: rgb(160, 160, 160);
+    padding: 5px;
+  }
+  .addBtn:hover {
+    background-color: rgb(240,240,240, 0.5);
   }
 
   .display-item {
