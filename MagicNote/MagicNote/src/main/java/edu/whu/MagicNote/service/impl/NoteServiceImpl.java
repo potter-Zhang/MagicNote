@@ -54,7 +54,15 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements INote
     }
     //更新笔记
     @Override
-    public boolean updateNote(Note myNote) {
+    public boolean updateNote(Note myNote) throws TodoException {
+        List<Note> notes=this.getAllNotesByUserIdAndName(myNote.getUserid(),myNote.getName());
+        if(notes!=null){
+            for(Note note:notes){
+                if(Objects.equals(note.getNotebookid(), myNote.getNotebookid())){
+                    throw new TodoException(TodoException.INPUT_ERROR,"该笔记名在当前笔记本中已存在");
+                }
+            }
+        }
         return this.updateById(myNote);
     }
     //根据id查询笔记

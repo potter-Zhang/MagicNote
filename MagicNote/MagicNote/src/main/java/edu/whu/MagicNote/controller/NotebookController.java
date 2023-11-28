@@ -65,11 +65,15 @@ public class NotebookController {
     }
     //更新笔记本
     @PutMapping("/update")
-    public ResponseEntity<Void> updateNotebook(@RequestBody Notebook myNotebook){
-        if(ns.updateNotebook(myNotebook)) {
-            return ResponseEntity.ok().build();
+    public ResponseEntity<String> updateNotebook(@RequestBody Notebook myNotebook) {
+        try {
+            if (ns.updateNotebook(myNotebook)) {
+                return ResponseEntity.ok().build();
+            }
+            else return ResponseEntity.notFound().build();
+        } catch (TodoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        else return ResponseEntity.notFound().build();
     }
     //根据id查询笔记本
     @GetMapping("/get1/{id}")

@@ -24,7 +24,7 @@ public interface INoteService extends IService<Note> {
     //根据name删除笔记
     public boolean removeNote(String name);
     //修改笔记
-    public boolean updateNote(Note myNote);
+    public boolean updateNote(Note myNote) throws TodoException;
     //根据id查询笔记
     public Note getNote(int id);
     //根据用户名，笔记本名，笔记名查询笔记
