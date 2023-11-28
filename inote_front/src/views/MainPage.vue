@@ -59,7 +59,9 @@
           <router-link to="/" class="user-zone-font">登录</router-link>
         </div>
         <div class="user-zone" v-else>
-          <router-link to="/userInfo"><user theme="outline" size="24" fill="#333" style="margin-right: 8px"/></router-link>
+          <router-link to="/userInfo" style="display: flex; align-items: center">
+            <img src="../assets/avatar.jpg" class="avatar">
+          </router-link>
           <router-link to="/userInfo" class="user-zone-font" style="margin-right: 8px">{{currentUser.name}}</router-link>
           <el-button type="danger" style="padding: 0 5px 0 5px" @click="logout">退出登录</el-button>
         </div>
@@ -124,6 +126,13 @@
     margin-right: 5%;
     min-width: min-content;
     box-sizing: border-box;
+  }
+
+  .avatar {
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    margin-right: 8px;
   }
 
   .user-zone-font {

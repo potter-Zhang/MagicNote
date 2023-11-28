@@ -44,7 +44,7 @@
 </script>
 
 <template>
-  <el-popover :visible="visible" placement="top-end" :width="400" style="max-height: 400px">
+  <el-popover :visible="visible" placement="top-end" :width="400" >
     <template #reference>
       <div id="ball" @click="visible=!visible" @mousedown="dragElement">
         <robot-one v-if="!visible" class="icon" theme="outline" size="24" fill="#ffffff"/>

@@ -1,5 +1,6 @@
 <script setup>
 import CustomDialog from './CustomDialog.vue'
+import arrowRight from "@icon-park/vue-next/lib/icons/ArrowRight";
 import { ref, computed } from 'vue'
 
 const isDragging = ref(false)
@@ -38,13 +39,16 @@ function drag (event) {
 function sendMessage (msg) {
   if (msg !== '') {
     messages.value.push({ role: 'user', content: msg })
+    userMsg.value = "";
+    const container = document.getElementById("chat-container")
+    container.scrollTop = container.scrollHeight;
   }
 }
 
 const messages = ref([
   {
     role: 'assistant',
-    content: 'hello, how can I assist you?'
+    content: '您好，请问有什么可以帮助您的吗？'
   },
   {
     role: 'user',
@@ -53,6 +57,10 @@ const messages = ref([
   {
     role: 'user',
     content: 'awohefiahfiehfoiewhfaiwfewahfewahefwaheflhwaelfhwjefh'
+  },
+  {
+    role: 'assistant',
+    content: '长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本'
   }
 ])
 
@@ -61,9 +69,9 @@ const messages = ref([
 <template>
   <div class="panel">
     <div class="panel-header"  @mousemove="drag" @mousedown="dragStart" @mouseup="dragEnd" @mouseleave="dragEnd">
-      <h1 style="margin: 5px 0 5px 0">Chat</h1>
+      <h1 style="margin: 5px 0 5px 0">ai助手</h1>
     </div>
-    <div class="chat-container">
+    <div class="chat-container" id="chat-container">
       <CustomDialog v-for="(message, idx) in messages"
           :key="idx"
           :role="message.role"
@@ -71,8 +79,8 @@ const messages = ref([
           ></CustomDialog>
     </div>
     <div class="send-comp">
-      <input class="send-text" v-model="userMsg">
-      <button class="send-button" @click="sendMessage(userMsg)">Send</button>
+      <input class="send-text" v-model="userMsg" @keyup.enter="sendMessage(userMsg)" />
+      <button class="send-button" @click="sendMessage(userMsg)"><arrow-right theme="outline" size="24" fill="#ffffff"/></button>
     </div>
   </div>
 </template>
@@ -81,7 +89,7 @@ const messages = ref([
 
   .send-comp {
     height: 50px;
-    margin-left: 0%;
+    margin-top: 3%;
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -89,12 +97,14 @@ const messages = ref([
   .send-button {
     cursor: pointer;
     font-size: medium;
-    font-weight: 100;
     margin-left: 5px;
     width: 15%;
     background-color: var(--el-color-primary-light-3);
     border-radius: 0.75em;
     border: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .send-text {
     font-size: medium;
@@ -102,24 +112,11 @@ const messages = ref([
     padding: 0.75em;
     width: 80%;
     border-radius: 0.75em;
-    border: var(--el-color-primary-light-7);
+    border: 1px solid rgb(200,200,200);
   }
-
-  .user {
-      width: 80%;
-      background-color:white;
-      float:right;
-      text-align:left;
-      margin-right: 5px;
-      word-wrap: break-word;
-  }
-
-  .assistant {
-      width: 80%;
-      background-color: var(--el-color-primary);
-      float:left;
-      text-align:left;
-      margin-left: 5px;
+  .send-text:focus {
+    outline: none;
+    border: 2px solid var(--el-color-primary);
   }
 
   .chat-container {
@@ -136,8 +133,6 @@ const messages = ref([
     flex-direction: column;
     width: 95%;
     height: 400px;
-    background-color: aliceblue;
-    border: 1px solid  var(--el-color-primary-light-7);
     border-radius: 0.75em;
     padding: 5px;
   }
@@ -145,17 +140,5 @@ const messages = ref([
   .panel-header {
       font-weight: 100;
       user-select: none;
-  }
-
-  .message {
-      padding: 0.75em;
-      margin-top:10px;
-      border-radius: 1em;
-      border: 1px solid var(--el-color-primary-light-7);
-      box-shadow: 0px 4px 6px #333;
-     -moz-box-shadow: 0px 4px 6px #333;
-     -webkit-box-shadow: 0px 4px 6px #333;
-      display: flex;
-      flex-direction: column;
   }
 </style>
