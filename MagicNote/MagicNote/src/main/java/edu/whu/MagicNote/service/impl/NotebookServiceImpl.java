@@ -35,6 +35,16 @@ public class NotebookServiceImpl extends ServiceImpl<NotebookDao, Notebook> impl
     @Autowired
     LogDao logDao;
 
+    private Log generateLog(Note note, String operation) {
+        Log log = new Log();
+        log.setUserid(note.getUserid());
+        log.setNotename(note.getName());
+        log.setTimestamp(LocalDateTime.now());
+        log.setOperation(operation);
+        log.setNoteid(note.getId());
+        return log;
+    }
+
     @Override
     public Notebook addNotebook(Notebook myNotebook) throws TodoException {
         List<Notebook> notebooks= this.getALLNotebooksByName(myNotebook.getName());
@@ -52,11 +62,7 @@ public class NotebookServiceImpl extends ServiceImpl<NotebookDao, Notebook> impl
     public boolean removeNotebook(int id) {
         List<Note> notes = noteDao.FindAllNoteByNotebookId(id);
         for(Note note : notes){
-            Log myLog = new Log();
-            myLog.setUserid(note.getUserid());
-            myLog.setNotename(note.getName());
-            myLog.setTimestamp(LocalDateTime.now());
-            myLog.setOperation("delete");
+            Log myLog = generateLog(note, "delete");
             logDao.insert(myLog);
             noteDao.deleteById(note.getId());
         }
@@ -68,11 +74,7 @@ public class NotebookServiceImpl extends ServiceImpl<NotebookDao, Notebook> impl
         int id = nb.GetNoteBookId(userid, name);
         List<Note> notes = noteDao.FindAllNoteByNotebookId(id);
         for(Note note : notes){
-            Log myLog = new Log();
-            myLog.setUserid(note.getUserid());
-            myLog.setNotename(note.getName());
-            myLog.setTimestamp(LocalDateTime.now());
-            myLog.setOperation("delete");
+            Log myLog = generateLog(note, "delete");
             logDao.insert(myLog);
             noteDao.deleteById(note.getId());
         }
