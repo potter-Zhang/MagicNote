@@ -49,11 +49,12 @@ public class NoteController {
             map.put("userid",String.valueOf(result.getUserid()));
             map.put("notebookid",String.valueOf(result.getNotebookid()));
             map.put("createtime",String.valueOf(result.getCreatetime()));
+            return ResponseEntity.ok(map);
         } catch (TodoException e) {
             map.put("code",String.valueOf(e.getCode()));
             map.put("message",e.getMessage());
+            return ResponseEntity.badRequest().body(map);
         }
-        return ResponseEntity.ok(map);
     }
     //根据id删除笔记
     @DeleteMapping("/delete1/{id}")
