@@ -43,17 +43,19 @@ public class NoteController {
             myLog.setNotename(myNote.getName());
             myLog.setTimestamp(LocalDateTime.now());
             myLog.setOperation("add");
+            myLog.setNoteid(myNote.getId());
             logService.addLog(myLog);
             map.put("id",String.valueOf(result.getId()));
             map.put("name",result.getName());
             map.put("userid",String.valueOf(result.getUserid()));
             map.put("notebookid",String.valueOf(result.getNotebookid()));
             map.put("createtime",String.valueOf(result.getCreatetime()));
+            return ResponseEntity.ok(map);
         } catch (TodoException e) {
             map.put("code",String.valueOf(e.getCode()));
             map.put("message",e.getMessage());
+            return ResponseEntity.badRequest().body(map);
         }
-        return ResponseEntity.ok(map);
     }
     //根据id删除笔记
     @DeleteMapping("/delete1/{id}")
@@ -64,6 +66,7 @@ public class NoteController {
         myLog.setNotename(myNote.getName());
         myLog.setTimestamp(LocalDateTime.now());
         myLog.setOperation("delete");
+        myLog.setNoteid(myNote.getId());
         if(noteService.removeNote(id)) {
             logService.addLog(myLog);
             return ResponseEntity.ok().build();
@@ -95,6 +98,7 @@ public class NoteController {
             myLog.setNotename(myNote.getName());
             myLog.setTimestamp(LocalDateTime.now());
             myLog.setOperation("update");
+            myLog.setNoteid(myNote.getId());
             if (noteService.updateNote(myNote)) {
                 logService.addLog(myLog);
                 return ResponseEntity.ok().build();
