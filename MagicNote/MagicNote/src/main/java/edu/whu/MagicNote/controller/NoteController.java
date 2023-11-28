@@ -3,6 +3,7 @@ package edu.whu.MagicNote.controller;
 
 import edu.whu.MagicNote.domain.Log;
 import edu.whu.MagicNote.domain.Note;
+import edu.whu.MagicNote.exception.TodoException;
 import edu.whu.MagicNote.service.impl.LogServiceImpl;
 import edu.whu.MagicNote.service.impl.NoteServiceImpl;
 import io.swagger.annotations.ApiParam;
@@ -11,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -30,16 +33,27 @@ public class NoteController {
     LogServiceImpl logService;
     //添加笔记
     @PostMapping("/add")
-    public ResponseEntity<Note> addNote(@ApiParam("请求体")@RequestBody Note myNote){
+    public ResponseEntity<Map<String,String>> addNote(@ApiParam("请求体")@RequestBody Note myNote){
+        Map<String,String> map= new HashMap<>();
         myNote.setCreatetime(LocalDateTime.now());
-        Note result=noteService.addNote(myNote);
-        Log myLog = new Log();
-        myLog.setUserid(myNote.getUserid());
-        myLog.setNotename(myNote.getName());
-        myLog.setTimestamp(LocalDateTime.now());
-        myLog.setOperation("add");
-        logService.addLog(myLog);
-        return ResponseEntity.ok(result);
+        try {
+            Note result = noteService.addNote(myNote);
+            Log myLog = new Log();
+            myLog.setUserid(myNote.getUserid());
+            myLog.setNotename(myNote.getName());
+            myLog.setTimestamp(LocalDateTime.now());
+            myLog.setOperation("add");
+            logService.addLog(myLog);
+            map.put("id",String.valueOf(result.getId()));
+            map.put("name",result.getName());
+            map.put("userid",String.valueOf(result.getUserid()));
+            map.put("notebookid",String.valueOf(result.getNotebookid()));
+            map.put("createtime",String.valueOf(result.getCreatetime()));
+        } catch (TodoException e) {
+            map.put("code",String.valueOf(e.getCode()));
+            map.put("message",e.getMessage());
+        }
+        return ResponseEntity.ok(map);
     }
     //根据id删除笔记
     @DeleteMapping("/delete1/{id}")
@@ -56,21 +70,21 @@ public class NoteController {
         }
         else return ResponseEntity.notFound().build();
     }
-    //根据文件名删除笔记
-    @DeleteMapping("/delete2/{name}")
-    public ResponseEntity<Void> removeNoteByName(@PathVariable String name){
-        Note myNote = noteService.getNote(name);
-        Log myLog = new Log();
-        myLog.setUserid(myNote.getUserid());
-        myLog.setNotename(myNote.getName());
-        myLog.setTimestamp(LocalDateTime.now());
-        myLog.setOperation("delete");
-        if(noteService.removeNote(name)) {
-            logService.addLog(myLog);
-            return ResponseEntity.ok().build();
-        }
-        else return ResponseEntity.notFound().build();
-    }
+    //根据文件名删除笔记  存在重名文件，需要用到id
+//    @DeleteMapping("/delete2/{name}")
+//    public ResponseEntity<Void> removeNoteByName(@PathVariable String name){
+//        Note myNote = noteService.getNote(name);
+//        Log myLog = new Log();
+//        myLog.setUserid(myNote.getUserid());
+//        myLog.setNotename(myNote.getName());
+//        myLog.setTimestamp(LocalDateTime.now());
+//        myLog.setOperation("delete");
+//        if(noteService.removeNote(name)) {
+//            logService.addLog(myLog);
+//            return ResponseEntity.ok().build();
+//        }
+//        else return ResponseEntity.notFound().build();
+//    }
 
     //更新笔记
     @PutMapping("/update")
@@ -93,9 +107,9 @@ public class NoteController {
         return result==null? ResponseEntity.noContent().build():ResponseEntity.ok(result);
     }
     //根据文件名查询笔记
-    @GetMapping("/get2/{name}")
-    public ResponseEntity<Note> getNoteByName(@PathVariable String name){
-        Note result = noteService.getNote(name);
+    @GetMapping("/get2/{userid}/{notebook}/{name}")
+    public ResponseEntity<Note> getNoteByName(@PathVariable int userid,@PathVariable int notebook,@PathVariable String name){
+        Note result = noteService.getNote(userid,notebook,name);
         return result==null? ResponseEntity.noContent().build():ResponseEntity.ok(result);
     }
     //根据用户id查询所有笔记
