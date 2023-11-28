@@ -43,6 +43,7 @@ public class NoteController {
             myLog.setNotename(myNote.getName());
             myLog.setTimestamp(LocalDateTime.now());
             myLog.setOperation("add");
+            myLog.setNoteid(myNote.getId());
             logService.addLog(myLog);
             map.put("id",String.valueOf(result.getId()));
             map.put("name",result.getName());
@@ -65,6 +66,7 @@ public class NoteController {
         myLog.setNotename(myNote.getName());
         myLog.setTimestamp(LocalDateTime.now());
         myLog.setOperation("delete");
+        myLog.setNoteid(myNote.getId());
         if(noteService.removeNote(id)) {
             logService.addLog(myLog);
             return ResponseEntity.ok().build();
@@ -96,6 +98,7 @@ public class NoteController {
             myLog.setNotename(myNote.getName());
             myLog.setTimestamp(LocalDateTime.now());
             myLog.setOperation("update");
+            myLog.setNoteid(myNote.getId());
             if (noteService.updateNote(myNote)) {
                 logService.addLog(myLog);
                 return ResponseEntity.ok().build();
