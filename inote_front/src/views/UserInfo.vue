@@ -16,8 +16,9 @@
   const loadLog = async () => {
     const response = await logAPI(currentUser.value.id);
     logs.value = [];
-    logs.value.push.apply(logs.value, response.splice(10));
+    logs.value.push.apply(logs.value, response);
     logs.value.reverse();
+    logs.value.splice(10);
     logs.value = logs.value.filter((item) => {
       // 生成展示内容
       switch (item.operation) {
