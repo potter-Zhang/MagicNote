@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -77,26 +78,67 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
+    public ResponseEntity<Map<String,String>> register(@RequestBody User myuser) {
+        Map<String,String> result = new HashMap<>();
         // 检查用户名是否存在
-        if (userDetailsService.isUserExists(user.getName())) {
-            return ResponseEntity.badRequest().body("用户名已存在");
+        if (userDetailsService.isUserExists(myuser.getName())) {
+            result.put("error","用户名已存在");
+            return ResponseEntity.badRequest().body(result);
         }
-        if (user.getEmail() == null) {
-            user.setEmail("@");
+        if (myuser.getEmail() == null) {
+            myuser.setEmail("@");
         }
-        return checkAndSave(user);
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(myuser.getName())
+                .password(myuser.getPassword())
+                .roles("USER")
+                .build();
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        String message = String.valueOf(checkAndSave(myuser));
+        if(!Objects.equals(message, "注册成功")){
+            result.put("error",message);
+            return ResponseEntity.badRequest().body(result);
+        }
+        User user = userService.getUserByEmail(myuser.getName());
+        result.put("id",String.valueOf(user.getId()));
+        result.put("name",user.getName());
+        result.put("email",user.getEmail());
+        result.put("profile", user.getProfile());
+        result.put("token",token);
+
+        return ResponseEntity.ok(result);
+
     }
 
     @PostMapping("registerByEmail")
-    public ResponseEntity<String> registerByEmail(@RequestBody User user) {
+    public ResponseEntity<Map<String,String>> registerByEmail(@RequestBody User myuser) {
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(myuser.getEmail())
+                .password(myuser.getPassword())
+                .roles("USER")
+                .build();
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        Map<String,String> result = new HashMap<>();
         // 检查用户是否存在
-        if (userDetailsService.isUserExists(user.getEmail())) {
-            return ResponseEntity.badRequest().body("邮箱已注册");
+        if (userDetailsService.isUserExists(myuser.getEmail())) {
+            result.put("error","邮箱已注册");
+            return ResponseEntity.badRequest().body(result);
         }
         // 默认用户名设为邮箱地址
-        user.setName(user.getEmail());
-        return checkAndSave(user);
+        myuser.setName(myuser.getEmail());
+        String message = String.valueOf(checkAndSave(myuser));
+        if(!Objects.equals(message, "注册成功")){
+            result.put("error",message);
+            return ResponseEntity.badRequest().body(result);
+        }
+        User user = userService.getUserByEmail(myuser.getEmail());
+        result.put("id",String.valueOf(user.getId()));
+        result.put("name",user.getName());
+        result.put("email",user.getEmail());
+        result.put("profile", user.getProfile());
+        result.put("token",token);
+
+        return ResponseEntity.ok(result);
     }
 
     private ResponseEntity<String> checkAndSave(User user) {
