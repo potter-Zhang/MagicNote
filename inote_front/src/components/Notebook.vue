@@ -57,9 +57,13 @@
       inputErrorMessage: '请输入新的名称！',
     })
         .then(async ({ value }) => {
+          const oldName = notebook.name;
           notebook.name = value;
-          console.log(notebook);
-          await updateNotebookAPI(notebook);
+          await updateNotebookAPI(notebook)
+              .catch((err) => {
+                notebook.name = oldName;
+                ElMessage.error(err.response.data.message)
+              })
         })
   }
 
@@ -78,12 +82,14 @@
     })
         .then(async ({ value }) => {
           const data = {"name": value, "userid": currentUser.value.id};
-          const newNotebook = await addNotebookAPI(data);
-          notebooks.value.push(newNotebook);
-          ElMessage({
-            type: 'success',
-            message: `创建成功`,
-          })
+          await addNotebookAPI(data)
+              .then((response) => {
+                notebooks.value.push(response);
+                ElMessage.success("创建成功");
+              })
+              .catch((err) => {
+                ElMessage.error(err.response.data.message)
+              })
         })
   }
 
@@ -104,8 +110,13 @@
       inputErrorMessage: '请输入新的名称！',
     })
         .then(async ({ value }) => {
+          const oldName = note.name;
           note.name = value;
-          await updateNoteAPI(note);
+          await updateNoteAPI(note)
+              .catch((err) => {
+                note.name = oldName;
+                ElMessage.error(err.response.data.message);
+              })
         })
   }
 
@@ -123,17 +134,19 @@
       inputErrorMessage: '请输入名称！',
     })
       .then(async ({ value }) => {
-        const newNote = await addNoteAPI({
+        await addNoteAPI({
           "userid": currentUser.value.id,
           "content": "",
           "name": value,
           "notebookid": currentNotebook.value
-        });
-        notes.value.push(newNote);
-        ElMessage({
-          type: 'success',
-          message: `创建成功`,
         })
+            .then((response) => {
+              notes.value.push(response);
+              ElMessage.success("创建成功")
+            })
+            .catch((err) => {
+              ElMessage.error(err.response.data.message)
+            })
       })
   }
 </script>
