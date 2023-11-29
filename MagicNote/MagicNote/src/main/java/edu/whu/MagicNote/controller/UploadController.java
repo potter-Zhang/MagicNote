@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/static/upload")
 public class UploadController {
 
     @Autowired
@@ -36,7 +36,7 @@ public class UploadController {
         System.out.println(words);
 
         // 获得SpringBoot当前项目的路径：System.getProperty("user.dir")
-        String path = System.getProperty("user.dir")+"/MagicNote/upload/";
+        String path = System.getProperty("user.dir")+"/MagicNote/src/main/resources/static/upload/";
         //System.out.println(path);
 
         File realPath = new File(path);
@@ -61,7 +61,7 @@ public class UploadController {
 
         // 给editormd进行回调
         JSONObject res = new JSONObject();
-        res.put("url","/upload/"+ filename);
+        res.put("url", "/upload/" + filename);
         res.put("success", 1);
         res.put("message", "upload success!");
 
@@ -75,7 +75,7 @@ public class UploadController {
     public ResponseEntity<Void> fileUpload(MultipartFile file) throws IOException {
 
         //获得SpringBoot当前项目的路径：System.getProperty("user.dir")
-        String path = System.getProperty("user.dir")+"/upload/";
+        String path = System.getProperty("user.dir")+ "/MagicNote/src/main/resources/static/upload/";
         //System.out.println(path);
 
         File realPath = new File(path);
