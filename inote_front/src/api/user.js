@@ -33,3 +33,14 @@ export const updateProfileAPI = (data) => {
     }
     return request.put('/user/updateProfile', params);
 }
+
+export const updateAvatarAPI = (file, userid) => {
+    let formData = new FormData();
+    formData.append("id", userid);
+    formData.append('file', file);
+    return request({
+        url: "/user/updatePhoto",
+        method: "put",
+        data: formData
+    })
+}
