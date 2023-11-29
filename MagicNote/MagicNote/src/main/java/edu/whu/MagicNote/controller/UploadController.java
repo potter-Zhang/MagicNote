@@ -27,9 +27,9 @@ public class UploadController {
     // 处理上传图片文件操作，将上传的图片保存（这里的设计是贴合Editor的控件来的，若不使用editor需要修改)
     // 需要注意这里传入的参数还有图片所属的用户的id与图片所属的笔记的id
     //@RequestMapping("/photo")
-    @PostMapping("/photo")
+    @PostMapping("/photo/{userid}/{noteid}")
     @ResponseBody
-    public JSONObject photoUpload(@RequestParam(value = "editormd-image-file", required = true) MultipartFile file, int userid ,int noteid) throws IOException, TodoException {
+    public JSONObject photoUpload(@RequestParam(value = "editormd-image-file", required = true) MultipartFile file, @PathVariable int userid , @PathVariable int noteid) throws IOException, TodoException {
 
         // 进行图片中的文字识别
         String words = ocrService.recognizeImg(file);
