@@ -1,18 +1,19 @@
 package edu.whu.MagicNote.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import edu.whu.MagicNote.dao.*;
-import edu.whu.MagicNote.domain.*;
-import edu.whu.MagicNote.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.checkerframework.checker.units.qual.A;
+import edu.whu.MagicNote.dao.*;
+import edu.whu.MagicNote.domain.User;
+import edu.whu.MagicNote.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 /**
  * <p>
  *  服务实现类
@@ -92,6 +93,21 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         newUser.setPhoto(oldUser.getPhoto());
         newUser.setEmail(oldUser.getEmail());
         newUser.setProfile(profile);
+        return this.updateById(newUser);
+    }
+
+    @Override
+    public boolean updateUserPhoto(int id, MultipartFile photo) throws IOException, SQLException {
+        User newUser = new User();
+        User oldUser = this.getById(id);
+        newUser.setId(oldUser.getId());
+        newUser.setName(oldUser.getName());
+        newUser.setPassword(oldUser.getPassword());
+        newUser.setEmail(oldUser.getEmail());
+        newUser.setProfile(oldUser.getProfile());
+        byte[] fileBytes = photo.getBytes();
+        Blob blob = new SerialBlob(fileBytes);
+        newUser.setPhoto(blob);
         return this.updateById(newUser);
     }
 
