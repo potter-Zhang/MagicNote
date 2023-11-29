@@ -93,7 +93,6 @@
         </el-menu>
 
         <el-main style="padding: 0; display: flex">
-          <float-ball/>
           <div id="notebook">
             <notebook style="height: 100%"/>
           </div>
