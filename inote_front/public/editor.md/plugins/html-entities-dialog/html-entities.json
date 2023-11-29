@@ -1,0 +1,669 @@
+[
+	{
+		"name" : "&amp;#64;",
+		"description":"at symbol"		
+	},
+	{
+		"name":"&amp;copy;",
+		"description":"copyright symbol"
+	},
+	{
+		"name":"&amp;reg;",
+		"description":"registered symbol"
+	},
+	{
+		"name":"&amp;trade;",
+		"description":"trademark symbol"
+	},
+	{
+		"name":"&amp;hearts;",
+		"description":"heart"
+	},
+	{
+		"name":"&amp;nbsp;",
+		"description":"Inserts a non-breaking blank space"
+	},
+	{
+		"name":"&amp;amp;",
+		"description":"Ampersand"
+	},
+	{
+		"name":"&amp;#36;",
+		"description":"dollar symbol"
+	},
+	{
+		"name":"&amp;cent;",
+		"description":"Cent symbol"
+	},
+	{
+		"name":"&amp;pound;",
+		"description":"Pound"
+	},
+	{
+		"name":"&amp;yen;",
+		"description":"Yen"
+	},
+	{
+		"name":"&amp;euro;",
+		"description":"Euro symbol"
+	},
+	{
+		"name":"&amp;quot;",
+		"description":"quotation mark"
+	},
+	{
+		"name":"&amp;ldquo;",
+		"description":"Opening Double Quotes "
+	},
+	{
+		"name":"&amp;rdquo;",
+		"description":"Closing Double Quotes "
+	},
+	{
+		"name":"&amp;lsquo;",
+		"description":"Opening Single Quote Mark "
+	},
+	{
+		"name":"&amp;rsquo;",
+		"description":"Closing Single Quote Mark "
+	},
+	{
+		"name":"&amp;laquo;",
+		"description":"angle quotation mark (left)"
+	},
+	{
+		"name":"&amp;raquo;",
+		"description":"angle quotation mark (right)"
+	},
+	{
+		"name":"&amp;lsaquo;",
+		"description":"single left angle quotation"
+	},
+	{
+		"name":"&amp;rsaquo;",
+		"description":"single right angle quotation"
+	},
+	{
+		"name":"&amp;sect;",
+		"description":"Section Symbol"
+	},
+	{
+		"name":"&amp;micro;",
+		"description":"micro sign"
+	},
+	{
+		"name":"&amp;para;",
+		"description":"Paragraph symbol"
+	},
+	{
+		"name":"&amp;bull;",
+		"description":"Big List Dot"
+	},
+	{
+		"name":"&amp;middot;",
+		"description":"Medium List Dot"
+	},
+	{
+		"name":"&amp;hellip;",
+		"description":"horizontal ellipsis"
+	},
+	{
+		"name":"&amp;#124;",
+		"description":"vertical bar"
+	},
+	{
+		"name":"&amp;brvbar;",
+		"description":"broken vertical bar"
+	},
+	{
+		"name":"&amp;ndash;",
+		"description":"en-dash"
+	},
+	{
+		"name":"&amp;mdash;",
+		"description":"em-dash"
+	},
+	{
+		"name":"&amp;curren;",
+		"description":"Generic currency symbol"
+	},
+	{
+		"name":"&amp;#33;",
+		"description":"exclamation point"
+	},
+	{
+		"name":"&amp;#35;",
+		"description":"number sign"
+	},
+	{
+		"name":"&amp;#39;",
+		"description":"single quote"
+	},
+	{
+		"name":"&amp;#40;",
+		"description":""
+	},
+	{
+		"name":"&amp;#41;",
+		"description":""
+	},
+	{
+		"name":"&amp;#42;",
+		"description":"asterisk"
+	},
+	{
+		"name":"&amp;#43;",
+		"description":"plus sign"
+	},
+	{
+		"name":"&amp;#44;",
+		"description":"comma"
+	},
+	{
+		"name":"&amp;#45;",
+		"description":"minus sign - hyphen"
+	},
+	{
+		"name":"&amp;#46;",
+		"description":"period"
+	},
+	{
+		"name":"&amp;#47;",
+		"description":"slash"
+	},
+	{
+		"name":"&amp;#48;",
+		"description":"0"
+	},
+	{
+		"name":"&amp;#49;",
+		"description":"1"
+	},
+	{
+		"name":"&amp;#50;",
+		"description":"2"
+	},
+	{
+		"name":"&amp;#51;",
+		"description":"3"
+	},
+	{
+		"name":"&amp;#52;",
+		"description":"4"
+	},
+	{
+		"name":"&amp;#53;",
+		"description":"5"
+	},
+	{
+		"name":"&amp;#54;",
+		"description":"6"
+	},
+	{
+		"name":"&amp;#55;",
+		"description":"7"
+	},
+	{
+		"name":"&amp;#56;",
+		"description":"8"
+	},
+	{
+		"name":"&amp;#57;",
+		"description":"9"
+	},
+	{
+		"name":"&amp;#58;",
+		"description":"colon"
+	},
+	{
+		"name":"&amp;#59;",
+		"description":"semicolon"
+	},
+	{
+		"name":"&amp;#61;",
+		"description":"equal sign"
+	},
+	{
+		"name":"&amp;#63;",
+		"description":"question mark"
+	},
+	{
+		"name":"&amp;lt;",
+		"description":"Less than"
+	},
+	{
+		"name":"&amp;gt;",
+		"description":"Greater than"
+	},
+	{
+		"name":"&amp;le;",
+		"description":"Less than or Equal to"
+	},
+	{
+		"name":"&amp;ge;",
+		"description":"Greater than or Equal to"
+	},
+	{
+		"name":"&amp;times;",
+		"description":"Multiplication symbol"
+	},
+	{
+		"name":"&amp;divide;",
+		"description":"Division symbol"
+	},
+	{
+		"name":"&amp;minus;",
+		"description":"Minus symbol"
+	},
+	{
+		"name":"&amp;plusmn;",
+		"description":"Plus/minus symbol"
+	},
+	{
+		"name":"&amp;ne;",
+		"description":"Not Equal"
+	},
+	{
+		"name":"&amp;sup1;",
+		"description":"Superscript 1"
+	},
+	{
+		"name":"&amp;sup2;",
+		"description":"Superscript 2"
+	},
+	{
+		"name":"&amp;sup3;",
+		"description":"Superscript 3"
+	},
+	{
+		"name":"&amp;frac12;",
+		"description":"Fraction ¬Ω"
+	},
+	{
+		"name":"&amp;frac14;",
+		"description":"Fraction ¬º"
+	},
+	{
+		"name":"&amp;frac34;",
+		"description":"Fraction ¬æ"
+	},
+	{
+		"name":"&amp;permil;",
+		"description":"per mille"
+	},
+	{
+		"name":"&amp;deg;",
+		"description":"Degree symbol"
+	},
+	{
+		"name":"&amp;radic;",
+		"description":"square root"
+	},
+	{
+		"name":"&amp;infin;",
+		"description":"Infinity"
+	},
+	{
+		"name":"&amp;larr;",
+		"description":"left arrow"
+	},
+	{
+		"name":"&amp;uarr;",
+		"description":"up arrow"
+	},
+	{
+		"name":"&amp;rarr;",
+		"description":"right arrow"
+	},
+	{
+		"name":"&amp;darr;",
+		"description":"down arrow"
+	},
+	{
+		"name":"&amp;harr;",
+		"description":"left right arrow"
+	},
+	{
+		"name":"&amp;crarr;",
+		"description":"carriage return arrow"
+	},
+	{
+		"name":"&amp;lceil;",
+		"description":"left ceiling"
+	},
+	{
+		"name":"&amp;rceil;",
+		"description":"right ceiling"
+	},
+	{
+		"name":"&amp;lfloor;",
+		"description":"left floor"
+	},
+	{
+		"name":"&amp;rfloor;",
+		"description":"right floor"
+	},
+	{
+		"name":"&amp;spades;",
+		"description":"spade"
+	},
+	{
+		"name":"&amp;clubs;",
+		"description":"club"
+	},
+	{
+		"name":"&amp;hearts;",
+		"description":"heart"
+	},
+	{
+		"name":"&amp;diams;",
+		"description":"diamond"
+	},
+	{
+		"name":"&amp;loz;",
+		"description":"lozenge"
+	},
+	{
+		"name":"&amp;dagger;",
+		"description":"dagger"
+	},
+	{
+		"name":"&amp;Dagger;",
+		"description":"double dagger"
+	},
+	{
+		"name":"&amp;iexcl;",
+		"description":"inverted exclamation mark"
+	},
+	{
+		"name":"&amp;iquest;",
+		"description":"inverted question mark"
+	},
+	{
+		"name":"&amp;#338;",
+		"description":"latin capital letter OE"
+	},
+	{
+		"name":"&amp;#339;",
+		"description":"latin small letter oe"
+	},
+	{
+		"name":"&amp;#352;",
+		"description":"latin capital letter S with caron"
+	},
+	{
+		"name":"&amp;#353;",
+		"description":"latin small letter s with caron"
+	},
+	{
+		"name":"&amp;#376;",
+		"description":"latin capital letter Y with diaeresis"
+	},
+	{
+		"name":"&amp;#402;",
+		"description":"latin small f with hook - function"
+	},
+	{
+		"name":"&amp;not;",
+		"description":"not sign"
+	},
+	{
+		"name":"&amp;ordf;",
+		"description":"feminine ordinal indicator"
+	},
+	{
+		"name":"&amp;uml;",
+		"description":"spacing diaeresis - umlaut"
+	},
+	{
+		"name":"&amp;macr;",
+		"description":"spacing macron - overline"
+	},
+	{
+		"name":"&amp;acute;",
+		"description":"acute accent - spacing acute"
+	},
+	{
+		"name":"&amp;Agrave;",
+		"description":"latin capital letter A with grave"
+	},
+	{
+		"name":"&amp;Aacute;",
+		"description":"latin capital letter A with acute"
+	},
+	{
+		"name":"&amp;Acirc;",
+		"description":"latin capital letter A with circumflex"
+	},
+	{
+		"name":"&amp;Atilde;",
+		"description":"latin capital letter A with tilde"
+	},
+	{
+		"name":"&amp;Auml;",
+		"description":"latin capital letter A with diaeresis"
+	},
+	{
+		"name":"&amp;Aring;",
+		"description":"latin capital letter A with ring above"
+	},
+	{
+		"name":"&amp;AElig;",
+		"description":"latin capital letter AE"
+	},
+	{
+		"name":"&amp;Ccedil;",
+		"description":"latin capital letter C with cedilla"
+	},
+	{
+		"name":"&amp;Egrave;",
+		"description":"latin capital letter E with grave"
+	},
+	{
+		"name":"&amp;Eacute;",
+		"description":"latin capital letter E with acute"
+	},
+	{
+		"name":"&amp;Ecirc;",
+		"description":"latin capital letter E with circumflex"
+	},
+	{
+		"name":"&amp;Euml;",
+		"description":"latin capital letter E with diaeresis"
+	},
+	{
+		"name":"&amp;Igrave;",
+		"description":"latin capital letter I with grave"
+	},
+	{
+		"name":"&amp;Iacute;",
+		"description":"latin capital letter I with acute"
+	},
+	{
+		"name":"&amp;Icirc;",
+		"description":"latin capital letter I with circumflex"
+	},
+	{
+		"name":"&amp;Iuml;",
+		"description":"latin capital letter I with diaeresis"
+	},
+
+	{
+		"name":"&amp;ETH;",
+		"description":"latin capital letter ETH"
+	},
+	{
+		"name":"&amp;Ntilde;",
+		"description":"latin capital letter N with tilde"
+	},
+	{
+		"name":"&amp;Ograve;",
+		"description":"latin capital letter O with grave"
+	},
+	{
+		"name":"&amp;Oacute;",
+		"description":"latin capital letter O with acute"
+	},
+	{
+		"name":"&amp;Ocirc;",
+		"description":"latin capital letter O with circumflex"
+	},
+	{
+		"name":"&amp;Otilde;",
+		"description":"latin capital letter O with tilde"
+	},
+	{
+		"name":"&amp;Ouml;",
+		"description":"latin capital letter O with diaeresis"
+	},
+	{
+		"name":"&amp;times;",
+		"description":"multiplication sign"
+	},
+	{
+		"name":"&amp;Oslash;",
+		"description":"latin capital letter O with slash"
+	},
+	{
+		"name":"&amp;Ugrave;",
+		"description":"latin capital letter U with grave"
+	},
+	{
+		"name":"&amp;Uacute;",
+		"description":"latin capital letter U with acute"
+	},
+	{
+		"name":"&amp;Ucirc;",
+		"description":"latin capital letter U with circumflex"
+	},
+	{
+		"name":"&amp;Uuml;",
+		"description":"latin capital letter U with diaeresis"
+	},
+	{
+		"name":"&amp;Yacute;",
+		"description":"latin capital letter Y with acute"
+	},
+	{
+		"name":"&amp;THORN;",
+		"description":"latin capital letter THORN"
+	},
+	{
+		"name":"&amp;szlig;",
+		"description":"latin small letter sharp s - ess-zed"
+	},
+
+
+	{
+		"name":"&amp;eth;",
+		"description":"latin capital letter eth"
+	},
+	{
+		"name":"&amp;ntilde;",
+		"description":"latin capital letter n with tilde"
+	},
+	{
+		"name":"&amp;ograve;",
+		"description":"latin capital letter o with grave"
+	},
+	{
+		"name":"&amp;oacute;",
+		"description":"latin capital letter o with acute"
+	},
+	{
+		"name":"&amp;ocirc;",
+		"description":"latin capital letter o with circumflex"
+	},
+	{
+		"name":"&amp;otilde;",
+		"description":"latin capital letter o with tilde"
+	},
+	{
+		"name":"&amp;ouml;",
+		"description":"latin capital letter o with diaeresis"
+	},
+	{
+		"name":"&amp;times;",
+		"description":"multiplication sign"
+	},
+	{
+		"name":"&amp;oslash;",
+		"description":"latin capital letter o with slash"
+	},
+	{
+		"name":"&amp;ugrave;",
+		"description":"latin capital letter u with grave"
+	},
+	{
+		"name":"&amp;uacute;",
+		"description":"latin capital letter u with acute"
+	},
+	{
+		"name":"&amp;ucirc;",
+		"description":"latin capital letter u with circumflex"
+	},
+	{
+		"name":"&amp;uuml;",
+		"description":"latin capital letter u with diaeresis"
+	},
+	{
+		"name":"&amp;yacute;",
+		"description":"latin capital letter y with acute"
+	},
+	{
+		"name":"&amp;thorn;",
+		"description":"latin capital letter thorn"
+	},
+	{
+		"name":"&amp;yuml;",
+		"description":"latin small letter y with diaeresis"
+	},
+
+	{
+		"name":"&amp;agrave;",
+		"description":"latin capital letter a with grave"
+	},
+	{
+		"name":"&amp;aacute;",
+		"description":"latin capital letter a with acute"
+	},
+	{
+		"name":"&amp;acirc;",
+		"description":"latin capital letter a with circumflex"
+	},
+	{
+		"name":"&amp;atilde;",
+		"description":"latin capital letter a with tilde"
+	},
+	{
+		"name":"&amp;auml;",
+		"description":"latin capital letter a with diaeresis"
+	},
+	{
+		"name":"&amp;aring;",
+		"description":"latin capital letter a with ring above"
+	},
+	{
+		"name":"&amp;aelig;",
+		"description":"latin capital letter ae"
+	},
+	{
+		"name":"&amp;ccedil;",
+		"description":"latin capital letter c with cedilla"
+	},
+	{
+		"name":"&amp;egrave;",
+		"description":"latin capital letter e with grave"
+	},
+	{
+		"name":"&amp;eacute;",
+		"description":"latin capital letter e with acute"
+	},
+	{
+		"name":"&amp;ecirc;",
+		"description":"latin capital letter e with circumflex"
+	},
+	{
+		"name":"&amp;euml;",
+		"description":"lat5^}  ôô @^} U^} Bù `^} u^} H0ö Ä^} –^} Bù –^} Ì^} 8ïõ ^} _} H0ö _} %_} H0ö 0_} Q`} 4Bù Q`} {`} h~ô Ä`} —`} îBù ‡`} a} ¨Bù  a} Ra} ¿Bù `a} ©a} ‘Bù ∞a} Ÿa} 8®ö ‡a} b} ’õ b} yb} ÏBù Äb} Ωb} Cù ¿b} Èb} 8®ö b} "c} ¿Bù 0c} vc} (Cù Äc} .e} <Cù .e} Xe} $_ô `e} óe} ƒCù †e} %f} ËCù 0f} bf} $Dù pf} ÿf} 8Dù ‡f} /g} TDù 0g} vg} (Cù Äg} œg} hDù –g} ˘g} 8®ö  h} /h} ƒbô 0h} fh} ÿ@ù ph} Öh} îDù êh} ∆h} ÿ@ù –h} €h}  bô ‡h} Èh} †õö h} ˝h} 4âô  i} i} ¯ù  i} 5i} Äù @i} ai} ÃAù pi} ªi} ®Dù ¿i} j} ºDù j} /j} ¯ù 0j} cj} –Dù pj} ûj} ∏nô †j} dl} ËDù dl} õl} $_ô †l} ·m} lEù m} ¶n} îEù ∞n} Bo} ¥Eù Po} p} îEù p} õq} ‘Eù †q} ër} Fù †r} ‰r} <Fù r} t} `Fù  t} ¯u} êFù  v} ƒw} ËDù ƒw} ˚w} $_ô  x} Ay} lEù Py} óy} –Fù †y} Vz} îEù `z} ßz} –Fù ∞z} B{} ¥Eù P{} |} îEù |} õ}} ‘Eù †}} d} ËDù d} õ} $_ô †} ·Ä} lEù Ä} 7Å} –Fù @Å} OÅ} ‰Fù PÅ} _Å} ‰Fù `Å} oÅ} ‰Fù pÅ} Å} ‰Fù ÄÅ} »Å} x◊ô –Å} Ç} àÈú  Ç} °Ç} †Èú ∞Ç} ‚Ç} ºÈú Ç} 8É} ÃÈú @É} ïÉ} ‰Èú †É} Ñ} ¸Èú Ñ} (Ñ} Íú 0Ñ} ïÑ} \Çö †Ñ} µÑ}  îö ¿Ñ} bÖ} 0Íú pÖ} ˘Ö} LÍú  Ü} dá} dÍú pá} ’á} ‘Íú ‡á} Bà} Íú Pà} ıà} Îú  â} Aâ} (Îú Pâ} xâ} @Îú Äâ} ∂ã} tÅö ∂ã} ˆã} Äô  å} ~å} PÎú ~å} ªå} $_ô ¿å} gç} <oú pç} ”ç} åÎú ‡ç} %é} ®Îú 0é} µé} ¿Îú ¿é} Êé} ‹Îú é} Éè} ÏÎú êè} ê} Ïú  ê} ¢ê} Ïú ∞ê}  ë} $Ïú  ë} „ë} <Ïú ë} “í} `Ïú ‡í} Ûí} ÑÏú  ì} ì} òÏú  ì} ÿì} ¨Ïú ‡ì} òî} ÃÏú †î} ∂î} Ïú ¿î} ÿî} Ìú ‡î} ∑ï} Ìú ¿ï} wñ} <Ìú Äñ} ¢ñ} \Ìú ∞ñ} ñ} 0Çö ñ} ó} lÌú  ó} {ó} |Ìú Äó} Êó} òÌú Êó} ò} Ëñô  ò} Mò} lÌú Pò} ¿ò} »Ìú ¿ò} iô} ‰Ìú pô} õô} Cú †ô} øô} Óú ¿ô} ‚ô} Óú ô} lö} (Óú pö} ©ö} HÓú ∞ö} ¬ö} `Óú –ö} Põ} tÓú Põ} âõ} ÃÉô êõ} Úõ} Çö  ú} ~ú} PÎú ~ú} ªú} $_ô ¿ú} 'ù} ∞Óú 0ù} aù} »Óú pù} ∆ù} ‘Óú –ù} *û} ÏÓú 0û} fû} Ôú pû} xû} @ö Äû} àû} @ö êû} òû} @ö †û} ®û} @ö ∞û} πû} 0wô ¿û} aü} @Çö pü} }ü} 4âô Äü} °} Ôú °} G°}  bô P°} æ°} úÔú ¿°} Ó°} ∏nô °} :¢} ¯Fù @¢} §} Gù §} S§} úëô `§} j§} Ä\ô p§} z§} Ä\ô Ä§} ä§} Ä\ô ê§} ö§} Ä\ô †§} ™§} Ä\ô ∞§} ª§}  bô ¿§} „§} §ô §} ˇ§} 0Åö  •} 
+•} Ä\ô •} •} Ä\ô  •} o•} àÈú p•} Ò•} †Èú  ¶} 2¶} ºÈú @¶} à¶} ÃÈú ê¶} Â¶} ‰Èú ¶} ]ß} ¸Èú `ß} xß} Íú Äß} Âß} \Çö ß} ®}  îö ®} ≤®} 0Íú ¿®} I©} LÍú P©} ¥™} dÍú ¿™} %´} ‘Íú 0´} í´} Íú †´} E¨} Îú P¨} ë¨} (Îú †¨} »¨} @Îú –¨} Ø} tÅö Ø} FØ} Äô PØ} ŒØ} PÎú ŒØ} ∞} $_ô ∞} ∑∞} <oú ¿∞} #±} åÎú 0±} u±} ®Îú Ä±} ≤} ¿Îú ≤} 6≤} ‹Îú @≤} ”≤} ÏÎú ‡≤} b≥} Ïú p≥} Ú≥} Ïú  ¥} p¥} $Ïú p¥} 3µ} <Ïú @µ} "∂} `Ïú 0∂} C∂} ÑÏú P∂} g∂} òÏú p∂} (∑} ¨Ïú 0∑} Ë∑} ÃÏú ∑} ∏} Ïú ∏} (∏} Ìú 0∏} π} Ìú π} «π} <Ìú –π} Úπ} \Ìú  ∫} @∫} 0Çö @∫} m∫} lÌú p∫} À∫} |Ìú –∫} 6ª} òÌú 6ª} fª} Ëñô pª} ùª} lÌú †ª} º} »Ìú º} πº} ‰Ìú ¿º} ﬂº} Óú ‡º} Ω} Óú Ω} åΩ} (Óú êΩ} …Ω} HÓú –Ω} ‚Ω} `Óú Ω} pæ} tÓú pæ} ©æ} ÃÉô ∞æ} ø} Çö  ø} ûø} PÎú ûø} €ø} $_ô ‡ø} G¿} ∞Óú P¿} Å¿} »Óú ê¿} Ê¿} ‘Óú ¿} J¡} ÏÓú P¡} Ü¡} Ôú ê¡} ò¡} @ö †¡} ®¡} @ö ∞¡} ∏¡} @ö ¿¡} »¡} @ö –¡} Ÿ¡} 0wô ‡¡} Å¬} @Çö ê¬} ù¬} 4âô †¬} .ƒ} Ôú .ƒ} gƒ}  bô pƒ} ﬁƒ} úÔú ‡ƒ} ≈} ∏nô ≈} D≈}  ù P≈} ß≈} ù ∞≈} “≈} ÏÄö ‡≈} ∆} xÑö  ∆} å∆} Ñö ê∆} ñ∆} ¿\ô †∆} –∆} ,ù –∆} $»} ‹~ú $»} g»} åô p»} ˚»} –äô ˚»} %…} $_ô 0…} † } ¯æô † } „ } åô  } `Ã} ¯æô `Ã} £Ã} åô ∞Ã}  Œ} ¯æô  Œ} cŒ} åô pŒ} Êœ} hªô Êœ} )–} åô 0–} ¶—} hªô ¶—} È—} åô —} t“} Tåô t“} û“} $_ô †“} $”} Tåô $”} N”} $_ô P”} ‘”} Tåô ‘”} ˛”} $_ô  ‘} ‘} ¿\ô ‘} j‘} ºGù p‘} N’} ËGù P’} p’} Hù p’} oŸ} 4Hù oŸ} ØŸ} òö ØŸ} ÔŸ} òö ÔŸ} H⁄} òö P⁄} n⁄} ºËô p⁄} v⁄} ¿\ô Ä⁄} ’⁄} †Iù ‡⁄} Ê⁄} ¿\ô ⁄} Â€} ºIù €} ˆ€} ¿\ô  ‹} ‹} ¿\ô ‹} í‹} Ã∏ô í‹} ª‹}  bô ¿‹} ∆‹} ¿\ô –‹} %›} †Iù 0›} 6›} ¿\ô @›} ï›} †Iù †›} ¶›} ¿\ô ∞›} ﬁ} †Iù ﬁ} ﬁ} ¿\ô  ﬁ} &ﬁ} ¿\ô 0ﬁ} Öﬁ} †Iù êﬁ} NÁ} ‰Iù NÁ} ÇÁ} $_ô ÇÁ} ºÁ} $_ô ºÁ} (Ë} $_ô 0Ë} NË} ºËô PË} VË} ¿\ô `Ë} iË} †õö pË} xË} @ö ÄË} ÜË} ¿\ô êË} ñË} ¿\ô †Ë} ◊Ë} ¯÷ô ‡Ë} ÊË} ¿\ô Ë} ˆË} ¿\ô  È} È} ¿\ô È} È} ¿\ô  È} IÈ} LLù PÈ} VÈ} ¿\ô `È} fÈ} ¿\ô pÈ} vÈ} ¿\ô ÄÈ} ÜÈ} ¿\ô êÈ} ∞È} Ãçö ∞È} ∂È} ¿\ô ¿È} ˜È} ¯÷ô  Í} Í} ¿\ô Í} uÍ} lLù ÄÍ} ëÍ} ,\ô †Í} ™Í} Ä\ô ∞Í} ¡Í} ,\ô –Í} eÎ} àLù pÎ} ÊÏ} hªô 
