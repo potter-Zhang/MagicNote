@@ -8,5 +8,4 @@ public class MagicNoteApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MagicNoteApplication.class, args);
 	}
-
 }
