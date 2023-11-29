@@ -30,12 +30,10 @@
     historyNotes.value = historyNotes.value.filter((item, index, self) => {
       // 裁切时间
       item.timestamp = item.timestamp.split("T")[0];
-      // 先根据笔记名称去重(主要是排除对同一笔记的增删改日志)
-      const nameIndex = self.findIndex((t) => t.notename === item.notename)
       // 日志中可能会出现noteid相同但是notename不同(重命名的笔记)，因此还需要根据noteid来进行一次去重
       const idIndex = self.findIndex((t) => t.noteid === item.noteid)
       // 去除被删除的日志、同时按照笔记名字和id来进行去重
-      return !deletedNotes.includes(item.noteid) && index === nameIndex && index === idIndex;
+      return !deletedNotes.includes(item.noteid) && index === idIndex;
     });
   }
 
@@ -62,6 +60,8 @@
           const data = {"name": value, "userid": currentUser.value.id};
           await addNotebookAPI(data)
               .then(() => {
+                // 更新笔记本
+                loadNotebooks();
                 // 发出事件通知Notebook.vue组件更新要展示的笔记本
                 globalEventBus.emit("addNotebook");
                 ElMessage({
