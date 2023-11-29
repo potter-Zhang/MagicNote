@@ -1,8 +1,173 @@
 <script setup>
-  import floatBall from "@/components/FloatBall.vue"
+import floatBall from "@/components/FloatBall.vue"
+import '@/static/zepto/dist/zepto.js'
+//import { editormd } from '@/static/editor.md/editormd' 
+import { onMounted, ref, computed, watch } from 'vue'
+import bubble from '@/components/AIBubble.vue'
+import { currentNote  } from "../global"
+
+const editor = ref(null)
+
+const flip = ref(false)
+const showBubble = ref(false)
+
+const selectedText = ref('')
+
+const x = ref(111)
+
+const y = ref(Math.round(window.innerWidth / 2))
+
+const width = ref(0)
+
+const height = ref(0)
+
+const func = ref('')
+
+function reset() {
+  showBubble.value = false
+}
+
+function setBubble(AIFunction, select) {
+  const editorPanel = document.getElementById('editor');
+  const rect = editorPanel.getBoundingClientRect()
+  x.value = Math.round(rect.top + rect.height / 2)
+  y.value = Math.round(rect.left + rect.width / 2)
+  func.value = AIFunction
+  width.value = Math.round(rect.width / 2)
+  height.value = Math.round(rect.height / 2)
+  selectedText.value = select
+  showBubble.value = true
+}
+
+onMounted(() => {
+    console.log('init')
+    const editormd = require('@/static/editor.md/editormd')
+   
+    editor.value = editormd("editor", {
+      
+      imageUpload : true,
+      imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+      imageUploadURL : "/upload/photo", //图片上传路径
+      width  : "100%",
+      height : "100%",
+      path   : "./editor.md/lib/",
+      toolbarIcons : function() {
+        return ["undo", "redo", "|", "abstract", "expand", "segment", "generateTable", "generateFlowChart", "|",
+            "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", 
+            "h1", "h2", "h3", "h4", "h5", "h6", "|", 
+            "list-ul", "list-ol", "hr", "|",
+            "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
+            "watch", "preview", "fullscreen", "clear", "search"]
+      },
+      toolbarIconsClass : {
+            abstract : "far fa-file",  // 指定一个FontAawsome的图标类
+            expand : "fal fa-edit",
+            segment : "fal fa-align-justify",
+            generateTable : "fal fa-table",
+            generateFlowChart : "fa fa-connectdevelop"
+      },
+      onload : function() {
+                console.log('onload', this);
+                mermaid.init();
+                initGraph();
+            },
+      onchange : function() {
+          initGraph();
+          mermaid.init();
+      },
+      toolbarIconTexts : {
+          abstract : "摘要",  // 如果没有图标，则可以这样直接插入内容，可以是字符串或HTML标签
+          expand : "扩写",
+          segment : "分段",
+          generateTable : "表格生成",
+          generateFlowChart : "思维导图生成"
+      },
+      extensions: ["mermaid"],
+      mermaid: {
+          startOnLoad: true,
+          theme: "default",
+          htmlLabels: false
+      },
+      toolbarHandlers : {
+            /**
+             * @param {Object}      cm         CodeMirror对象
+             * @param {Object}      icon       图标按钮jQuery元素对象
+             * @param {Object}      cursor     CodeMirror的光标对象，可获取光标所在行和位置
+             * @param {String}      selection  编辑器选中的文本
+             */
+            abstract : function(cm, icon, cursor, selection) {
+                if(selection === "") {
+                    cm.setCursor(cursor.line, cursor.ch + 1);
+                } else {
+                    console.log(selection)
+                    setBubble('abstract', selection)
+                }
+            },
+            expand: function(cm, icon, cursor, selection) {
+              if(selection === "") {
+                  cm.setCursor(cursor.line, cursor.ch + 1);
+              } else {
+                  setBubble('expand', selection)
+              }
+            },
+            segment: function(cm, icon, cursor, selection) {
+              if(selection === "") {
+                  cm.setCursor(cursor.line, cursor.ch + 1);
+              } else {
+                  setBubble('segment', selection)
+              }
+            },
+            generateTable: function(cm, icon, cursor, selection) {
+              if(selection === "") {
+                  cm.setCursor(cursor.line, cursor.ch + 1);
+              } else {
+                  setBubble('generateTable', selection)
+              }
+            },
+            generateFlowChart: function(cm, icon, cursor, selection) {
+              if(selection === "") {
+                  cm.setCursor(cursor.line, cursor.ch + 1);
+              } else {
+                  setBubble('generateFlowChart', selection)
+              }
+            },
+
+          },
+      emoji: true
+      });
+  
+	});
+
+const mermaidHtml = (str) => {
+      return `<pre><code class="language-mermaid"><div class="mermaid">${str}</div></code></pre>`
+}
+const initGraph = () => {
+    $('.editormd-preview-container').find('pre').find('ol').find('.L0').find('.lang-mermaid').each(function() {
+        var buffer = new Array();
+        $(this).parent().parent().find('li').each(function() {
+            $(this).find('span').each(function() {
+                buffer.push($(this).text());
+            })
+            buffer.push("\n");
+        })
+
+        var preDom = $(this).parent().parent().parent();
+        var contentBuffer = buffer.join("");
+        var content = mermaidHtml(contentBuffer);
+        console.log(content);
+        $(content).insertAfter(preDom);
+        $(preDom).remove();
+    })
+}
+
 </script>
 
 <template>
+  <component :is="'script'" src="./editor.md/jquery-1.12.0/package/dist/jquery.min.js"></component>
+<bubble @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
+<link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
+<div id="editor">
+</div>
   <float-ball/>
 </template>
 

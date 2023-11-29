@@ -13,3 +13,8 @@ export const currentUser = ref({
     token: "",
     profile: ""
 });
+
+export const currentNote = ref({
+    noteId: -1,
+    notebookId: -1
+})
