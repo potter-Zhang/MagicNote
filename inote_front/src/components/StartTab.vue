@@ -4,7 +4,7 @@
   import {addNotebookAPI, getNotebooksAPI} from "@/api/notebook";
   import {addNoteAPI} from "@/api/note";
   import {logAPI} from "@/api/log";
-  import {currentUser} from "@/global";
+  import {currentUser, currentNote} from "@/global";
 
   import {ref, onBeforeMount} from 'vue'
   import {ElMessage, ElMessageBox} from "element-plus";
