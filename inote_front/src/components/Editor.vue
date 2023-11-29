@@ -1,9 +1,10 @@
 <script setup>
-  import floatBall from "@/components/FloatBall.vue"
+import floatBall from "@/components/FloatBall.vue"
 import '@/static/zepto/dist/zepto.js'
 //import { editormd } from '@/static/editor.md/editormd' 
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import bubble from '@/components/AIBubble.vue'
+import { currentNote  } from "../global"
 
 const editor = ref(null)
 
@@ -21,7 +22,6 @@ const width = ref(0)
 const height = ref(0)
 
 const func = ref('')
-
 
 function reset() {
   showBubble.value = false

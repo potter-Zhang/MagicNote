@@ -4,8 +4,8 @@ export const getAllNotesAPI = (notebookId) => {
     return request.get("/note/getByNotebook/" + notebookId);
 }
 
-export const getNoteAPI = (data) => {
-    return request.get("/note/get", data);
+export const getNoteAPI = (noteId) => {
+    return request.get("/note/get1/" + noteId);
 }
 
 export const addNoteAPI = (data) => {

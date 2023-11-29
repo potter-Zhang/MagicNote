@@ -11,12 +11,19 @@
   import plus from "@icon-park/vue-next/lib/icons/Plus"
 
   import {ElMessageBox, ElMessage} from "element-plus";
-  import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI} from "@/api/note"
+  import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI, getNoteAPI} from "@/api/note"
   import {getNotebooksAPI, addNotebookAPI, updateNotebookAPI, delNotebookByIdAPI} from "@/api/notebook"
   import {currentUser} from "@/global"
   import {globalEventBus} from "@/util/eventBus"
+import { currentNote } from '../global';
 
   const notebooks = ref([]);
+
+  function setCurrentNote(noteId) {
+    console.log('set ', noteId, currentNotebook.value)
+    currentNote.value.noteId = noteId
+    currentNote.value.notebookId = currentNotebook.value
+  }
 
   const getAllNotebooks = async () => {
     notebooks.value.splice(0, notebooks.value.length);
@@ -215,7 +222,7 @@
         </div>
       </div>
       <div v-else-if="currentMode==='note' && notes.length > 0" class="display-item" v-for="note in notes">
-        <div class="display-item-icon-and-text">
+        <div class="display-item-icon-and-text" @click="setCurrentNote(note.id)">
          <note-icon class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
          <div style="margin-left: 5%; font-size: 0.8rem; font-weight: bold">{{note.name}}</div>
         </div>
