@@ -9,7 +9,7 @@
   import {onBeforeMount, ref} from 'vue';
   import {ElMessageBox} from "element-plus";
   import {logAPI} from "@/api/log";
-  import {updateUsernameAPI, updateProfileAPI} from "@/api/user";
+  import {updateUsernameAPI, updateProfileAPI, updateAvatarAPI} from "@/api/user";
   import {currentUser} from "@/global";
 
   const logs = ref([]);
@@ -57,8 +57,16 @@
     profile: currentUser.value.profile
   });
 
+  // 用户头像
+  const photo = ref();
+
+  const changeFile = (file) =>{
+    photo.value = file;
+  }
+
   const cancelSetting = () => {
     settingDialogVisible.value = false;
+    photo.value = null;
     newUserInfo.value.name = currentUser.value.name;
     newUserInfo.value.profile = currentUser.value.profile;
   }
@@ -79,6 +87,9 @@
     }
     await updateUsernameAPI(data);
     await updateProfileAPI(data);
+    if (photo.value !== null) {
+      await updateAvatarAPI(photo.value.raw, currentUser.value.id);
+    }
     currentUser.value.name = newUserInfo.value.name;
     currentUser.value.profile = newUserInfo.value.profile;
   }
@@ -145,7 +156,7 @@
                      :show-close="false" style="border-radius: 10px">
             <div style="display: flex; align-items: center">
               <me theme="outline" size="96" fill="#333"/>
-              <el-upload action="localhost:8080/upload" style="margin-left: 10%">
+              <el-upload :on-change="changeFile" :auto-upload="false" style="margin-left: 10%">
                 <el-button type="primary">上传头像</el-button>
               </el-upload>
             </div>

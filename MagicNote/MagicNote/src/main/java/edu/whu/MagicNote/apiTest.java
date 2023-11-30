@@ -15,7 +15,6 @@ import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
 import edu.whu.MagicNote.service.impl.OcrService;
-import edu.whu.MagicNote.service.impl.QAndAService;
 import io.reactivex.Flowable;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -263,7 +262,7 @@ public class apiTest {
             //aiFunctionService.expandNote(s6);
             //aiFunctionService.generateNote(s7, 2000);
             //aiFunctionService.segmentNote(s5);
-            //aiFunctionService.generateTable(s2);
+            aiFunctionService.generateTable(s2);
             //aiFunctionService.generateFlowChart(s2);
             //callWithMessage();
             //qwenQuickStart();
