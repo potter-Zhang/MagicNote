@@ -2,10 +2,17 @@ package edu.whu.MagicNote.controller;
 
 
 import edu.whu.MagicNote.domain.User;
+import edu.whu.MagicNote.exception.TodoException;
 import edu.whu.MagicNote.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -76,6 +83,25 @@ public class UserController {
         else
             //修改失败，不存在对应id的用户
             return ResponseEntity.noContent().build();
+    }
+
+    // 只更新用户头像的接口
+    @PutMapping("/updatePhoto")
+    public ResponseEntity<Map<String,String>> updateUserPhoto(int id, MultipartFile photo) throws SQLException, IOException {
+        try {
+            if (userService.updateUserPhoto(id, photo))
+                return ResponseEntity.ok().build();
+            else
+                //修改失败，不存在对应id的用户
+                return ResponseEntity.noContent().build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            Map<String,String> result = new HashMap<>();
+            result.put("code", String.valueOf(TodoException.UPDATE_ERROR));
+            result.put("message","图片上传数据库失败");
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
     @DeleteMapping("/delete/{id}")

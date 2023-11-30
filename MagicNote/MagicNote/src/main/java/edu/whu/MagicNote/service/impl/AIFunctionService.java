@@ -112,7 +112,7 @@ public class AIFunctionService {
     public String generateFlowChart(String note) throws NoApiKeyException, InputRequiredException {
         Constants.apiKey = "sk-a513d206b66948ad8b27356775c8c829";
 
-        String command ="请从我的笔记中提取出关键词，并通过合理的逻辑关系以makedowm格式的流程图表示。\n" +
+        String command ="请从我的笔记中提取出关键词，并通过合理的逻辑关系以makedowm格式的mermaid流程图表示。\n" +
                 "要求：1、类似的结点要多进行分支的流程图表示"+
                 "2、使用Markdown语法创建流程图"+
                 "给出的笔记是：\n";
