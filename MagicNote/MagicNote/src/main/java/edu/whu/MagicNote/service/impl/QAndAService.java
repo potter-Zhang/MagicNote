@@ -22,6 +22,7 @@ public class QAndAService {
 
     private MessageManager msgManager = new MessageManager(1000000);
 
+    // 旧版的知识问答方法，使用通义千问
     public void init(String note) throws NoApiKeyException, InputRequiredException {
 
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
@@ -64,7 +65,8 @@ public class QAndAService {
         return result.getOutput().getChoices().get(0).getMessage().getContent();
     }
 
-    public void init2(String note) throws IOException {
+    // 新版的知识问答方法，调用了python脚本
+    public void initNew(String note) throws IOException {
         String path = System.getProperty("user.dir") + "/MagicNote/src/main/resources/test.txt";
         File newFile = new File(path);
         FileWriter writer = new FileWriter(newFile);
