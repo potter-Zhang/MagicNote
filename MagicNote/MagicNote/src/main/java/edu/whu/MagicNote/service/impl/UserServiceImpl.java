@@ -36,6 +36,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Autowired
     LogDao logDao;
+    @Autowired
+    UserDao userDao;
 
     @Override
     public User getUserById(int id){

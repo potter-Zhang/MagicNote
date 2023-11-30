@@ -23,6 +23,10 @@ public interface INoteService extends IService<Note> {
     public boolean removeNote(int id);
     //根据name删除笔记
     public boolean removeNote(String name);
+
+    //更新笔记
+    boolean updateNoteName(Note myNote) throws TodoException;
+
     //修改笔记
     public boolean updateNote(Note myNote) throws TodoException;
     //根据id查询笔记
