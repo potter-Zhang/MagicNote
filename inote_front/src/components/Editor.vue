@@ -1,12 +1,20 @@
 <script setup>
 import floatBall from "@/components/FloatBall.vue"
 import '@/static/zepto/distrib/zepto.js'
-//import { editormd } from '@/static/editor.md/editormd' 
+import '@/static/editor.md/editormd.min.js' 
 import { onMounted, ref, computed, watch } from 'vue'
 import bubble from '@/components/AIBubble.vue'
 import { currentNote  } from "../global"
+import { getNoteAPI, updateNoteAPI } from '@/api/note.js'
+import { notificationEmits } from "element-plus"
 
-const editor = ref(null)
+
+const noteInEditor = ref({
+    notebookId: -1,
+    noteId: -1
+})
+
+var editor = null
 
 const flip = ref(false)
 const showBubble = ref(false)
@@ -39,38 +47,69 @@ function setBubble(AIFunction, select) {
   showBubble.value = true
 }
 
+watch(() => currentNote.value.noteId, (note, prevNote) => {
+    console.log(note)
+    if (note === -1)
+        return
+    if (noteInEditor.value.noteId !== -1) {
+        noteInEditor.value.content = editor.getMarkdown()
+        updateNoteAPI(noteInEditor.value).then().catch((err) => console.log(err))
+    }
+    getNoteAPI(note)
+    .then((note) => {
+        if (editor) {
+            editor.setMarkdown(note.content)
+            noteInEditor.value = note
+        }
+    })
+    .catch((err) => console.log(err))
+},
+{
+    immediate: true
+})
+
 onMounted(() => {
     console.log('init')
     const editormd = require('@/static/editor.md/editormd')
    
-    editor.value = editormd("editor", {
+    editor = editormd("editor", {
       
       imageUpload : true,
       imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
       imageUploadURL : "/upload/photo", //图片上传路径
       width  : "100%",
-      height : "100%",
+      height : "700px",
       path   : "./editor.md/lib/",
       toolbarIcons : function() {
-        return ["undo", "redo", "|", "abstract", "expand", "segment", "generateTable", "generateFlowChart", "|",
+        return ["save", "|", "undo", "redo", "|", "abstract", "expand", "segment", "generateTable", "generateFlowChart", "|",
             "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", 
             "h1", "h2", "h3", "h4", "h5", "h6", "|", 
             "list-ul", "list-ol", "hr", "|",
             "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
             "watch", "preview", "fullscreen", "clear", "search"]
       },
+      
       toolbarIconsClass : {
             abstract : "far fa-file",  // 指定一个FontAawsome的图标类
             expand : "fal fa-edit",
             segment : "fal fa-align-justify",
             generateTable : "fal fa-table",
-            generateFlowChart : "fa fa-connectdevelop"
+            generateFlowChart : "fa fa-connectdevelop",
+            save : "fa-save"
       },
       onload : function() {
                 console.log('onload', this);
                 mermaid.init();
                 initGraph();
-            },
+                if (currentNote.value.noteId !== -1) {
+                    getNoteAPI(currentNote.value.noteId)
+                    .then((note) => { 
+                        this.setMarkdown(note.content.toString())
+                        noteInEditor.value = note
+                    })
+                    .catch((err) => console.log(err))
+                }
+    },
       onchange : function() {
           initGraph();
           mermaid.init();
@@ -80,7 +119,8 @@ onMounted(() => {
           expand : "扩写",
           segment : "分段",
           generateTable : "表格生成",
-          generateFlowChart : "思维导图生成"
+          generateFlowChart : "思维导图生成",
+          save : "保存"
       },
       extensions: ["mermaid"],
       mermaid: {
@@ -131,6 +171,15 @@ onMounted(() => {
                   setBubble('generateFlowChart', selection)
               }
             },
+            save: function(cm, icon, cursor, selection) {
+                
+                var note = noteInEditor.value
+                console.log(note)
+                note.content = this.getMarkdown()
+                
+                updateNoteAPI(note).then().catch((err) => console.log(err))
+            }
+
 
           },
       emoji: true
@@ -158,6 +207,10 @@ const initGraph = () => {
         $(content).insertAfter(preDom);
         $(preDom).remove();
     })
+}
+
+function initMarkdown() {
+    
 }
 
 </script>

@@ -122,8 +122,7 @@
           </div>
 
           <div id="workspace">
-            <!-- 开始页面、编辑器页面、帮助页面、搜索结果页面 -->
-            <start-tab v-if="currentTab==='start'"/>
+            <start-tab @jumpToNote="changeTab('editor')" v-if="currentTab==='start'"/>
             <editor v-else-if="currentTab==='editor'"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
             <search-result-view v-else-if="currentTab==='search'" :notes="searchResult"/>

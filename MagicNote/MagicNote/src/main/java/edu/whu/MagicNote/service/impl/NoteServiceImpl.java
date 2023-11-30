@@ -54,7 +54,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements INote
     }
     //更新笔记
     @Override
-    public boolean updateNote(Note myNote) throws TodoException {
+    public boolean updateNoteName(Note myNote) throws TodoException {
         List<Note> notes=this.getAllNotesByUserIdAndName(myNote.getUserid(),myNote.getName());
         if(notes!=null){
             for(Note note:notes){
@@ -63,6 +63,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteDao, Note> implements INote
                 }
             }
         }
+        return this.updateById(myNote);
+    }
+    public boolean updateNote(Note myNote) throws TodoException {
         return this.updateById(myNote);
     }
     //根据id查询笔记
