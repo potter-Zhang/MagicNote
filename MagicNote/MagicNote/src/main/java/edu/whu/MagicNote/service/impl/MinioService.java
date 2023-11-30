@@ -68,6 +68,7 @@ public class MinioService {
         InputStream inputStream = file.getInputStream();
         PutObjectArgs args = PutObjectArgs.builder().bucket(bucketName).object(fileName)
                 .stream(inputStream, inputStream.available(), -1).contentType(file.getContentType()).build();
+
         client.putObject(args);
         JSONObject res = new JSONObject();
         res.put("Endpoint", minioProp.getEndpoint());
@@ -76,6 +77,7 @@ public class MinioService {
         inputStream.close();
         return res;
     }
+
     //下载文件
     public InputStream downloadFile(String bucketName, String fileName) throws TodoException {
         try {
