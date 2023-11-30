@@ -39,18 +39,19 @@ public class UploadService {
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
         MessageManager msgManager = new MessageManager();
         Message systemMsg = Message.builder().role(Role.SYSTEM.getValue()).content("You are a helpful assistant.").build();
-        String content = "接下来我会给你一段文字，这段文字中可能会有错别字、错误字词等等，请你将它们更正为正确字词。最终只返回修正过后的文字。请尽量快速返回结果。给出的这段文字为：" + words;
+        String content = "接下来我会给你一段文字，这段文字中可能会有错别字、错误字词等等，请你将它们更正为正确字词。最终请只返回改后的结果，保持原文中的换行，不要去除原文中的换行符。给出的这段文字为：" + words;
         Message userMsg = Message.builder().role(Role.USER.getValue()).content(content).build();
         msgManager.add(systemMsg);
         msgManager.add(userMsg);
         QwenParam param =
-                QwenParam.builder().model("qwen-max").messages(msgManager.get())
+                QwenParam.builder().model("qwen-plus").messages(msgManager.get())
                         .resultFormat(QwenParam.ResultFormat.MESSAGE)
                         .topP(0.8)
                         .enableSearch(true)
                         .build();
         GenerationResult response = gen.call(param);
         System.out.println(response.getOutput().getChoices().get(0).getMessage().getContent());
+        words = response.getOutput().getChoices().get(0).getMessage().getContent();
 
         // 上传图片到服务器
         JSONObject result = minioService.uploadFile(file, "photo");
