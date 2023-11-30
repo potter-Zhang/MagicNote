@@ -101,7 +101,15 @@ onMounted(() => {
                 console.log('onload', this);
                 mermaid.init();
                 initGraph();
-            },
+                if (currentNote.value.noteId !== -1) {
+                    getNoteAPI(currentNote.value.noteId)
+                    .then((note) => { 
+                        this.setMarkdown(note.content.toString())
+                        noteInEditor.value = note
+                    })
+                    .catch((err) => console.log(err))
+                }
+    },
       onchange : function() {
           initGraph();
           mermaid.init();
@@ -199,6 +207,10 @@ const initGraph = () => {
         $(content).insertAfter(preDom);
         $(preDom).remove();
     })
+}
+
+function initMarkdown() {
+    
 }
 
 </script>

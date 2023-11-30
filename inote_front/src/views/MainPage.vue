@@ -98,7 +98,7 @@
           </div>
 
           <div id="workspace">
-            <start-tab v-if="currentTab==='start'"/>
+            <start-tab @jumpToNote="changeTab('editor')" v-if="currentTab==='start'"/>
             <editor v-else-if="currentTab==='editor'"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
           </div>
