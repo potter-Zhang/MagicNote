@@ -15,9 +15,11 @@ import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
 import edu.whu.MagicNote.service.impl.OcrService;
+import edu.whu.MagicNote.service.impl.QAndAService;
 import io.reactivex.Flowable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 
@@ -262,23 +264,24 @@ public class apiTest {
             //aiFunctionService.expandNote(s6);
             //aiFunctionService.generateNote(s7, 2000);
             //aiFunctionService.segmentNote(s5);
-            aiFunctionService.generateTable(s2);
+            //aiFunctionService.generateTable(s2);
             //aiFunctionService.generateFlowChart(s2);
             //callWithMessage();
             //qwenQuickStart();
-            //NotOneConversationsTest2("国足这次的对手是谁");
+            QAndAService qAndAService = new QAndAService();
+            qAndAService.init2(s2);
+            qAndAService.answerNew("米莱的政策是什么");
             //NotOneConversationsTest2("韩国这次的核心人物是谁");
             //NotOneConversationsTest2("韩国的教练是谁");
             //NotOneConversationsTest2("中国队的教练是谁");
             //NotOneConversationsTest2("重新回答我的上一个问题");
             //Generation gen = new Generation();
-            //QAndAService qAndAService = new QAndAService();
             //qAndAService.init(s2);
             //qAndAService.answer("阿根廷总统选举的重要人物是谁");
             //qAndAService.answer("阿根廷总统选举的关键人物是谁");
             //qAndAService.answer("阿根廷的新总统是谁");
 
-        } catch (ApiException e) {
+        } catch (ApiException | IOException e) {
             System.out.println(String.format("Exception %s", e.getMessage()));
         }
         System.exit(0);
