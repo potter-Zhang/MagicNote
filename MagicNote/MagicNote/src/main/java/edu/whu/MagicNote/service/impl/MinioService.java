@@ -73,6 +73,7 @@ public class MinioService {
         res.put("Endpoint", minioProp.getEndpoint());
         res.put("bucketName", bucketName);
         res.put("fileName", fileName);
+        inputStream.close();
         return res;
     }
     //下载文件
