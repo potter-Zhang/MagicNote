@@ -87,9 +87,9 @@ public class UserController {
 
     // 只更新用户头像的接口
     @PutMapping("/updatePhoto")
-    public ResponseEntity<Map<String,String>> updateUserPhoto(int id, MultipartFile file) throws SQLException, IOException {
+    public ResponseEntity<Map<String,String>> updateUserPhoto(int id, MultipartFile photo) throws SQLException, IOException {
         try {
-            if (userService.updateUserPhoto(id,file))
+            if (userService.updateUserPhoto(id, photo))
                 return ResponseEntity.ok().build();
             else
                 //修改失败，不存在对应id的用户
