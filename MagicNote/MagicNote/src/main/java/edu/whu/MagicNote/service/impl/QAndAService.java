@@ -12,6 +12,9 @@ import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
+import java.util.UUID;
+
 @Service
 public class QAndAService {
 
@@ -59,5 +62,40 @@ public class QAndAService {
         System.out.println(result.getOutput().getChoices().get(0).getMessage().getContent());
         //System.out.println(JsonUtils.toJson(result));
         return result.getOutput().getChoices().get(0).getMessage().getContent();
+    }
+
+    public void init2(String note) throws IOException {
+        String path = System.getProperty("user.dir") + "/MagicNote/src/main/resources/test.txt";
+        File newFile = new File(path);
+        FileWriter writer = new FileWriter(newFile);
+        writer.write(note);
+        writer.close();
+    }
+
+    public String answerNew(String question) throws NoApiKeyException, ApiException, InputRequiredException, IOException {
+        String pyPath = "D:\\在武大\\大三上\\JavaEE\\大作业\\java-ee-proj\\MagicNote\\MagicNote\\src\\main\\resources\\QA.py";
+
+        // 传入python脚本的参数为question
+        String[] args1 = new String[]{"python", pyPath, question};
+        String actionStr;
+        try {
+            // 执行Python文件，并传入参数
+            Process process = Runtime.getRuntime().exec(args1);
+            // 获取Python输出字符串作为输入流被Java读取
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            actionStr = in.readLine();
+            if (actionStr != null) {
+                System.out.println(actionStr);
+            }
+
+            in.close();
+            process.waitFor();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return actionStr;
     }
 }
