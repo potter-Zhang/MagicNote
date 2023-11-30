@@ -4,17 +4,34 @@
   import transferData from "@icon-park/vue-next/lib/icons/TransferData";
   import help from "@icon-park/vue-next/lib/icons/Help";
   import receive from "@icon-park/vue-next/lib/icons/Receive";
+  import search from "@icon-park/vue-next/lib/icons/Search"
   import router from "@/router/index"
 
   import {currentUser} from "@/global"
+  import {searchAPI} from "@/api/search"
   import helpInfo from "../components/HelpInfo.vue"
   import editor from "../components/Editor.vue"
   import notebook from "../components/Notebook.vue"
-  import floatBall from "../components/FloatBall.vue"
   import startTab from "../components/StartTab.vue"
-  import {ref, onMounted} from 'vue';
+  import searchResultView from "@/components/SearchResult.vue"
+  import {ref} from 'vue';
 
   const currentTab = ref("start"); // 当前展示在workspace的组件
+  const searchKeyword = ref("");  // 搜索框文本
+  const searchResult = ref([]); // 搜索结果
+
+  const searchNote = async () => {
+    searchResult.value.splice(0, searchResult.value.length);
+    const data = {
+      "userid": currentUser.value.id,
+      "words": searchKeyword.value
+    }
+    const response = await searchAPI(data);
+    if (response !== "") {
+      searchResult.value.push.apply(searchResult.value, response);
+    }
+    changeTab("search");
+  }
 
   const changeTab = (tab: string) => {
     currentTab.value = tab;
@@ -51,11 +68,17 @@
 
 <template>
     <el-container style="height: 100vh">
+      <!-- 顶部栏 -->
       <el-header id="header">
         <div id="icon-and-name" style="display: flex; align-items: center">
           <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
           <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
         </div>
+        <el-input id="search-box" v-model="searchKeyword" @keyup.enter="searchNote">
+          <template #prepend>
+            <search theme="outline" size="20" fill="#000000"/>
+          </template>
+        </el-input>
         <div class="user-zone" v-if="currentUser.id == -1">
           <user theme="outline" size="24" fill="#333" style="margin-right: 10%"/>
           <router-link to="/" class="user-zone-font">登录</router-link>
@@ -70,6 +93,7 @@
       </el-header>
 
       <el-container>
+        <!-- 侧边栏 -->
         <el-menu id="side-bar" :collapse="isCollapse" active-text-color="#a5d63f">
           <div>
             <el-menu-item index="1" @click="isCollapse=!isCollapse">
@@ -84,7 +108,6 @@
               <receive class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">我的笔记本</span></template>
             </el-menu-item>
-
           </div>
           <el-menu-item index="4" @click="changeTab('helpInfo')">
             <help class="icon" theme="outline" size="24" fill="#333"/>
@@ -93,14 +116,17 @@
         </el-menu>
 
         <el-main style="padding: 0; display: flex">
+          <!-- 笔记本弹窗 -->
           <div id="notebook">
             <notebook style="height: 100%"/>
           </div>
 
           <div id="workspace">
+            <!-- 开始页面、编辑器页面、帮助页面、搜索结果页面 -->
             <start-tab v-if="currentTab==='start'"/>
             <editor v-else-if="currentTab==='editor'"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
+            <search-result-view v-else-if="currentTab==='search'" :notes="searchResult"/>
           </div>
         </el-main>
       </el-container>
@@ -118,6 +144,10 @@
     width: 100%;
     height: var(--header-height);
     --el-header-padding: 0;
+  }
+
+  .el-input {
+    width: 30%;
   }
 
   .user-zone {
