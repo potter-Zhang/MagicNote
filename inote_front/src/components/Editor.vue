@@ -5,6 +5,10 @@ import '@/static/zepto/distrib/zepto.js'
 import { onMounted, ref, computed, watch } from 'vue'
 import bubble from '@/components/AIBubble.vue'
 import { currentNote  } from "../global"
+import { getNoteAPI, updateNoteAPI } from '@/api/note.js'
+import { notificationEmits } from "element-plus"
+
+const noteInEditor = ref({})
 
 const editor = ref(null)
 
@@ -39,6 +43,22 @@ function setBubble(AIFunction, select) {
   showBubble.value = true
 }
 
+watch(() => currentNote.value.noteId, (note, prevNote) => {
+    console.log(note)
+    if (note === -1)
+        return
+    getNoteAPI(note)
+    .then((note) => {
+        
+        editor.value.setMarkdown(note.content)
+        noteInEditor.value = note
+    })
+    .catch((err) => console.log(err))
+},
+{
+    immediate: true
+})
+
 onMounted(() => {
     console.log('init')
     const editormd = require('@/static/editor.md/editormd')
@@ -52,7 +72,7 @@ onMounted(() => {
       height : "100%",
       path   : "./editor.md/lib/",
       toolbarIcons : function() {
-        return ["undo", "redo", "|", "abstract", "expand", "segment", "generateTable", "generateFlowChart", "|",
+        return ["save", "|", "undo", "redo", "|", "abstract", "expand", "segment", "generateTable", "generateFlowChart", "|",
             "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", 
             "h1", "h2", "h3", "h4", "h5", "h6", "|", 
             "list-ul", "list-ol", "hr", "|",
@@ -64,7 +84,8 @@ onMounted(() => {
             expand : "fal fa-edit",
             segment : "fal fa-align-justify",
             generateTable : "fal fa-table",
-            generateFlowChart : "fa fa-connectdevelop"
+            generateFlowChart : "fa fa-connectdevelop",
+            save : "fa-save"
       },
       onload : function() {
                 console.log('onload', this);
@@ -80,7 +101,8 @@ onMounted(() => {
           expand : "扩写",
           segment : "分段",
           generateTable : "表格生成",
-          generateFlowChart : "思维导图生成"
+          generateFlowChart : "思维导图生成",
+          save : "保存"
       },
       extensions: ["mermaid"],
       mermaid: {
@@ -131,6 +153,14 @@ onMounted(() => {
                   setBubble('generateFlowChart', selection)
               }
             },
+            save: function(cm, icon, cursor, selection) {
+                
+                var note = noteInEditor.value
+                console.log(note)
+                note.content = this.getMarkdown()
+                
+                updateNoteAPI(note)
+            }
 
           },
       emoji: true
