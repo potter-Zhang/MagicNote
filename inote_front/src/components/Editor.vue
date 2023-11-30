@@ -1,6 +1,6 @@
 <script setup>
 import floatBall from "@/components/FloatBall.vue"
-import '@/static/zepto/dist/zepto.js'
+import '@/static/zepto/distrib/zepto.js'
 //import { editormd } from '@/static/editor.md/editormd' 
 import { onMounted, ref, computed, watch } from 'vue'
 import bubble from '@/components/AIBubble.vue'
@@ -163,7 +163,7 @@ const initGraph = () => {
 </script>
 
 <template>
-  <component :is="'script'" src="./editor.md/jquery-1.12.0/package/dist/jquery.min.js"></component>
+  <component :is="'script'" src="./editor.md/jquery-1.12.0/package/distrib/jquery.min.js"></component>
 <bubble @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
 <link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
 <div id="editor">
