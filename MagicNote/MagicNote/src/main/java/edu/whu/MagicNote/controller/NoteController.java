@@ -103,6 +103,20 @@ public class NoteController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    //更新笔记名
+    @PutMapping("/updateName")
+    public ResponseEntity<String> updateNoteName(@RequestBody Note myNote){
+        try {
+            Log myLog = generateLog(myNote, "update");
+            if (noteService.updateNoteName(myNote)) {
+                logService.addLog(myLog);
+                return ResponseEntity.ok().build();
+            } else return ResponseEntity.notFound().build();
+        } catch (TodoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     //根据id查询笔记
     @GetMapping("/get1/{id}")
     public ResponseEntity<Note> getNoteById(@PathVariable int id){
