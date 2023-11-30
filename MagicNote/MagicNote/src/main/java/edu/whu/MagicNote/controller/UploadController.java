@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import edu.whu.MagicNote.domain.Photo;
 import edu.whu.MagicNote.exception.TodoException;
 import edu.whu.MagicNote.service.IPhotoService;
+import edu.whu.MagicNote.service.impl.MinioService;
 import edu.whu.MagicNote.service.impl.OcrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/static/upload")
+@RequestMapping("upload")
 public class UploadController {
 
     @Autowired
@@ -24,32 +25,25 @@ public class UploadController {
     @Autowired
     OcrService ocrService;
 
+    @Autowired
+    MinioService minioService;
+
     // 处理上传图片文件操作，将上传的图片保存（这里的设计是贴合Editor的控件来的，若不使用editor需要修改)
     // 需要注意这里传入的参数还有图片所属的用户的id与图片所属的笔记的id
     //@RequestMapping("/photo")
     @PostMapping("/photo/{userid}/{noteid}")
     @ResponseBody
-    public JSONObject photoUpload(@RequestParam(value = "editormd-image-file", required = true) MultipartFile file, @PathVariable int userid , @PathVariable int noteid) throws IOException, TodoException {
+    public JSONObject photoUpload(@RequestParam(value = "editormd-image-file", required = true) MultipartFile file, @PathVariable int userid , @PathVariable int noteid) throws Exception {
 
         // 进行图片中的文字识别
         String words = ocrService.recognizeImg(file);
         System.out.println(words);
 
-        // 获得SpringBoot当前项目的路径：System.getProperty("user.dir")
-        String path = System.getProperty("user.dir")+"/MagicNote/src/main/resources/static/upload/";
-        //System.out.println(path);
+        // 上传图片到服务器
+        JSONObject result = minioService.uploadFile(file, "photo");
 
-        File realPath = new File(path);
-        if (!realPath.exists()){
-            realPath.mkdir();
-        }
-
-        // 解决文件名字问题，这里使用uuid;
-        String filename = "ks-"+ UUID.randomUUID().toString().replaceAll("-", "");
-        String filePath = realPath +"/"+ filename;
-
-        // 通过CommonsMultipartFile的方法直接写文件
-        file.transferTo(new File(filePath));
+        // 设置文件路径，根据minio中路径
+        String filePath = "http://118.178.241.148:9000/photo/" + result.get("fileName");
 
         // 添加photo信息到photo表
         Photo photo = new Photo();
@@ -61,7 +55,7 @@ public class UploadController {
 
         // 给editormd进行回调
         JSONObject res = new JSONObject();
-        res.put("url", "/upload/" + filename);
+        res.put("url", filePath);
         res.put("success", 1);
         res.put("message", "upload success!");
 
@@ -72,12 +66,9 @@ public class UploadController {
     // 处理上传视频与音频操作，将上传的视频和音频保存
     @PostMapping("/videoAndAudio")
     @ResponseBody
-    public ResponseEntity<Void> fileUpload(MultipartFile file) throws IOException {
+    public ResponseEntity<Void> fileUpload(MultipartFile file) throws Exception {
 
-        //获得SpringBoot当前项目的路径：System.getProperty("user.dir")
-        String path = System.getProperty("user.dir")+ "/MagicNote/src/main/resources/static/upload/";
-        //System.out.println(path);
-
+        /*
         File realPath = new File(path);
         if (!realPath.exists()){
             realPath.mkdir();
@@ -90,6 +81,13 @@ public class UploadController {
         filename = randomName + suffix;
 
         file.transferTo(new File(realPath +"/"+ filename));
+        */
+
+        // 上传文件到服务器
+        JSONObject result = minioService.uploadFile(file, "videoandaudio");
+
+        // 设置文件路径，根据minio中路径
+        String filePath = "http://118.178.241.148:9000/videoandaudio/" + result.get("fileName");
 
         return ResponseEntity.ok().build();
     }

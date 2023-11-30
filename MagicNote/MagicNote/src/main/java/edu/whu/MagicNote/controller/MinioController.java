@@ -45,7 +45,6 @@ public class MinioController {
     @PostMapping("/download")
     public ResponseEntity<Resource> downloadFile(String bucketName, String fileName) throws IOException {
         try {
-
             boolean fileExists = minioService.fileExists(bucketName, fileName);
             if (!fileExists) {
                 return ResponseEntity.badRequest().build();
