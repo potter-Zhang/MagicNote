@@ -1,7 +1,7 @@
 package edu.whu.MagicNote.dao;
 
-import edu.whu.MagicNote.domain.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import edu.whu.MagicNote.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -15,5 +15,4 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface UserDao extends BaseMapper<User> {
-
 }
