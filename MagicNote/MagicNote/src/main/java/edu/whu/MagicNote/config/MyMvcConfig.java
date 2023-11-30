@@ -12,7 +12,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/upload/**")
-                .addResourceLocations("file:"+System.getProperty("user.dir")+"/MagicNote/upload/");
+                .addResourceLocations("file:"+System.getProperty("user.dir")+"/MagicNote/src/main/resources/static/upload/");
     }
 
     @Override
