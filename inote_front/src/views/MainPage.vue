@@ -41,7 +41,7 @@
     }
   }
 
-  function boggleDrawer() {
+  function toggleDrawer() {
     const drawer = document.getElementById("notebook");
     const width = drawer.style.width;
     const openWidth = "250px";
@@ -53,9 +53,6 @@
       drawer.style.width = openWidth;
     }
   }
-
-  // 侧边菜单是否折叠
-  const isCollapse = ref(true);
 
   const logout = () => {
     currentUser.value.id = -1;
@@ -94,22 +91,18 @@
 
       <el-container>
         <!-- 侧边栏 -->
-        <el-menu id="side-bar" :collapse="isCollapse" active-text-color="#a5d63f">
+        <el-menu id="side-bar" active-text-color="#a5d63f">
           <div>
-            <el-menu-item index="1" @click="isCollapse=!isCollapse">
-              <transfer-data theme="outline" size="24" fill="#333"/>
-              <template #title><span class="menu-title">展开与收起</span></template>
-            </el-menu-item>
-            <el-menu-item index="2" @click="changeTab('start');">
+            <el-menu-item index="1" @click="changeTab('start');">
               <all-application class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">开始</span></template>
             </el-menu-item>
-            <el-menu-item index="3" v-on:click="boggleDrawer(); changeTab('editor')">
+            <el-menu-item index="2" v-on:click="toggleDrawer(); changeTab('editor')">
               <receive class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">我的笔记本</span></template>
             </el-menu-item>
           </div>
-          <el-menu-item index="4" @click="changeTab('helpInfo')">
+          <el-menu-item index="3" @click="changeTab('helpInfo')">
             <help class="icon" theme="outline" size="24" fill="#333"/>
             <template #title><span class="menu-title">帮助</span></template>
           </el-menu-item>
@@ -118,7 +111,7 @@
         <el-main style="padding: 0; display: flex">
           <!-- 笔记本弹窗 -->
           <div id="notebook">
-            <notebook style="height: 100%"/>
+            <notebook style="height: 100%" @collapse="toggleDrawer"/>
           </div>
 
           <div id="workspace">
@@ -203,7 +196,7 @@
 
   .menu-title {
     margin-left: 10px;
-    font-size: 16px;
+    font-size: medium;
     font-weight: bold;
   }
 

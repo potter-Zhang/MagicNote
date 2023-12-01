@@ -33,16 +33,18 @@
 
 <style scoped>
   #search-body {
-    height: 95%;
-    width: 90vw;
+    height: 100%;
+    width: 95vw;
+    box-sizing: border-box;
     padding: 15px;
     display: flex;
     flex-direction: column;
   }
 
   .search-item {
+    box-sizing: border-box;
     display: flex;
-    height: 50px;
+    height: 80px;
     width: 100%;
     border-bottom: 1px solid rgb(240,240,240);
     padding: 1rem;
@@ -51,9 +53,8 @@
   .content-text {
     font-size: small;
     margin-top: 5px;
-    max-width: 90% !important;
-    overflow: clip;
-    overflow-y: hidden;
+    max-width: 95% !important;
+    box-sizing: border-box;
     align-self: start;
     white-space:pre-wrap;
   }
