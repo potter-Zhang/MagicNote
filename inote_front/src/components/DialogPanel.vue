@@ -2,11 +2,16 @@
 import CustomDialog from './CustomDialog.vue'
 import arrowRight from "@icon-park/vue-next/lib/icons/ArrowRight";
 import { ref, computed, watch, nextTick } from 'vue'
+import { currentNote } from '../global';
 
 const isDragging = ref(false)
 const left = ref(500)
 const top = ref(300)
 const userMsg = ref('')
+
+const props = defineProps({
+  visible: { type: Boolean, required: true, default: false }
+})
 
 
 const messages = ref([
@@ -58,6 +63,10 @@ function sendMessage (msg) {
     userMsg.value = "";
   }
 }
+
+watch(() => currentNote.noteId, (newNote) => {
+  
+})
 
 watch(messages.value, () => {
   // 消息渲染出来后再将滚动条拉到最底
