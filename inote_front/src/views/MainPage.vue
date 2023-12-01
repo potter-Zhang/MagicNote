@@ -194,6 +194,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    min-width: 60px;
   }
 
   #side-bar:not(.el-menu--collapse) {

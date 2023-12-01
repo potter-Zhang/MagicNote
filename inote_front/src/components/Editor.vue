@@ -6,12 +6,13 @@ import { onMounted, ref, computed, watch } from 'vue'
 import bubble from '@/components/AIBubble.vue'
 import { currentNote  } from "../global"
 import { getNoteAPI, updateNoteAPI } from '@/api/note.js'
-import { notificationEmits } from "element-plus"
+import {ElMessage} from "element-plus";
 
 
 const noteInEditor = ref({
     notebookId: -1,
-    noteId: -1
+    noteId: -1,
+    name: ""
 })
 
 var editor = null
@@ -200,7 +201,11 @@ onMounted(() => {
                 console.log(note)
                 note.content = this.getMarkdown()
                 
-                updateNoteAPI(note).then().catch((err) => console.log(err))
+                updateNoteAPI(note)
+                    .then(() => {
+                      ElMessage.success("保存成功")
+                    })
+                    .catch((err) => console.log(err))
             }
 
 
@@ -240,17 +245,19 @@ function initMarkdown() {
 
 <template>
   <component :is="'script'" src="./editor.md/jquery-1.12.0/package/distrib/jquery.min.js"></component>
-<link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
-<div id="editor">
+  <link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
+  <div id="editor">
     <bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
-</div>
+  </div>
   <float-ball/>
 </template>
 
 <style>
   #editor {
     height: 100% !important;
+    width: 100% !important;
     margin: 0;
+    box-sizing: border-box;
   }
   .editormd-preview {
     width: 50% !important;
