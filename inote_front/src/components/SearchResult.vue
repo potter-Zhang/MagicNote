@@ -1,8 +1,16 @@
 <script setup>
-  import {ref, defineProps} from "vue";
+  import {defineEmits, defineProps} from "vue";
+  import {setCurrentNote} from "@/global";
   import noteIcon from "@icon-park/vue-next/lib/icons/Notes"
 
   const props = defineProps(['notes'])
+
+  const emit = defineEmits(['noteclick'])
+
+  const openEditor = (noteid) => {
+    setCurrentNote(noteid, -1);
+    emit('noteclick');
+  }
 </script>
 
 <template>
@@ -15,7 +23,7 @@
     <div v-if="props.notes.length > 0" class="search-item" v-for="note in props.notes">
         <note-icon class="icon" theme="multi-color" size="20" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
         <div style="display: flex; flex-direction: column; margin-left: 10px; width: 100%">
-          <div style="font-size: large; cursor:pointer">{{note.name}}</div>
+          <div style="font-size: large; cursor:pointer" @click="openEditor(note.id)">{{note.name}}</div>
           <el-text truncated class="content-text">{{note.content}}</el-text>
         </div>
     </div>
