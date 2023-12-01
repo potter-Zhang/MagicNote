@@ -10,10 +10,15 @@
 -->
     <div class="ai-header">
         <label class="ai-function">{{ props.func }}</label>
-        <button class="ai-btn" @click="close"></button>
+        <button class="ai-btn" @click="close">关闭</button>
+        <button class="ai-btn" @click="insert">插入</button>
+        <button class="ai-btn" @click="replace">替换</button>
+        
     </div>
-    <div class="ai-text">
-        <textarea class="ai-text-area" v-model="processedText"></textarea>
+    <div class="ai-text" v-loading="loading">
+        
+        <textarea class="ai-text-area" v-model="processedText"></textarea> 
+        
     </div>
 </div>
 
@@ -24,16 +29,14 @@
 import { computed } from '@vue/reactivity';
 import { ref, defineProps } from 'vue'
 import { generateTableAPI, getAbstractAPI, getExpandAPI, getSegmentAPI, generateFlowChartAPI } from '@/api/ai';
+import { ElLoading } from 'element-plus';
 
-const showTextArea = ref(false)
 
 const textBuffer = ref('')
 
+const loading = ref(true)
+
 const callFlag = ref(false)
-
-const folddedHeight = 300
-
-const containerHeight = ref(folddedHeight)
 
 const props = defineProps({
     text: { type: String, default: ''},
@@ -44,12 +47,22 @@ const props = defineProps({
     func: { type: String, required: true, default: ''}
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'insert', 'replace'])
 
 function close() {
     callFlag.value = false
     textBuffer.value = ''
+    loading.value = false
     emit('close')
+}
+
+function insert() {
+    console.log('insert')
+    emit('insert', textBuffer.value)
+}
+
+function replace() {
+    emit('replace', textBuffer.value)
 }
 
 const func = computed({
@@ -65,6 +78,8 @@ const processedText = computed({
     get() {
         if (!callFlag.value) {
             callFlag.value = true
+            
+            loading.value = true
             AIFunctions.value[props.func](props.text)
         } 
         return textBuffer.value
@@ -114,11 +129,14 @@ const left = computed({
 
 function errorHandler(err) {
     console.log(err)
+    loading.value = false
     textBuffer.value = err.response.data.error
 }
 
 function setTextBuffer(msg) {
-    console.log(msg)
+    console.log("hhhhhhhhhhhhhhhh")
+    //loadingInstance.close()
+    loading.value = false
     textBuffer.value = msg
 }
 
@@ -187,6 +205,7 @@ const AIFunctions = ref({
 </script>
 
 <style scoped>
+
 .bubble-container {
     position: absolute;
     top: v-bind(top);
@@ -199,11 +218,12 @@ const AIFunctions = ref({
     justify-content: center;
     align-items: center;
     border-radius: 0.75em;
-    background-color: aliceblue;
+    box-shadow: 0.75em;
+    background-color: var(--el-color-primary-light-3);
 }
 
 .ai-text {
-    padding: 0.05em;
+    padding: 0.01em;
     border-radius: 0.75em;
     max-height: 500px;
     height: 80%;
@@ -212,18 +232,63 @@ const AIFunctions = ref({
 
 .ai-text-area {
     position: relative;
-    width: 95%; 
-    height: 95%; 
+    width: 98%; 
+    height: 98%; 
     box-sizing: border-box;
     line-height: 20px;
     margin-top: 1%;
+    margin-left: 1%;
     resize: none;
     font-size: medium;
+    z-index: -1;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    height: 30%;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+}
+.loader::before,
+.loader::after {    
+  content:"";
+  grid-area: 1/1;
+  --c:no-repeat radial-gradient(farthest-side,#25b09b 92%,#0000);
+  background: 
+    var(--c) 50%  0, 
+    var(--c) 50%  100%, 
+    var(--c) 100% 50%, 
+    var(--c) 0    50%;
+  background-size: 12px 12px;
+  animation: l12 1s infinite;
+}
+.loader::before {
+  margin: 4px;
+  filter: hue-rotate(45deg);
+  background-size: 8px 8px;
+  animation-timing-function: linear
+}
+
+@keyframes l12 { 
+  100%{transform: rotate(.5turn)}
+}
+
+.ai-text-area::-webkit-scrollbar {
+    display: none;
 }
 
 .ai-header {
-    padding: 0.05em;
+    padding: 0.01em;
     width: 100%;
+}
+
+.ai-loading-mask {
+    width: 100%;
+    height: 100%;
+    background-color: var(--el-color-primary-light-3);
+    display: flex;
+    justify-content: center;
 }
 
 .ai-function {
@@ -234,10 +299,10 @@ const AIFunctions = ref({
 }
 
 .ai-btn {
-    background-color:azure;
+    background-color: var(--el-color-primary);
     float: right;
-    margin-right: 2%;
-    width: 5%;
+    margin-right: 3%;
+    width: 8%;
     height: 100%;
     border-radius: 0.75em;
     border-color: rgb(216, 234, 250);
