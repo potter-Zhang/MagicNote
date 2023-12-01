@@ -87,7 +87,7 @@
     }
     await updateUsernameAPI(data);
     await updateProfileAPI(data);
-    if (photo.value !== null) {
+    if (photo.value !== undefined) {
       await updateAvatarAPI(photo.value.raw, currentUser.value.id);
     }
     currentUser.value.name = newUserInfo.value.name;

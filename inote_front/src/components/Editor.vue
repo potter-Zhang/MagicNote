@@ -236,6 +236,19 @@ function initMarkdown() {
   <float-ball/>
 </template>
 
-<style scoped>
+<style>
+  #editor {
+    height: 100% !important;
+    margin: 0;
+  }
+  .editormd-preview {
+    width: 50% !important;
+  }
+  .editormd .CodeMirror {
+    width: 50% !important;
+  }
 
+</style>
+
+<style scoped>
 </style>
