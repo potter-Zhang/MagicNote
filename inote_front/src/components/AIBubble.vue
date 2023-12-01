@@ -208,11 +208,11 @@ const AIFunctions = ref({
 
 .bubble-container {
     position: absolute;
-    top: v-bind(top);
-    left: v-bind(left);
+    bottom: 0;
+    left: 50%;
     z-index: 15;
-    width: v-bind(bubbleWidth);
-    height: v-bind(bubbleHeight);
+    width: 50%;
+    height: 40%;
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -59,6 +59,15 @@ function setBubble(AIFunction, select) {
   showBubble.value = true
 }
 
+watch(() => {
+    if(editor) {
+        return document.getElementById('editor').getBoundingClientRect()
+    }
+    return null
+}, (newRect) => {
+    console.log(newRect)
+})
+
 watch(() => currentNote.value.noteId, (note, prevNote) => {
     console.log(note)
     if (note === -1)
@@ -229,9 +238,9 @@ function initMarkdown() {
 
 <template>
   <component :is="'script'" src="./editor.md/jquery-1.12.0/package/distrib/jquery.min.js"></component>
-<bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
 <link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
 <div id="editor">
+    <bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
 </div>
   <float-ball/>
 </template>
