@@ -207,8 +207,6 @@ onMounted(() => {
                     })
                     .catch((err) => console.log(err))
             }
-
-
           },
       emoji: true
       });

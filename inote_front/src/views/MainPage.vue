@@ -41,7 +41,7 @@
     }
   }
 
-  function boggleDrawer() {
+  function toggleDrawer() {
     const drawer = document.getElementById("notebook");
     const width = drawer.style.width;
     const openWidth = "250px";
@@ -97,7 +97,7 @@
               <all-application class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">开始</span></template>
             </el-menu-item>
-            <el-menu-item index="2" v-on:click="boggleDrawer(); changeTab('editor')">
+            <el-menu-item index="2" v-on:click="toggleDrawer(); changeTab('editor')">
               <receive class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">我的笔记本</span></template>
             </el-menu-item>
@@ -111,7 +111,7 @@
         <el-main style="padding: 0; display: flex">
           <!-- 笔记本弹窗 -->
           <div id="notebook">
-            <notebook style="height: 100%"/>
+            <notebook style="height: 100%" @collapse="toggleDrawer"/>
           </div>
 
           <div id="workspace">
