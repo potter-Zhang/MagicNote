@@ -4,7 +4,7 @@
   import {addNotebookAPI, getNotebooksAPI} from "@/api/notebook";
   import {addNoteAPI} from "@/api/note";
   import {logAPI} from "@/api/log";
-  import {currentUser, currentNote} from "@/global";
+  import {currentUser, currentNote, setCurrentNote} from "@/global";
 
   import {ref, onBeforeMount, defineEmits } from 'vue'
   import {ElMessage, ElMessageBox} from "element-plus";
@@ -49,12 +49,6 @@
     await loadLog();
     await loadNotebooks();
   });
-
-  function setCurrentNote(noteId) {
-    console.log('set ', noteId)
-    currentNote.value.noteId = noteId
-    currentNote.value.notebookId = -1
-  }
 
   const addNotebook = () => {
     ElMessageBox.prompt('新笔记本的名称', {
@@ -186,7 +180,7 @@
         <div class="history-card">
           <div style="display: flex; align-items: center; cursor: pointer">
             <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
-            <div style="margin-left: 0.5rem" @click="console.log(history);setCurrentNote(history.noteid);emit('jumpToNote')">{{history.notename}}</div>
+            <div style="margin-left: 0.5rem" @click="setCurrentNote(history.noteid, -1);emit('jumpToNote')">{{history.notename}}</div>
           </div>
 <!--          <div style="color: rgb(200,200,200); width: 20%">笔记本: {{history.notebookName}}</div>-->
           <div style="color: rgb(200,200,200); margin-right: 10%">{{history.timestamp}}</div>
@@ -210,6 +204,7 @@
     height: 100%;
     width: 100%;
     padding: 1rem;
+    box-sizing: border-box;
   }
 
   .title {

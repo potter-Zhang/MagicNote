@@ -18,3 +18,8 @@ export const currentNote = ref({
     noteId: -1,
     notebookId: -1
 })
+
+export const setCurrentNote = (noteid, notebookid) => {
+    currentNote.value.noteId = noteid;
+    currentNote.value.notebookId = notebookid
+}
