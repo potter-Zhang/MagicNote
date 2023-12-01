@@ -59,15 +59,6 @@ function setBubble(AIFunction, select) {
   showBubble.value = true
 }
 
-watch(() => {
-    if(editor) {
-        return document.getElementById('editor').getBoundingClientRect()
-    }
-    return null
-}, (newRect) => {
-    console.log(newRect)
-})
-
 watch(() => currentNote.value.noteId, (note, prevNote) => {
     console.log(note)
     if (note === -1)
@@ -109,14 +100,15 @@ onMounted(() => {
             "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
             "watch", "preview", "fullscreen", "clear", "search"]
       },
+    
       
       toolbarIconsClass : {
-            abstract : "far fa-file",  // 指定一个FontAawsome的图标类
-            expand : "fal fa-edit",
-            segment : "fal fa-align-justify",
-            generateTable : "fal fa-table",
-            generateFlowChart : "fa fa-connectdevelop",
-            save : "fa-save"
+            // abstract : "far fa-file",  // 指定一个FontAawsome的图标类
+            // expand : "fal fa-edit",
+            // segment : "fal fa-align-justify",
+            // generateTable : "fal fa-table",
+            // generateFlowChart : "fa fa-connectdevelop",
+            // save : "fa-save"
       },
       onload : function() {
                 console.log('onload', this);
@@ -136,13 +128,23 @@ onMounted(() => {
           mermaid.init();
       },
       toolbarIconTexts : {
-          abstract : "摘要",  // 如果没有图标，则可以这样直接插入内容，可以是字符串或HTML标签
-          expand : "扩写",
-          segment : "分段",
-          generateTable : "表格生成",
-          generateFlowChart : "思维导图生成",
-          save : "保存"
+          abstract : "<div style=\"display: flex; flex-direction: column\"><div class=\"far fa-file\"></div><span style=\"font-size: small\">abstract</span></div>",  // 如果没有图标，则可以这样直接插入内容，可以是字符串或HTML标签
+          expand : "<div style=\"display: flex; flex-direction: column\"><div class=\"fal fa-edit\"></div><span style=\"font-size: small\">expand</span></div>",
+          segment : "<div style=\"display: flex; flex-direction: column\"><div class=\"fal fa-align-justify\"></div><span style=\"font-size: small\">segment</span></div>",
+          generateTable : "<div style=\"display: flex; flex-direction: column\"><div class=\"fal fa-table\"></div><span style=\"font-size: small\">table</span></div>",
+          generateFlowChart : "<div style=\"display: flex; flex-direction: column\"><div class=\"fa fa-connectdevelop\"></div><span style=\"font-size: small\">flow chart</span></div>",
+          save : "<div style=\"display: flex; flex-direction: column\"><div class=\"fa-save\"></div><span style=\"font-size: small\">save</span></div>"
       },
+      lang : {
+            toolbar : {
+                abstract : "摘要",  // 如果没有图标，则可以这样直接插入内容，可以是字符串或HTML标签
+                expand : "扩写",
+                segment : "分段",
+                generateTable : "表格生成",
+                generateFlowChart : "思维导图生成",
+                save : "保存"
+            }
+        },
       extensions: ["mermaid"],
       mermaid: {
           startOnLoad: true,
