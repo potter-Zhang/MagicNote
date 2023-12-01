@@ -32,6 +32,6 @@ tess4j:
 
 # minio 文件存储配置信息
 minio:
-  endpoint: http://192.168.80.1:9000
+  endpoint: http://118.178.241.148:9000
   accesskey: minioadmin
   secretKey: minioadmin
