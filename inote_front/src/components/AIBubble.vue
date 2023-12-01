@@ -16,9 +16,7 @@
         
     </div>
     <div class="ai-text" v-loading="loading">
-        
         <textarea class="ai-text-area" v-model="processedText"></textarea> 
-        
     </div>
 </div>
 
@@ -27,7 +25,7 @@
 <script setup>
 /* eslint-disable */
 import { computed } from '@vue/reactivity';
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, watch } from 'vue'
 import { generateTableAPI, getAbstractAPI, getExpandAPI, getSegmentAPI, generateFlowChartAPI } from '@/api/ai';
 import { ElLoading } from 'element-plus';
 
@@ -40,10 +38,10 @@ const callFlag = ref(false)
 
 const props = defineProps({
     text: { type: String, default: ''},
-    x: { type: Number, required: true, default: 100},
-    y: { type: Number, required: true, default: 100},
-    width: { type: Number, required: true, default: 100},
-    height: { type: Number, required: true, default: 100},
+    // x: { type: Number, required: true, default: 100},
+    // y: { type: Number, required: true, default: 100},
+    // width: { type: Number, required: true, default: 100},
+    // height: { type: Number, required: true, default: 100},
     func: { type: String, required: true, default: ''}
 })
 
@@ -72,6 +70,13 @@ const func = computed({
     set(value) {
         props.func = value
     }
+})
+
+watch(() => { return [props.func, props.text] }, ([f, t]) => {
+    callFlag.value = false
+},
+{
+    immediate: true
 })
 
 const processedText = computed({
@@ -240,39 +245,8 @@ const AIFunctions = ref({
     margin-left: 1%;
     resize: none;
     font-size: medium;
-    z-index: -1;
 }
 
-/* HTML: <div class="loader"></div> */
-.loader {
-    height: 30%;
-    aspect-ratio: 1;
-    display: grid;
-    place-items: center;
-}
-.loader::before,
-.loader::after {    
-  content:"";
-  grid-area: 1/1;
-  --c:no-repeat radial-gradient(farthest-side,#25b09b 92%,#0000);
-  background: 
-    var(--c) 50%  0, 
-    var(--c) 50%  100%, 
-    var(--c) 100% 50%, 
-    var(--c) 0    50%;
-  background-size: 12px 12px;
-  animation: l12 1s infinite;
-}
-.loader::before {
-  margin: 4px;
-  filter: hue-rotate(45deg);
-  background-size: 8px 8px;
-  animation-timing-function: linear
-}
-
-@keyframes l12 { 
-  100%{transform: rotate(.5turn)}
-}
 
 .ai-text-area::-webkit-scrollbar {
     display: none;

@@ -48,13 +48,13 @@ function replace(content) {
 }
 
 function setBubble(AIFunction, select) {
-  const editorPanel = document.getElementById('editor');
-  const rect = editorPanel.getBoundingClientRect()
-  x.value = Math.round(rect.top + rect.height / 2)
-  y.value = Math.round(rect.left + rect.width / 2)
+//   const editorPanel = document.getElementById('editor');
+//   const rect = editorPanel.getBoundingClientRect()
+//   x.value = Math.round(rect.top + rect.height / 2)
+//   y.value = Math.round(rect.left + rect.width / 2)
   func.value = AIFunction
-  width.value = Math.round(rect.width / 2)
-  height.value = Math.round(rect.height / 2)
+//   width.value = Math.round(rect.width / 2)
+//   height.value = Math.round(rect.height / 2)
   selectedText.value = select
   showBubble.value = true
 }
@@ -242,7 +242,7 @@ function initMarkdown() {
   <component :is="'script'" src="./editor.md/jquery-1.12.0/package/distrib/jquery.min.js"></component>
 <link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
 <div id="editor">
-    <bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
+    <bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :func="func"></bubble>
 </div>
   <float-ball/>
 </template>
