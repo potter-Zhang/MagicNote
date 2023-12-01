@@ -125,7 +125,7 @@
             <start-tab @jumpToNote="changeTab('editor')" v-if="currentTab==='start'"/>
             <editor v-else-if="currentTab==='editor'"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
-            <search-result-view v-else-if="currentTab==='search'" :notes="searchResult"/>
+            <search-result-view v-else-if="currentTab==='search'" :notes="searchResult" @noteclick="changeTab('editor')"/>
           </div>
         </el-main>
       </el-container>
