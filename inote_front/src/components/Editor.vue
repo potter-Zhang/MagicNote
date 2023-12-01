@@ -42,6 +42,14 @@ function insert(content) {
     }
 }
 
+function saveNote() {
+    var note = noteInEditor.value
+    note.content = editor.getMarkdown()
+    updateNoteAPI(note)
+        .then()
+        .catch((err) => console.log(err))
+}
+
 function replace(content) {
     if (editor) {
         editor.replaceSelection(content)
@@ -59,6 +67,15 @@ function setBubble(AIFunction, select) {
   selectedText.value = select
   showBubble.value = true
 }
+
+watch(() => currentNote.value.updateCode, (newCode) => {
+    if (newCode === 1) {
+        saveNote()
+    }
+},
+{
+    immediate: true
+})
 
 watch(() => currentNote.value.noteId, (note, prevNote) => {
     console.log(note)
@@ -204,6 +221,7 @@ onMounted(() => {
                 updateNoteAPI(note)
                     .then(() => {
                       ElMessage.success("保存成功")
+                      currentNote.value.updateCode = 2
                     })
                     .catch((err) => console.log(err))
             }
@@ -247,7 +265,7 @@ function initMarkdown() {
   <div id="editor">
     <bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
   </div>
-  <float-ball/>
+  <float-ball @synEditor="saveNote"/>
 </template>
 
 <style>
