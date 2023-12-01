@@ -182,7 +182,7 @@
     <!--历史文档区-->
     <div class="title" style="margin-top: 1rem">最近</div>
     <div v-if="historyNotes.length>0">
-      <div v-for="history in historyNotes" style="cursor: default">
+      <div v-for="history in historyNotes">
         <div class="history-card">
           <div style="display: flex; align-items: center; cursor: pointer">
             <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>

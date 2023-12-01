@@ -217,13 +217,25 @@ function initMarkdown() {
 
 <template>
   <component :is="'script'" src="./editor.md/jquery-1.12.0/package/distrib/jquery.min.js"></component>
-<bubble @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
-<link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
-<div id="editor">
-</div>
+  <bubble @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
+  <link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
+  <div id="editor"></div>
   <float-ball/>
 </template>
 
-<style scoped>
+<style>
+  #editor {
+    height: 100% !important;
+    margin: 0;
+  }
+  .editormd-preview {
+    width: 50% !important;
+  }
+  .editormd .CodeMirror {
+    width: 50% !important;
+  }
 
+</style>
+
+<style scoped>
 </style>
