@@ -3,11 +3,19 @@ import CustomDialog from './CustomDialog.vue'
 import arrowRight from "@icon-park/vue-next/lib/icons/ArrowRight";
 import { ref, computed, watch, nextTick } from 'vue'
 import { currentNote } from '../global';
+import { initAPI, answerAPI } from '@/api/ai'
+import { getNoteAPI } from '@/api/note'
 
 const isDragging = ref(false)
 const left = ref(500)
 const top = ref(300)
 const userMsg = ref('')
+
+var noteId = -1
+
+const emit = defineEmits(['close'])
+
+const thinking = ref(false)
 
 const props = defineProps({
   visible: { type: Boolean, required: true, default: false }
@@ -18,16 +26,15 @@ const messages = ref([
   {
     role: 'assistant',
     content: '您好，请问有什么可以帮助您的吗？'
-  },
-  {
-    role: 'user',
-    content: 'go say bye-bye'
-  },
-  {
-    role: 'user',
-    content: 'awohefiahfiehfoiewhfaiwfewahfewahefwaheflhwaelfhwjefh'
   }
 ])
+
+function clearMessages() {
+  messages.value = [{
+    role: 'assistant',
+    content: '您好，请问有什么可以帮助您的吗？'
+  }]
+}
 
 const leftPx = computed({
   get () {
@@ -57,16 +64,63 @@ function drag (event) {
   }
 }
 
-function sendMessage (msg) {
+function addMessage(msgRole, msg) {
   if (msg !== '') {
-    messages.value.push({ role: 'user', content: msg })
+    messages.value.push({ role: msgRole, content: msg })
     userMsg.value = "";
   }
 }
 
-watch(() => currentNote.noteId, (newNote) => {
-  
+function sendMessage (msg) {
+  if (msg !== '') {
+    
+    messages.value.push({ role: 'user', content: msg })
+    thinking.value = true
+    userMsg.value = "";
+    const data = {
+      str: msg,
+      num: 0
+    }
+    answerAPI(data)
+    .then((returnMsg) => {addMessage('assistant', returnMsg)})
+    .catch((err) => {console.log(err)})
+    .finally(() => thinking.value = false)
+  }
+}
+
+watch(() => currentNote.value.updateCode, (newCode) => {
+  if (newCode === 2) {
+    clearMessages()
+    emit('close')
+    noteId = -1
+  }
 })
+
+watch(() => props.visible, (newValue) => {
+  console.log(newValue)
+  if (!props.visible)
+    return
+  if (noteId === currentNote.value.noteId) {
+    // do nothing
+  }
+  else {
+    noteId = currentNote.value.noteId
+    currentNote.value.updateCode = 1
+    clearMessages()
+    getNoteAPI(noteId).then((msg) => { 
+      const data = {
+        str: msg.content,
+        num: 0
+      }
+      initAPI(data).then().catch((err) => console.log(err))
+    }).catch((err) => console.log(err))
+
+  }
+},
+{
+  immediate: true
+})
+
 
 watch(messages.value, () => {
   // 消息渲染出来后再将滚动条拉到最底
@@ -91,7 +145,7 @@ watch(messages.value, () => {
           :content="message.content"
           ></CustomDialog>
     </div>
-    <div class="send-comp">
+    <div class="send-comp" v-loading="thinking">
       <input class="send-text" v-model="userMsg" @keyup.enter="sendMessage(userMsg)" />
       <button class="send-button" @click="sendMessage(userMsg)"><arrow-right theme="outline" size="24" fill="#ffffff"/></button>
     </div>

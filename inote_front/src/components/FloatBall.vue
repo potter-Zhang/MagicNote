@@ -7,6 +7,10 @@
 
   const visible = ref(false);
 
+  function hide() {
+    visible.value = false
+  }
+
   function dragElement() {
     const element = document.getElementById("ball");
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -51,7 +55,7 @@
         <close v-else class="icon" theme="outline" size="20" fill="#ffffff"/>
       </div>
     </template>
-    <ai-dialog/>
+    <ai-dialog :visible="visible" @close="hide"/>
   </el-popover>
 </template>
 

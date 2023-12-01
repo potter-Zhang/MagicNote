@@ -16,7 +16,8 @@ export const currentUser = ref({
 
 export const currentNote = ref({
     noteId: -1,
-    notebookId: -1
+    notebookId: -1,
+    updateCode: -1
 })
 
 export const setCurrentNote = (noteid, notebookid) => {
