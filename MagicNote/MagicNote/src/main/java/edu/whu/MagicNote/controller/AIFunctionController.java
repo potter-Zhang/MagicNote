@@ -2,10 +2,9 @@ package edu.whu.MagicNote.controller;
 
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
+import edu.whu.MagicNote.domain.AIObject;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
 import edu.whu.MagicNote.service.impl.QAndAService;
-import lombok.Data;
-import edu.whu.MagicNote.domain.AIObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -80,8 +79,5 @@ public class AIFunctionController {
         String answer = qAndAService.answer(aiObject.getStr());
         return ResponseEntity.ok(answer);
     }
-
-
-
 
 }

@@ -32,7 +32,7 @@ public interface IUserService extends IService<User> {
 
     public boolean updateUserProfile(int id, String profile);
 
-    public boolean updateUserPhoto(int id, MultipartFile photo) throws IOException, SQLException;
+    public boolean updateUserPhoto(int id, MultipartFile file) throws Exception;
 
     public boolean deleteUser(int id);
 }
