@@ -269,7 +269,7 @@ public class apiTest {
             //callWithMessage();
             //qwenQuickStart();
             QAndAService qAndAService = new QAndAService();
-            qAndAService.init2(s2);
+            qAndAService.initNew(s2);
             qAndAService.answerNew("米莱的政策是什么");
             //NotOneConversationsTest2("韩国这次的核心人物是谁");
             //NotOneConversationsTest2("韩国的教练是谁");

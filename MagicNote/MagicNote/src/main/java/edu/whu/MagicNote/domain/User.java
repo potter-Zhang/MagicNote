@@ -29,7 +29,7 @@ public class User implements Serializable {
 
     private String password;
 
-    private Blob photo;
+    private String photo;
 
     private String email;
 

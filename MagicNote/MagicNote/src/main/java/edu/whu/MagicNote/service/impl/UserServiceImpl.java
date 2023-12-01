@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.whu.MagicNote.dao.*;
 import edu.whu.MagicNote.domain.User;
 import edu.whu.MagicNote.service.IUserService;
+import io.minio.errors.*;
+import org.apache.commons.math3.analysis.function.Min;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.SQLException;
 /**
@@ -36,8 +41,15 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Autowired
     LogDao logDao;
+
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    UploadService uploadService;
+
+    @Autowired
+    MinioService minioService;
 
     @Override
     public User getUserById(int id){
@@ -99,7 +111,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     }
 
     @Override
-    public boolean updateUserPhoto(int id, MultipartFile photo) throws IOException, SQLException {
+    public boolean updateUserPhoto(int id, MultipartFile file) throws Exception {
         User newUser = new User();
         User oldUser = this.getById(id);
         newUser.setId(oldUser.getId());
@@ -107,9 +119,19 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         newUser.setPassword(oldUser.getPassword());
         newUser.setEmail(oldUser.getEmail());
         newUser.setProfile(oldUser.getProfile());
-        byte[] fileBytes = photo.getBytes();
-        Blob blob = new SerialBlob(fileBytes);
-        newUser.setPhoto(blob);
+
+        // 删除用户原本头像文件（若有的话）
+        User user = this.getUserById(id);
+        String path = user.getPhoto();
+        if(path != null){
+            String previousFileName = path.substring(path.lastIndexOf("/"));
+            if(minioService.fileExists("userphoto", previousFileName))
+                minioService.deleteFile("userphoto",previousFileName);
+        }
+        // 上传新头像，并修改user的photo属性
+        String photoPath = uploadService.userPhotoUpload(file);
+        newUser.setPhoto(photoPath);
+
         return this.updateById(newUser);
     }
 

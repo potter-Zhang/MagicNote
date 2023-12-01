@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {ref, onBeforeMount, onBeforeUnmount} from 'vue'
+  import {ref, onBeforeMount, onBeforeUnmount, defineEmits} from 'vue'
   import notebook from "@icon-park/vue-next/lib/icons/Notebook"
   import edit from "@icon-park/vue-next/lib/icons/Edit";
   import deleteOne from "@icon-park/vue-next/lib/icons/DeleteOne";
@@ -9,15 +9,16 @@
   import noteIcon from "@icon-park/vue-next/lib/icons/Notes"
   import more from "@icon-park/vue-next/lib/icons/More"
   import plus from "@icon-park/vue-next/lib/icons/Plus"
+  import left from "@icon-park/vue-next/lib/icons/Left"
 
   import {ElMessageBox, ElMessage} from "element-plus";
   import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI, getNoteAPI} from "@/api/note"
   import {getNotebooksAPI, addNotebookAPI, updateNotebookAPI, delNotebookByIdAPI} from "@/api/notebook"
   import {currentUser, setCurrentNote} from "@/global"
   import {globalEventBus} from "@/util/eventBus"
-import { currentNote } from '../global';
 
   const notebooks = ref([]);
+  const emits = defineEmits(['collapse'])
 
   const getAllNotebooks = async () => {
     notebooks.value.splice(0, notebooks.value.length);
@@ -155,6 +156,7 @@ import { currentNote } from '../global';
 
 <template>
   <div id="body">
+    <left id="collapse-btn" theme="outline" size="24" fill="#000000" @click="$emit('collapse')"/>
     <!-- 显示笔记本的操作栏 -->
     <div v-if="currentMode==='notebook'" class="operationBar">
       <el-tooltip effect="dark" content="新增笔记本" placement="bottom">
@@ -248,9 +250,18 @@ import { currentNote } from '../global';
 
 <style scoped>
   #body {
+    position: relative;
     background-color: transparent;
     display: flex;
     flex-direction: column;
+  }
+
+  #collapse-btn {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(-100%, -50%);
+    cursor: pointer;
   }
 
   #content {
