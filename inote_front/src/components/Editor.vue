@@ -49,13 +49,13 @@ function replace(content) {
 }
 
 function setBubble(AIFunction, select) {
-  const editorPanel = document.getElementById('editor');
-  const rect = editorPanel.getBoundingClientRect()
-  x.value = Math.round(rect.top + rect.height / 2)
-  y.value = Math.round(rect.left + rect.width / 2)
+//   const editorPanel = document.getElementById('editor');
+//   const rect = editorPanel.getBoundingClientRect()
+//   x.value = Math.round(rect.top + rect.height / 2)
+//   y.value = Math.round(rect.left + rect.width / 2)
   func.value = AIFunction
-  width.value = Math.round(rect.width / 2)
-  height.value = Math.round(rect.height / 2)
+//   width.value = Math.round(rect.width / 2)
+//   height.value = Math.round(rect.height / 2)
   selectedText.value = select
   showBubble.value = true
 }
