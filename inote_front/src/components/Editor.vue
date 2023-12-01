@@ -35,6 +35,18 @@ function reset() {
   showBubble.value = false
 }
 
+function insert(content) {
+    if (editor) {
+        editor.replaceSelection(editor.getSelection() + content)
+    }
+}
+
+function replace(content) {
+    if (editor) {
+        editor.replaceSelection(content)
+    }
+}
+
 function setBubble(AIFunction, select) {
   const editorPanel = document.getElementById('editor');
   const rect = editorPanel.getBoundingClientRect()
@@ -217,7 +229,7 @@ function initMarkdown() {
 
 <template>
   <component :is="'script'" src="./editor.md/jquery-1.12.0/package/distrib/jquery.min.js"></component>
-<bubble @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
+<bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
 <link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
 <div id="editor">
 </div>
