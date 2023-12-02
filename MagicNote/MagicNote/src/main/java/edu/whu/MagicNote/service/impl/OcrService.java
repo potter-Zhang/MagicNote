@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Cleanup;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -27,10 +26,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class OcrService {
-
     @Autowired
     private final Tesseract tesseract;
-
     /**
      * 识别图片中的文字
      * @param imageFile 图片文件
