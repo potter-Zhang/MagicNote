@@ -15,11 +15,9 @@ import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
 import edu.whu.MagicNote.service.impl.OcrService;
-import edu.whu.MagicNote.service.impl.QAndAService;
 import io.reactivex.Flowable;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 
@@ -40,7 +38,7 @@ public class apiTest {
             //"你需要根据笔记内容生成markdown形式思维导图，加粗‘阿根廷’字样，数字用红色字体。\n" +
             "给出的笔记是：\n";
 
-    static String s2 = "现年52岁的米莱，经济学家出身，是阿根廷“自由前进党”的创建者和主要领导人。\n" +
+    static String s2 = "闲年52岁的米莱，经济学家出身，是阿根廷“自由前进党”的创建者和主要领导人。\n" +
             "此次阿根廷总统选举得到外界普遍关注，其中一个重要原因是极端右翼政客米莱的参选。由于阿根廷通货膨胀率已经达到142.7%，且该国多年来经济增长严重放缓，米莱主张全面美元化。据参考消息8月15日报道，米莱的竞选承诺是要“炸掉”阿根廷央行，还提议大幅削减税收和公共开支。\n" +
             "此外，米莱所引发的争议还在于他支持器官买卖合法化，实行宽松的枪支管制政策，禁止堕胎合法化。因为与美国前总统特朗普有一些共同点，比如酷爱社交媒体，经常语出惊人等，米莱被一些媒体称为“阿根廷特朗普”。\n" +
             "据央视财经报道，目前，阿根廷货币贬值，通胀高企，极大地推高了当地的物价水平。为缓解生活成本压力，阿根廷民众也开始寻找一些节省开支的办法，以物换物市场再度受到青睐。据了解，阿根廷正面临严重的通胀压力。当地时间13日，阿根廷政府公布的10月通胀率达到8.3%，过去12个月累计通胀率达142.7%，创32年来新高。阿根廷央行今年内6次加息，将基准利率上调至133%，以应对当前复杂的通胀形势。\n" ;
@@ -266,11 +264,12 @@ public class apiTest {
             //aiFunctionService.segmentNote(s5);
             //aiFunctionService.generateTable(s2);
             //aiFunctionService.generateFlowChart(s2);
+            aiFunctionService.polish(s2);
             //callWithMessage();
             //qwenQuickStart();
-            QAndAService qAndAService = new QAndAService();
+           /* QAndAService qAndAService = new QAndAService();
             qAndAService.init2(s2);
-            qAndAService.answerNew("米莱的政策是什么");
+            qAndAService.answerNew("米莱的政策是什么");*/
             //NotOneConversationsTest2("韩国这次的核心人物是谁");
             //NotOneConversationsTest2("韩国的教练是谁");
             //NotOneConversationsTest2("中国队的教练是谁");
@@ -281,7 +280,7 @@ public class apiTest {
             //qAndAService.answer("阿根廷总统选举的关键人物是谁");
             //qAndAService.answer("阿根廷的新总统是谁");
 
-        } catch (ApiException | IOException e) {
+        } catch (ApiException e) {
             System.out.println(String.format("Exception %s", e.getMessage()));
         }
         System.exit(0);
