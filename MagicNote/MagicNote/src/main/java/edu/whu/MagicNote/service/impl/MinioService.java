@@ -71,7 +71,7 @@ public class MinioService {
 
         client.putObject(args);
         JSONObject res = new JSONObject();
-        res.put("Endpoint", minioProp.getEndpoint());
+        res.put("endPoint", minioProp.getEndpoint());
         res.put("bucketName", bucketName);
         res.put("fileName", fileName);
         inputStream.close();
