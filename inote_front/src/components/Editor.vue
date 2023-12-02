@@ -266,10 +266,13 @@ function initMarkdown() {
 <template>
   <component :is="'script'" src="./editor.md/jquery-1.12.0/package/distrib/jquery.min.js"></component>
   <link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
-  <div id="editor">
-    <bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
+  <div id="editor-container">
+    <div id="currentEditing">正在编辑：{{currentNote.name}} </div>
+    <div id="editor">
+      <bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
+    </div>
+    <float-ball @synEditor="saveNote"/>
   </div>
-  <float-ball @synEditor="saveNote"/>
 </template>
 
 <style>
@@ -278,6 +281,7 @@ function initMarkdown() {
     width: 100% !important;
     margin: 0;
     box-sizing: border-box;
+    border: 0;
   }
   .editormd-preview {
     width: 50% !important;
@@ -289,4 +293,14 @@ function initMarkdown() {
 </style>
 
 <style scoped>
+  #editor-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #currentEditing {
+    color: rgb(128, 128, 128);
+    margin: 5px;
+  }
 </style>

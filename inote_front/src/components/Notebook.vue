@@ -218,7 +218,7 @@
         </div>
       </div>
       <div v-else-if="currentMode==='note' && notes.length > 0" class="display-item" v-for="note in notes">
-        <div class="display-item-icon-and-text" @click="setCurrentNote(note.id, currentNotebook)">
+        <div class="display-item-icon-and-text" @click="setCurrentNote(note.id, note.name, currentNotebook)">
          <note-icon class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
          <div style="margin-left: 5%; font-size: 0.8rem; font-weight: bold">{{note.name}}</div>
         </div>
