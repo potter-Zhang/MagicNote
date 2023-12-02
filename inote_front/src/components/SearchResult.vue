@@ -34,7 +34,7 @@
 <style scoped>
   #search-body {
     height: 100%;
-    width: 95vw;
+    width: 100%;
     box-sizing: border-box;
     padding: 15px;
     display: flex;
@@ -48,6 +48,9 @@
     width: 100%;
     border-bottom: 1px solid rgb(240,240,240);
     padding: 1rem;
+  }
+  .search-item:hover {
+    background-color: rgb(240,240,240,0.2);
   }
 
   .content-text {
