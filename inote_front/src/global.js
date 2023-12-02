@@ -16,11 +16,13 @@ export const currentUser = ref({
 
 export const currentNote = ref({
     noteId: -1,
+    name: "",
     notebookId: -1,
     updateCode: -1
 })
 
-export const setCurrentNote = (noteid, notebookid) => {
+export const setCurrentNote = (noteid, name, notebookid) => {
     currentNote.value.noteId = noteid;
+    currentNote.value.name = name;
     currentNote.value.notebookId = notebookid
 }

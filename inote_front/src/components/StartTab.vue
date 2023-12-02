@@ -180,9 +180,10 @@
         <div class="history-card">
           <div style="display: flex; align-items: center; cursor: pointer">
             <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
-            <div style="margin-left: 0.5rem" @click="setCurrentNote(history.noteid, -1);emit('jumpToNote')">{{history.notename}}</div>
+            <div style="margin-left: 0.5rem" @click="setCurrentNote(history.noteid, history.notename, -1);emit('jumpToNote')">
+              {{history.notename}}
+            </div>
           </div>
-<!--          <div style="color: rgb(200,200,200); width: 20%">笔记本: {{history.notebookName}}</div>-->
           <div style="color: rgb(200,200,200); margin-right: 10%">{{history.timestamp}}</div>
         </div>
       </div>
