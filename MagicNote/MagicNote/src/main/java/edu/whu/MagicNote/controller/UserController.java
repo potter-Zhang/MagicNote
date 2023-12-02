@@ -88,14 +88,16 @@ public class UserController {
 
     // 只更新用户头像的接口
     @PutMapping("/updatePhoto")
-    public ResponseEntity<JSONObject> updateUserPhoto(int id, MultipartFile photo) {
+    public ResponseEntity<String> updateUserPhoto(int id, MultipartFile photo) {
         try {
-            if (userService.updateUserPhoto(id, photo))
-                return ResponseEntity.ok().build();
-            else
+            if (userService.updateUserPhoto(id, photo)){
+                String photoPath = userService.getUserById(id).getPhoto();
+                return ResponseEntity.ok(photoPath);
+            } else
                 //修改失败，不存在对应id的用户
                 return ResponseEntity.noContent().build();
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
