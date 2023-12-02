@@ -5,6 +5,7 @@
   import agreement from "@icon-park/vue-next/lib/icons/Agreement";
   import tips from "@icon-park/vue-next/lib/icons/Tips";
   import userBackground from "@/assets/userBackground.jpg"
+  import defaultAvatar from '@/assets/default.png'
 
   import {onBeforeMount, ref} from 'vue';
   import {ElMessageBox} from "element-plus";
@@ -120,7 +121,7 @@
             <div id="avatarCard" :style="{backgroundImage: `url(${userBackground})`}">
               <div class="mask">
                 <div class="avatar-and-name" style="z-index: 1; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                  <img src="../assets/avatar.jpg" class="avatar">
+                  <img :src=currentUser.photo class="avatar" @error="e=>{e.target.src = defaultAvatar}">
                   <div style="font-size: 1.5rem; color: white; font-weight: bolder">{{currentUser.name}}</div>
                 </div>
               </div>

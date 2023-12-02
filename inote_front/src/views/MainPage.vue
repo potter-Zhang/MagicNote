@@ -6,6 +6,7 @@
   import receive from "@icon-park/vue-next/lib/icons/Receive";
   import search from "@icon-park/vue-next/lib/icons/Search"
   import router from "@/router/index"
+  import defaultAvatar from '@/assets/default.png'
 
   import {currentUser} from "@/global"
   import {searchAPI} from "@/api/search"
@@ -83,7 +84,7 @@
         </div>
         <div class="user-zone" v-else>
           <router-link to="/userInfo" style="display: flex; align-items: center">
-            <img src="../assets/avatar.jpg" class="avatar">
+            <img :src=currentUser.photo class="avatar" @error="e=>{e.target.src = defaultAvatar}">
           </router-link>
           <router-link to="/userInfo" class="user-zone-font" style="margin-right: 8px">{{currentUser.name}}</router-link>
           <el-button type="danger" style="padding: 0 5px 0 5px" @click="logout">退出登录</el-button>

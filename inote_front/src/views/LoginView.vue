@@ -49,6 +49,7 @@
     currentUser.value.id = apiResponse.id;
     currentUser.value.name = apiResponse.name;
     currentUser.value.profile = apiResponse.profile;
+    currentUser.value.photo = apiResponse.photo;
     currentUser.value.token = apiResponse.token;
   }
 

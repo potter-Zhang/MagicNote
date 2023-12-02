@@ -11,6 +11,7 @@ export const currentUser = ref({
     id: -1,
     name: "",
     token: "",
+    photo: "",
     profile: ""
 });
 
