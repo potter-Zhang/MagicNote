@@ -1,6 +1,7 @@
 package edu.whu.MagicNote.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import edu.whu.MagicNote.domain.User;
 import edu.whu.MagicNote.exception.TodoException;
 import edu.whu.MagicNote.service.IUserService;
@@ -87,20 +88,17 @@ public class UserController {
 
     // 只更新用户头像的接口
     @PutMapping("/updatePhoto")
-    public ResponseEntity<Map<String,String>> updateUserPhoto(int id, MultipartFile photo) throws SQLException, IOException {
+    public ResponseEntity<String> updateUserPhoto(int id, MultipartFile photo) {
         try {
-            if (userService.updateUserPhoto(id, photo))
-                return ResponseEntity.ok().build();
-            else
+            if (userService.updateUserPhoto(id, photo)){
+                String photoPath = userService.getUserById(id).getPhoto();
+                return ResponseEntity.ok(photoPath);
+            } else
                 //修改失败，不存在对应id的用户
                 return ResponseEntity.noContent().build();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            Map<String,String> result = new HashMap<>();
-            result.put("code", String.valueOf(TodoException.UPDATE_ERROR));
-            result.put("message","图片上传数据库失败");
-            return ResponseEntity.badRequest().body(result);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 
