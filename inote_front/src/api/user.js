@@ -37,7 +37,7 @@ export const updateProfileAPI = (data) => {
 export const updateAvatarAPI = (file, userid) => {
     let formData = new FormData();
     formData.append("id", userid);
-    formData.append('file', file);
+    formData.append('photo', file);
     return request({
         url: "/user/updatePhoto",
         method: "put",
