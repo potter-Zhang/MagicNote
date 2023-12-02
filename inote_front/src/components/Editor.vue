@@ -215,6 +215,10 @@ onMounted(() => {
             save: function(cm, icon, cursor, selection) {
                 
                 var note = noteInEditor.value
+                if (note.noteId === -1) {
+                  ElMessage.error("请先打开一篇笔记")
+                  return;
+                }
                 console.log(note)
                 note.content = this.getMarkdown()
                 

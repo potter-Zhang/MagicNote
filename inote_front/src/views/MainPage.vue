@@ -71,7 +71,8 @@
           <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
           <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
         </div>
-        <el-input id="search-box" v-model="searchKeyword" @keyup.enter="searchNote">
+        <!-- 搜索框 -->
+        <el-input id="search-box" v-model="searchKeyword" @keyup.enter="searchNote" placeholder="搜索笔记">
           <template #prepend>
             <search theme="outline" size="20" fill="#000000"/>
           </template>
@@ -99,7 +100,7 @@
             </el-menu-item>
             <el-menu-item index="2" v-on:click="toggleDrawer(); changeTab('editor')">
               <receive class="icon" theme="outline" size="24" fill="#333"/>
-              <template #title><span class="menu-title">我的笔记本</span></template>
+              <template #title><span class="menu-title">笔记本</span></template>
             </el-menu-item>
           </div>
           <el-menu-item index="3" @click="changeTab('helpInfo')">
@@ -187,12 +188,9 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 130px;
   }
 
-  #side-bar:not(.el-menu--collapse) {
-    width: 150px;
-    height: 100%;
-  }
 
   .menu-title {
     margin-left: 10px;
@@ -204,5 +202,6 @@
     flex: 1;
     display: flex;
     height: calc(100vh - var(--header-height));
+    width: calc(100vw - 130px);
   }
 </style>
