@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AIFunctionService {
-
     // 缩写、提炼笔记信息的方法
     public String abstractNote(String note) throws NoApiKeyException, InputRequiredException {
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
@@ -117,6 +116,24 @@ public class AIFunctionService {
                 "2、使用Markdown语法创建流程图"+
                 "给出的笔记是：\n";
         String prompt = command + note;
+
+        Generation gen = new Generation();
+        QwenParam param = QwenParam.builder().model("qwen-max").prompt(prompt)
+                .topP(0.8).build();
+        GenerationResult result = gen.call(param);
+
+        System.out.println(result.getOutput().getText());
+        return result.getOutput().getText();
+    }
+
+    // 对多模态识别结果进行错误修改
+    public String polish(String text) throws NoApiKeyException, InputRequiredException {
+        Constants.apiKey = "sk-a513d206b66948ad8b27356775c8c829";
+
+        String command ="这是我对视频，音频等的文字识别结果，其中可能包含错别字，语法错误以及乱码，请你进行改正错误并给出修改结果\n" +
+                "要求：1、只修改错误以及逻辑不通之处，不要修改原意"+
+                "给出的原始文字识别结果是：\n";
+        String prompt = command + text;
 
         Generation gen = new Generation();
         QwenParam param = QwenParam.builder().model("qwen-max").prompt(prompt)
