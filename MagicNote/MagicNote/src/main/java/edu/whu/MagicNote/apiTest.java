@@ -267,9 +267,15 @@ public class apiTest {
             aiFunctionService.polish(s2);
             //callWithMessage();
             //qwenQuickStart();
+<<<<<<< HEAD
            /* QAndAService qAndAService = new QAndAService();
             qAndAService.init2(s2);
             qAndAService.answerNew("米莱的政策是什么");*/
+=======
+            QAndAService qAndAService = new QAndAService();
+            qAndAService.initNew(s2);
+            qAndAService.answerNew("米莱的政策是什么");
+>>>>>>> e3c23db7a01fed0a7b5b507659500fa34406d4c8
             //NotOneConversationsTest2("韩国这次的核心人物是谁");
             //NotOneConversationsTest2("韩国的教练是谁");
             //NotOneConversationsTest2("中国队的教练是谁");
