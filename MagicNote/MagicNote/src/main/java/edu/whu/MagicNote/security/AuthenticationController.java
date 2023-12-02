@@ -32,6 +32,7 @@ public class AuthenticationController {
         result.put("name",user.getName());
         result.put("email",user.getEmail());
         result.put("profile", user.getProfile());
+        result.put("photo", user.getPhoto());
         result.put("token",token);
     }
 
