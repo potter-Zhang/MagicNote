@@ -75,6 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     @Override
     public User addUser(User user){
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setPhoto("");
         this.baseMapper.insert(user);
         return user;
     }
@@ -121,10 +122,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         newUser.setProfile(oldUser.getProfile());
 
         // 删除用户原本头像文件（若有的话）
-        User user = this.getUserById(id);
-        String path = user.getPhoto();
-        if(path != null){
-            String previousFileName = path.substring(path.lastIndexOf("/"));
+        String path = oldUser.getPhoto();
+        if(!path.isEmpty()){
+            String previousFileName = path.substring(path.lastIndexOf("/") + 1);
             if(minioService.fileExists("userphoto", previousFileName))
                 minioService.deleteFile("userphoto",previousFileName);
         }
