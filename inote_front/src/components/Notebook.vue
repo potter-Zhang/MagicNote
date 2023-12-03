@@ -52,6 +52,7 @@
     await updateNotebooks();
     if (currentNote.value.notebookId === notebook.id) {
       setCurrentNote(-1, "", -1);
+      
     }
   }
 
