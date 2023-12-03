@@ -79,6 +79,12 @@ watch(() => currentNote.value.updateCode, (newCode) => {
 
 watch(() => currentNote.value.noteId, (note, prevNote) => {
     console.log(note)
+    if (prevNote > 0 && note === -1) {
+      editor.clear()
+      noteInEditor.value = { notebookId: -1, noteId: -1, name: ""}
+      return
+    }
+      
     if (note === -1)
         return
     if (noteInEditor.value.noteId !== -1) {
