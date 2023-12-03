@@ -5,7 +5,7 @@
   import wavesLeft from "@icon-park/vue-next/lib/icons/WavesLeft";
   import notebookIcon from "@icon-park/vue-next/lib/icons/Notebook"
 
-  import {ref} from "vue";
+  import {ref, onMounted} from "vue";
 
   import {currentNotebooks, currentUser} from "@/global";
 
@@ -13,6 +13,45 @@
   import '@/static/editor.md/editormd.min.js'
   import {ElMessage} from "element-plus";
   import {addNoteAPI} from "@/api/note";
+  import { transformPdfAPI, transformPptAPI  } from "../api/ocr";
+
+  var pdfUploader = null
+  var pptUploader = null
+
+  const reader = new FileReader()
+
+  onMounted(() => {
+    pdfUploader = document.getElementById('file-uploader-pdf')
+    pdfUploader.addEventListener('change', (event) => {
+      const file = event.target.files[0]
+      const formData = new FormData()
+      formData.append('file', file)
+
+      transformPdfAPI(formData).then((msg) => {previewText.value = extractPDFMeta(msg)}).catch((err) => ElMessage(err.response))
+    })
+
+    pptUploader = document.getElementById('file-uploader-ppt')
+    pptUploader.addEventListener('change', (event) => {
+      const file = event.target.files[0]
+      const formData = new FormData()
+      formData.append('file', file)
+
+      transformPptAPI(formData).then((msg) => {previewText.value = msg}).catch((err) => ElMessage(err.response))
+    })
+  })
+
+  function extractPDFMeta(msg) {
+    for (let i = 0; i < msg.length; i++) {
+      if (msg[i] === '\n') {
+        console.log(i)
+        ElMessage.success(msg.substring(0, i))
+        console.log(msg.substring(i))
+        return msg.substring(i)
+      }
+    }
+    return msg
+  }
+
 
   const importFromPDF = () => {
 
@@ -77,6 +116,7 @@
         <div style="display: flex; align-items: center">
           <file-pdf-one theme="outline" size="30" fill="#ffffff"/>
           <div class="btn-text">从pdf导入</div>
+          <input type="file" id="file-uploader-pdf" accept=".pdf">
         </div>
       </el-button>
       <el-button class="upload-btn" type="primary" @click="importFromPPT">
@@ -84,18 +124,21 @@
           <file-ppt theme="outline" size="30" fill="#ffffff"/>
           <div class="btn-text">从ppt导入</div>
         </div>
+        <input type="file" id="file-uploader-ppt" accept=".pptx">
       </el-button>
       <el-button class="upload-btn" type="primary" @click="importFromVideo">
         <div style="display: flex; align-items: center">
           <video-two theme="outline" size="30" fill="#ffffff"/>
           <div class="btn-text">从视频导入</div>
         </div>
+        <input type="file" id="file-uploader">
       </el-button>
       <el-button class="upload-btn" type="primary" @click="importFromAudio">
         <div style="display: flex; align-items: center">
           <waves-left theme="outline" size="30" fill="#ffffff"/>
           <div class="btn-text">从音频导入</div>
         </div>
+        <input type="file" id="file-uploader">
       </el-button>
     </div>
 
@@ -154,6 +197,16 @@
     flex-wrap: wrap;
   }
 
+  #file-uploader, #file-uploader-pdf, #file-uploader-ppt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
   .upload-btn {
     min-width: 150px;
     width: 20%;
@@ -161,6 +214,7 @@
     margin: 20px;
     border-radius: 10px;
     box-shadow: 0 0 3px 3px rgb(220,220,220, 0.5);
+    position: relative;
   }
   .upload-btn, .upload-btn:focus:not(.upload-btn:hover){
     /*点击后自动失焦*/
