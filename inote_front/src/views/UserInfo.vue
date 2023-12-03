@@ -120,7 +120,7 @@
         <!-- 主体部分 -->
         <div style="display: flex; flex-direction: column; flex: 1; align-items: center">
           <!-- 用户信息部分 -->
-          <div style="display: flex; width: 70%; margin-top: 3%; margin-bottom: 3%">
+          <div style="display: flex; width: 70%; margin-top: 3%; flex-wrap: wrap;">
             <div id="avatarCard" :style="{backgroundImage: `url(${userBackground})`}">
               <div class="mask">
                 <div class="avatar-and-name" style="z-index: 1; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
@@ -143,7 +143,7 @@
                   <span>{{currentUser.profile}}</span>
                 </div>
               </div>
-              <div class="content-card" style="margin: 5px 5px 0 15px">
+              <div class="content-card" style="margin: 5px 5px 50px 15px">
                 <div class="icon-box">
                   <tips theme="outline" size="96" fill="#ffffff"/>
                   <div style="font-weight: bolder; color: white">每日灵感</div>
@@ -240,9 +240,11 @@
     flex-direction: column;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
     width: 40%;
+    min-width: 300px;
     height: 300px;
     position: relative;
-    background-size: 100% 100%
+    background-size: 100% 100%;
+    margin-bottom: 50px;
   }
 
   .avatar {
@@ -274,6 +276,7 @@
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
     display: flex;
     align-items: center;
+    min-width: 400px;
   }
 
   .icon-box {
