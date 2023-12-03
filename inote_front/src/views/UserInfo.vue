@@ -89,7 +89,10 @@
     await updateUsernameAPI(data);
     await updateProfileAPI(data);
     if (photo.value !== undefined) {
-      await updateAvatarAPI(photo.value.raw, currentUser.value.id);
+      updateAvatarAPI(photo.value.raw, currentUser.value.id)
+          .then((response) => {
+            currentUser.value.photo = response;
+          })
     }
     currentUser.value.name = newUserInfo.value.name;
     currentUser.value.profile = newUserInfo.value.profile;
