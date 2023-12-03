@@ -8,7 +8,7 @@
   import afferentThree from "@icon-park/vue-next/lib/icons/AfferentThree"
   import defaultAvatar from '@/assets/default.png'
 
-  import {currentUser} from "@/global"
+  import {currentUser, updateNotebooks} from "@/global"
   import {searchAPI} from "@/api/search"
   import helpInfo from "../components/HelpInfo.vue"
   import editor from "../components/Editor.vue"
@@ -16,11 +16,15 @@
   import startTab from "../components/StartTab.vue"
   import importNote from "../components/ImportNote.vue"
   import searchResultView from "@/components/SearchResult.vue"
-  import {ref} from 'vue';
+  import {onBeforeMount, ref} from 'vue';
 
   const currentTab = ref("start"); // 当前展示在workspace的组件
   const searchKeyword = ref("");  // 搜索框文本
   const searchResult = ref([]); // 搜索结果
+
+  onBeforeMount(() => {
+    updateNotebooks();
+  })
 
   const searchNote = async () => {
     searchResult.value.splice(0, searchResult.value.length);
