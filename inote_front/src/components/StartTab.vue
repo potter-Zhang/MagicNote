@@ -4,11 +4,10 @@
   import {addNotebookAPI, getNotebooksAPI} from "@/api/notebook";
   import {addNoteAPI} from "@/api/note";
   import {logAPI} from "@/api/log";
-  import {currentUser, currentNote, setCurrentNote} from "@/global";
+  import {currentUser, currentNotebooks, setCurrentNote, updateNotebooks} from "@/global";
 
   import {ref, onBeforeMount, defineEmits } from 'vue'
   import {ElMessage, ElMessageBox} from "element-plus";
-  import {globalEventBus} from "@/util/eventBus";
 
   const emit = defineEmits(['jumpToNote'])
   let historyNotes = ref([]);
@@ -16,7 +15,6 @@
   const addNoteDialogVisible = ref(false);
   const selectedNotebook = ref(""); // 新建笔记时选择的笔记本
   const addNoteInput = ref("");  // 新建笔记的名称
-  const notebooks = ref([]);  // 用于新建笔记时选择笔记本
 
   const loadLog = async () => {
     const response = await logAPI(currentUser.value.id);
@@ -38,16 +36,9 @@
     });
   }
 
-  const loadNotebooks = async () => {
-    notebooks.value.splice(0, notebooks.value.length);
-    const response = await getNotebooksAPI(currentUser.value.id);
-    notebooks.value.push.apply(notebooks.value, response);
-  }
-
   // 挂载时加载历史记录和笔记本
-  onBeforeMount(async () => {
-    await loadLog();
-    await loadNotebooks();
+  onBeforeMount(() => {
+    loadLog();
   });
 
   const addNotebook = () => {
@@ -62,9 +53,7 @@
           await addNotebookAPI(data)
               .then(() => {
                 // 更新笔记本
-                loadNotebooks();
-                // 发出事件通知Notebook.vue组件更新要展示的笔记本
-                globalEventBus.emit("addNotebook");
+                updateNotebooks();
                 ElMessage({
                   type: 'success',
                   message: `创建成功`,
@@ -125,7 +114,7 @@
           </el-col>
           <el-col :span="12">
             <el-select v-model="selectedNotebook" placeholder="请选择笔记本" style="width: 100%">
-              <el-option v-for="item in notebooks" :key="item.id" :label="item.name" :value="item">
+              <el-option v-for="item in currentNotebooks" :key="item.id" :label="item.name" :value="item">
                 <div style="display: flex; align-items: center">
                   <notebook class="icon" theme="multi-color" size="18" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
                   <div style="margin-left: 5px; font-size: 16px">{{item.name}}</div>

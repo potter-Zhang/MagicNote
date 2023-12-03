@@ -5,7 +5,8 @@
 * */
 
 
-import {ref} from "vue";
+import {ref, onBeforeMount} from "vue";
+import {getNotebooksAPI} from "@/api/notebook";
 
 export const currentUser = ref({
     id: -1,
@@ -26,4 +27,11 @@ export const setCurrentNote = (noteid, name, notebookid) => {
     currentNote.value.noteId = noteid;
     currentNote.value.name = name;
     currentNote.value.notebookId = notebookid
+}
+
+export const currentNotebooks = ref([])
+
+export const updateNotebooks = async () => {
+    const response = await getNotebooksAPI(currentUser.value.id);
+    currentNotebooks.value.splice(0, currentNotebooks.value.length, ...response);
 }

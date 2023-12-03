@@ -14,34 +14,12 @@
   import {ElMessageBox, ElMessage} from "element-plus";
   import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI, getNoteAPI} from "@/api/note"
   import {getNotebooksAPI, addNotebookAPI, updateNotebookAPI, delNotebookByIdAPI} from "@/api/notebook"
-  import {currentUser, setCurrentNote} from "@/global"
-  import {globalEventBus} from "@/util/eventBus"
+  import {currentUser, setCurrentNote, currentNotebooks, updateNotebooks} from "@/global"
 
-  const notebooks = ref([]);
   const emits = defineEmits(['collapse'])
 
-  const getAllNotebooks = async () => {
-    notebooks.value.splice(0, notebooks.value.length);
-    const response = await getNotebooksAPI(currentUser.value.id);
-    notebooks.value.push.apply(notebooks.value, response);
-  }
-
-  onBeforeMount(async () => {
-    await getAllNotebooks();
-
-    // StartTab新增Notebook时需要更新notebooks
-    globalEventBus.on("addNotebook", async () => {
-      await getAllNotebooks();
-    })
-  })
-
-  onBeforeUnmount(() => {
-    // 取消监听
-    globalEventBus.off("addNotebook");
-  })
-
   const currentMode = ref('notebook'); // 显示笔记本或者笔记本中的文档
-  const currentNotebook = ref(-1);  // 当前正在浏览的笔记本id，在笔记本中新增笔记时需要使用
+  const selectedNotebook = ref(-1);  // 当前正在浏览的笔记本id，在笔记本中新增笔记时需要使用
 
   const changeMode = (type: string) =>{
     currentMode.value = type;
@@ -60,20 +38,18 @@
       inputErrorMessage: '请输入新的名称！',
     })
         .then(async ({ value }) => {
-          const oldName = notebook.name;
           notebook.name = value;
           await updateNotebookAPI(notebook)
               .catch((err) => {
-                notebook.name = oldName;
                 ElMessage.error(err.response.data)
               })
+          await updateNotebooks();
         })
   }
 
   const delNotebook = async (notebook) => {
     await delNotebookByIdAPI(notebook.id);
-    const listId = notebooks.value.indexOf(notebook);
-    notebooks.value.splice(listId, 1);
+    await updateNotebooks();
   }
 
   const addNotebook = () => {
@@ -87,7 +63,7 @@
           const data = {"name": value, "userid": currentUser.value.id};
           await addNotebookAPI(data)
               .then((response) => {
-                notebooks.value.push(response);
+                updateNotebooks();
                 ElMessage.success("创建成功");
               })
               .catch((err) => {
@@ -141,7 +117,7 @@
           "userid": currentUser.value.id,
           "content": "",
           "name": value,
-          "notebookid": currentNotebook.value
+          "notebookid": selectedNotebook.value
         })
             .then((response) => {
               notes.value.push(response);
@@ -177,14 +153,14 @@
 
     <div id="content">
       <!-- 显示笔记本 -->
-      <div v-if="currentMode==='notebook' && notebooks.length === 0">
+      <div v-if="currentMode==='notebook' && currentNotebooks.length === 0">
         <div class="addBtn" @click="addNotebook">
           <plus theme="outline" size="24" fill="#c8c8c8"/>
           <div>新建笔记本</div>
         </div>
       </div>
-      <div v-else-if="currentMode==='notebook' && notebooks.length > 0"  v-for="notebook in notebooks" class="display-item">
-        <div class="display-item-icon-and-text"  @click="currentNotebook=notebook.id; displayNotes(notebook.id);">
+      <div v-else-if="currentMode==='notebook' && currentNotebooks.length > 0"  v-for="notebook in currentNotebooks" class="display-item">
+        <div class="display-item-icon-and-text"  @click="selectedNotebook=notebook.id; displayNotes(notebook.id);">
           <notebook class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
           <div style="margin-left: 0.5rem; font-size: 0.8rem; font-weight: bold">{{notebook.name}}</div>
         </div>
@@ -218,7 +194,7 @@
         </div>
       </div>
       <div v-else-if="currentMode==='note' && notes.length > 0" class="display-item" v-for="note in notes">
-        <div class="display-item-icon-and-text" @click="setCurrentNote(note.id, note.name, currentNotebook)">
+        <div class="display-item-icon-and-text" @click="setCurrentNote(note.id, note.name, selectedNotebook)">
          <note-icon class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
          <div style="margin-left: 5%; font-size: 0.8rem; font-weight: bold">{{note.name}}</div>
         </div>
