@@ -1,11 +1,11 @@
 <script lang="ts" setup>
   import user from "@icon-park/vue-next/lib/icons/User";
   import allApplication from "@icon-park/vue-next/lib/icons/AllApplication";
-  import transferData from "@icon-park/vue-next/lib/icons/TransferData";
   import help from "@icon-park/vue-next/lib/icons/Help";
   import receive from "@icon-park/vue-next/lib/icons/Receive";
   import search from "@icon-park/vue-next/lib/icons/Search"
   import router from "@/router/index"
+  import afferentThree from "@icon-park/vue-next/lib/icons/AfferentThree"
   import defaultAvatar from '@/assets/default.png'
 
   import {currentUser} from "@/global"
@@ -14,6 +14,7 @@
   import editor from "../components/Editor.vue"
   import notebook from "../components/Notebook.vue"
   import startTab from "../components/StartTab.vue"
+  import importNote from "../components/ImportNote.vue"
   import searchResultView from "@/components/SearchResult.vue"
   import {ref} from 'vue';
 
@@ -99,12 +100,16 @@
               <all-application class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">开始</span></template>
             </el-menu-item>
-            <el-menu-item index="2" v-on:click="toggleDrawer(); changeTab('editor')">
+            <el-menu-item index="2" @click="toggleDrawer(); changeTab('editor')">
               <receive class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">笔记本</span></template>
             </el-menu-item>
+            <el-menu-item index="3" @click="changeTab('import')">
+              <afferent-three theme="outline" size="24" fill="#000000"/>
+              <template #title><span class="menu-title">导入笔记</span></template>
+            </el-menu-item>
           </div>
-          <el-menu-item index="3" @click="changeTab('helpInfo')">
+          <el-menu-item index="4" @click="changeTab('helpInfo')">
             <help class="icon" theme="outline" size="24" fill="#333"/>
             <template #title><span class="menu-title">帮助</span></template>
           </el-menu-item>
@@ -116,10 +121,12 @@
             <notebook style="height: 100%" @collapse="toggleDrawer"/>
           </div>
 
+          <!-- 工作区 -->
           <div id="workspace">
             <start-tab @jumpToNote="changeTab('editor')" v-if="currentTab==='start'"/>
             <editor v-else-if="currentTab==='editor'"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
+            <import-note v-else-if="currentTab==='import'"/>
             <search-result-view v-else-if="currentTab==='search'" :notes="searchResult" @noteclick="changeTab('editor')"/>
           </div>
         </el-main>
