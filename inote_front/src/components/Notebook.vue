@@ -14,7 +14,7 @@
   import {ElMessageBox, ElMessage} from "element-plus";
   import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI, getNoteAPI} from "@/api/note"
   import {getNotebooksAPI, addNotebookAPI, updateNotebookAPI, delNotebookByIdAPI} from "@/api/notebook"
-  import {currentUser, setCurrentNote, currentNotebooks, updateNotebooks} from "@/global"
+  import {currentUser, currentNote, setCurrentNote, currentNotebooks, updateNotebooks} from "@/global"
 
   const emits = defineEmits(['collapse'])
 
@@ -50,6 +50,9 @@
   const delNotebook = async (notebook) => {
     await delNotebookByIdAPI(notebook.id);
     await updateNotebooks();
+    if (currentNote.value.notebookId === notebook.id) {
+      setCurrentNote(-1, "", -1);
+    }
   }
 
   const addNotebook = () => {
@@ -101,6 +104,9 @@
 
   const delNote = async (note) => {
     await delNoteByIdAPI(note.id);
+    if (note.id === currentNote.value.noteId) {
+      setCurrentNote(-1, "", -1);
+    }
     const listId = notes.value.indexOf(note);
     notes.value.splice(listId, 1);
   }

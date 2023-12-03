@@ -14,6 +14,22 @@
   import {ElMessage} from "element-plus";
   import {addNoteAPI} from "@/api/note";
 
+  const importFromPDF = () => {
+
+  }
+
+  const importFromPPT = () => {
+
+  }
+
+  const importFromVideo = () => {
+
+  }
+
+  const importFromAudio = () => {
+
+  }
+
   const previewText = ref("长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文" +
       "本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文"+
   "长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文"+
@@ -57,25 +73,25 @@
   <div id="import-body">
     <!-- 选项 -->
     <div id="option-bar">
-      <el-button class="upload-btn" type="primary">
+      <el-button class="upload-btn" type="primary" @click="importFromPDF">
         <div style="display: flex; align-items: center">
           <file-pdf-one theme="outline" size="30" fill="#ffffff"/>
           <div class="btn-text">从pdf导入</div>
         </div>
       </el-button>
-      <el-button class="upload-btn" type="primary">
+      <el-button class="upload-btn" type="primary" @click="importFromPPT">
         <div style="display: flex; align-items: center">
           <file-ppt theme="outline" size="30" fill="#ffffff"/>
           <div class="btn-text">从ppt导入</div>
         </div>
       </el-button>
-      <el-button class="upload-btn" type="primary">
+      <el-button class="upload-btn" type="primary" @click="importFromVideo">
         <div style="display: flex; align-items: center">
           <video-two theme="outline" size="30" fill="#ffffff"/>
           <div class="btn-text">从视频导入</div>
         </div>
       </el-button>
-      <el-button class="upload-btn" type="primary">
+      <el-button class="upload-btn" type="primary" @click="importFromAudio">
         <div style="display: flex; align-items: center">
           <waves-left theme="outline" size="30" fill="#ffffff"/>
           <div class="btn-text">从音频导入</div>
