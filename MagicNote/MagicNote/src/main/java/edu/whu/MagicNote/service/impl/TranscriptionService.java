@@ -30,10 +30,8 @@ public class TranscriptionService {
 
             if (session.isConnected()) {
                 System.out.println("SSH连接成功！");
-                // 执行其他操作
             } else {
                 System.out.println("SSH连接失败！");
-                // 处理连接失败的情况
             }
             // 创建SSH通道
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -44,8 +42,6 @@ public class TranscriptionService {
             String command = pythonInterpreter + " " + pythonScript + " " + filePath;
 
             //ProcessBuilder processBuilder = new ProcessBuilder(pythonInterpreter, pythonScript, filePath);
-
-
 
             // 在远程服务器上执行命令
             channel.setCommand(command);
