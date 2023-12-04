@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,8 +41,13 @@ public class OcrService {
             @Cleanup
             InputStream sbs = new ByteArrayInputStream(imageFile.getBytes());
             BufferedImage bufferedImage = ImageIO.read(sbs);
+            // 将图像转换为灰度图像
+            BufferedImage grayscaleImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            Graphics2D g2d = grayscaleImage.createGraphics();
+            g2d.drawImage(bufferedImage, 0, 0, null);
+            g2d.dispose();
             // 对图片进行文字识别
-            result = tesseract.doOCR(bufferedImage);
+            result = tesseract.doOCR(grayscaleImage);
             result = result.replaceAll(" +","");     // 将所有空格替换为空字符串，一是规范化数据，二是方便之后的根据图片中信息进行笔记搜索
         } catch (IOException e) {
             throw new TodoException(TodoException.OCR_ERROR, "图片转换失败");
