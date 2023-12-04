@@ -3104,6 +3104,9 @@
         },
 
         image : function() {
+            this.settings.toolbarHandlers.callback()
+            //console.log(this.toolbarHandlers['save'])
+            //this.defaults.toolbarHandlers.callback()
             this.executePlugin("imageDialog", "image-dialog/image-dialog");
         },
         

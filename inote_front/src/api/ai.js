@@ -1,5 +1,6 @@
 /* eslint-disable */
 import request from "@/util/request";
+import axios from 'axios'
 
 export const getAbstractAPI = (text) => {
     return request.post("/ai/abstract", text);
@@ -27,5 +28,17 @@ export const initAPI = (text) => {
 
 export const answerAPI = (text) => {
     return request.post('/ai/answer', text)
+}
+
+export const streamAnswerAPI = (text) => {
+    return axios({
+        method: 'get', 
+        headers: {
+            Accept: 'text/event-stream',
+        },
+        url: 'http://localhost:8081/ai/streamChatWithWeb', 
+        responseType: 'stream',
+        data: text
+        })
 }
 

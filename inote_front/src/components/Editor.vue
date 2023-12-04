@@ -4,7 +4,7 @@ import '@/static/zepto/distrib/zepto.js'
 import '@/static/editor.md/editormd.min.js' 
 import { onMounted, ref, computed, watch } from 'vue'
 import bubble from '@/components/AIBubble.vue'
-import { currentNote  } from "../global"
+import { currentNote, currentUser  } from "../global"
 import { getNoteAPI, updateNoteAPI } from '@/api/note.js'
 import {ElMessage} from "element-plus";
 
@@ -16,6 +16,8 @@ const noteInEditor = ref({
 })
 
 var editor = null
+
+const uploadURL = ref('http://localhost:8081/upload/photo')
 
 const flip = ref(false)
 const showBubble = ref(false)
@@ -112,7 +114,7 @@ onMounted(() => {
       
       imageUpload : true,
       imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-      imageUploadURL : "http://localhost:8081/upload/photo", //图片上传路径
+      imageUploadURL : 'http://localhost:5173/upload/photo',
       width  : "100%",
       height : "700px",
       path   : "./editor.md/lib/",
@@ -151,6 +153,7 @@ onMounted(() => {
           initGraph();
           mermaid.init();
       },
+      crossDomainUpload: true,
       toolbarIconTexts : {
           abstract : "<div style=\"display: flex; flex-direction: column\"><div class=\"far fa-file\"></div><span style=\"font-size: small\">abstract</span></div>",  // 如果没有图标，则可以这样直接插入内容，可以是字符串或HTML标签
           expand : "<div style=\"display: flex; flex-direction: column\"><div class=\"fal fa-edit\"></div><span style=\"font-size: small\">expand</span></div>",
@@ -210,6 +213,10 @@ onMounted(() => {
               } else {
                   setBubble('generateTable', selection)
               }
+            },
+            callback: function() {
+              //console.log(this.settings)
+              //this.settings.imageUploadURL = 'http://localhost:8081/upload/photo/' + currentUser.value.id + '/' + currentNote.value.noteId
             },
             generateFlowChart: function(cm, icon, cursor, selection) {
               if(selection === "") {
