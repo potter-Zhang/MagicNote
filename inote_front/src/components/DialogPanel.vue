@@ -3,8 +3,9 @@ import CustomDialog from './CustomDialog.vue'
 import arrowRight from "@icon-park/vue-next/lib/icons/ArrowRight";
 import { ref, computed, watch, nextTick } from 'vue'
 import { currentNote } from '../global';
-import { initAPI, answerAPI } from '@/api/ai'
+import { initAPI, answerAPI, streamAnswerAPI } from '@/api/ai'
 import { getNoteAPI } from '@/api/note'
+import { Loading } from 'element-plus/es/components/loading/src/service';
 
 const isDragging = ref(false)
 const left = ref(500)
@@ -75,17 +76,38 @@ function sendMessage (msg) {
   if (msg !== '') {
     
     messages.value.push({ role: 'user', content: msg })
+    messages.value.push({ role: 'assistant', content: '' })
+   
     thinking.value = true
     userMsg.value = "";
     const data = {
       str: msg,
       num: 0
     }
-    answerAPI(data)
-    .then((returnMsg) => {addMessage('assistant', returnMsg)})
-    .catch((err) => {console.log(err)})
-    .finally(() => thinking.value = false)
-  }
+   
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `http://localhost:8081/ai/streamChatWithWeb?content=${msg}`);
+    xhr.setRequestHeader('Content-Type', 'text/event-stream');
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 3) {
+          // 将数据添加到文本框中
+          messages.value[messages.value.length - 1].content = xhr.responseText
+        }
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          messages.value[messages.value.length - 1].content = xhr.responseText
+          }
+          thinking.value = false
+        }
+      }
+    
+      
+  //   answerAPI(data)
+  //   .then((returnMsg) => {addMessage('assistant', returnMsg);})
+  //   .catch((err) => {console.log(err)})
+  //   .finally(() => thinking.value = false)
+  // 
+}
 }
 
 watch(() => currentNote.value.updateCode, (newCode) => {
