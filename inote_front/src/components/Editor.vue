@@ -112,7 +112,7 @@ onMounted(() => {
       
       imageUpload : true,
       imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-      imageUploadURL : "/upload/photo", //图片上传路径
+      imageUploadURL : "http://localhost:8081/upload/photo", //图片上传路径
       width  : "100%",
       height : "700px",
       path   : "./editor.md/lib/",
