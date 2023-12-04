@@ -49,6 +49,7 @@ public class AIFunctionService {
         response.setHeader("Cache-Control", "no-cache");
 
         String content = command + note;
+        System.out.println("Begin");
         OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
     }
 
