@@ -15,9 +15,13 @@ import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
 import edu.whu.MagicNote.service.impl.OcrService;
+import io.github.asleepyfish.util.OpenAiUtils;
 import io.reactivex.Flowable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.ServerSentEvent;
+import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 
@@ -180,7 +184,7 @@ public class apiTest {
         System.out.println(result.getOutput().getChoices().get(0).getMessage().getContent());
     }
 
-    public static void streamCallWithMessage()
+    public static Flux<ServerSentEvent<String>> streamCallWithMessage()
             throws NoApiKeyException, ApiException, InputRequiredException {
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
         String prompt = s1 + s5;
@@ -199,11 +203,35 @@ public class apiTest {
                         .build();
         Flowable<GenerationResult> result = gen.streamCall(param);
         StringBuilder fullContent = new StringBuilder();
-        result.blockingForEach(message -> {
-            fullContent.append(message.getOutput().getChoices().get(0).getMessage().getContent());
-            System.out.println(message.getOutput().getChoices().get(0).getMessage().getContent());
-        });
-        System.out.println("Full content: \n" + fullContent.toString());
+        //result.blockingForEach(message -> {
+        //    fullContent.append(message.getOutput().getChoices().get(0).getMessage().getContent());
+        //    System.out.println(message.getOutput().getChoices().get(0).getMessage().getContent());
+        //});
+        //System.out.println("Full content: \n" + fullContent.toString());
+
+        // 将Flowable转换成Flux<ServerSentEvent<String>>并进行处理
+        return Flux.from(result)
+                // add delay between each event
+                .delayElements(Duration.ofMillis(1000))
+                .map(message -> {
+                    String output = message.getOutput().getChoices().get(0).getMessage().getContent();
+                    System.out.println(output); // print the output
+                    return ServerSentEvent.<String>builder()
+                            .data(output)
+                            .build();
+                })
+                .concatWith(Flux.just(ServerSentEvent.<String>builder().comment("").build()))
+                .doOnError(e -> {
+                    if (e instanceof NoApiKeyException) {
+                        // 处理 NoApiKeyException
+                    } else if (e instanceof InputRequiredException) {
+                        // 处理 InputRequiredException
+                    } else if (e instanceof ApiException) {
+                        // 处理其他 ApiException
+                    } else {
+                        // 处理其他异常
+                    }
+                });
     }
 
     public static void NotOneConversationsTest(String question)
@@ -256,6 +284,13 @@ public class apiTest {
     }
 
 
+    public static void streamChat(String content) {
+        OpenAiUtils.createStreamChatCompletion(content, System.out);
+        // 下面的默认和上面这句代码一样，是输出结果到控制台
+        //OpenAiUtils.createStreamChatCompletion(content);
+    }
+
+
     public static void main(String[] args) throws NoApiKeyException, InputRequiredException {
         try {
             AIFunctionService aiFunctionService = new AIFunctionService();
@@ -265,7 +300,7 @@ public class apiTest {
             //aiFunctionService.segmentNote(s5);
             //aiFunctionService.generateTable(s2);
             //aiFunctionService.generateFlowChart(s2);
-            aiFunctionService.polish(s9);
+            //aiFunctionService.polish(s9);
             //callWithMessage();
             //qwenQuickStart();
 
@@ -286,7 +321,7 @@ public class apiTest {
             //qAndAService.answer("阿根廷总统选举的重要人物是谁");
             //qAndAService.answer("阿根廷总统选举的关键人物是谁");
             //qAndAService.answer("阿根廷的新总统是谁");
-
+            streamChat(s1+s2);
         } catch (ApiException e) {
             System.out.println(String.format("Exception %s", e.getMessage()));
         }
