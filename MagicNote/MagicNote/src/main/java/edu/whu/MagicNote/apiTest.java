@@ -129,6 +129,7 @@ public class apiTest {
 
     static String s8 = "接下来我会给出一篇笔记，你需要根据这篇笔记的内容回答我接下来的多个问题。这篇笔记为：";
 
+    static String s9 = "一行代码在你的项目中使用分不知所在我们项目开发中分不知所基本上都会用到现在用的最多的就是radison在实际开发中加锁和释放锁稍不注意就会出现问题为了规矩低级错误和方便使用我最近基于radison封装了一个工具类可以优雅的对我们的方法实行分不知所我们先看一下最终的时间效果我们有这样一个方法会而余额变更为了防止多实地并发现下的余额初段问题我们需要对当前会而进行加锁加锁时我们只需要在方法上加制定了lock住解在方法参数中加lock key住解根据耶五我们这里是需要对当前会而加锁所以我们在memoryd上加了lock key住解加上这两个住解后加锁就完成了我们看一下代码实现原理首先我们定了三个住解引用boreadison它可以放在我们的smean boat的啟动类上面表示我们当前项目需要中到分不知所根据配置我们会把当前分不知所的相关类出手挂到sprey容器中lock住解主要装营方法上第一所的一些相关属性可以试证所的类型为支援所住在所所得持续时间支援时间所得前锐呼启所失败后的提示lock key住解装营方法的参数上容易所小说的范围最核心的一个类lock manor项目通过引爆redison会把它引入到我们的sprey容器中它拦结了所有lock住解的方法多了一个签面然后根据住解计算出分不知所的key然后在方法掉入前进行加速翻牢里方法里撕放锁整个过程就是这样的如果您也想写这样一个工具类欢迎点赞收场方便以后参考";
     @Autowired
     OcrService ocrService;
 
@@ -264,7 +265,7 @@ public class apiTest {
             //aiFunctionService.segmentNote(s5);
             //aiFunctionService.generateTable(s2);
             //aiFunctionService.generateFlowChart(s2);
-            aiFunctionService.polish(s2);
+            aiFunctionService.polish(s9);
             //callWithMessage();
             //qwenQuickStart();
 

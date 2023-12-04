@@ -3,7 +3,6 @@ package edu.whu.MagicNote.controller;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.fastjson.JSONObject;
-import edu.whu.MagicNote.exception.TodoException;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
 import edu.whu.MagicNote.service.impl.MinioService;
 import edu.whu.MagicNote.service.impl.TranscriptionService;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/transcribe")
@@ -34,13 +31,9 @@ public class TranscriptionController {
             String ip = String.valueOf(uploadFile.get("endPoint"));
             String filepath = ip+"/videoandaudio/"+fileName;
             String Result = ts.transcribe(filepath);
-            //Result = ai.polish(Result);
+            Result = ai.polish(Result);
             minioService.deleteFile("videoandaudio",fileName);
             return Result == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(Result);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (TodoException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
