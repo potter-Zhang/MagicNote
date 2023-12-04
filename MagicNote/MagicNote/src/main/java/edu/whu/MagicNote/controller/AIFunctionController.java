@@ -158,6 +158,7 @@ public class AIFunctionController {
 
     @GetMapping("/streamChatWithWeb")
     public void streamChatWithWeb(String content, HttpServletResponse response) throws IOException {
+
         aiFunctionService.abstractNoteGPT(content, response);
     }
 }

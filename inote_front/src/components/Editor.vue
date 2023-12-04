@@ -284,7 +284,7 @@ function initMarkdown() {
     <div id="editor">
       <bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
     </div>
-    <float-ball @synEditor="saveNote"/>
+    <float-ball/>
   </div>
 </template>
 
