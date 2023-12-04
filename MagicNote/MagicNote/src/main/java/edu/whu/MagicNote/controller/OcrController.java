@@ -1,7 +1,5 @@
 package edu.whu.MagicNote.controller;
 
-import com.alibaba.dashscope.exception.InputRequiredException;
-import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.fastjson.JSONObject;
 import edu.whu.MagicNote.exception.TodoException;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
@@ -48,14 +46,10 @@ public class OcrController {
                     multipartFile.getOriginalFilename(), multipartFile.getContentType(),
                     multipartFile.getBytes());
             //识别图片结果并进行修改
-            result=ocrService.recognizePdf(multipartFile);
-            //result = ai.polish(result);
+            result=ocrService.recognizeImg(multipartFile);
+            result = ai.polish(result);
         } catch (TodoException e) {
             return ResponseEntity.badRequest().body(e.getCode() + e.getMessage());
-        } catch (NoApiKeyException e) {
-            throw new RuntimeException(e);
-        } catch (InputRequiredException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -83,8 +77,6 @@ public class OcrController {
             minioService.deleteFile("pdf",fileName);
         } catch (TodoException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
