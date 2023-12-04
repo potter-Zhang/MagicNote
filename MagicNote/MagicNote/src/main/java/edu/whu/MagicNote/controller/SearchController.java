@@ -3,7 +3,6 @@ package edu.whu.MagicNote.controller;
 
 import edu.whu.MagicNote.domain.Note;
 import edu.whu.MagicNote.service.INoteService;
-import org.checkerframework.checker.units.qual.N;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
