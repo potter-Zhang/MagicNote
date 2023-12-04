@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Arrays;
 
@@ -98,7 +100,7 @@ public class AIFunctionController {
     }
 
     @GetMapping(value = "/streamAsk", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<String>> streamCallWithMessage(String q)
+    public Flux<ServerSentEvent<String>> streamCallWithMessage(String q, HttpServletResponse response)
             throws NoApiKeyException, ApiException, InputRequiredException {
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
 
@@ -122,6 +124,7 @@ public class AIFunctionController {
                         .incrementalOutput(true) // get streaming output incrementally
                         .build();
         Flowable<GenerationResult> result = gen.streamCall(param);
+
         StringBuilder fullContent = new StringBuilder();
         System.out.println(fullContent.toString());
         return Flux.from(result)
@@ -148,12 +151,50 @@ public class AIFunctionController {
                 });
     }
 
+    @GetMapping(value = "/streamQwen", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public void streamQwen(String q, HttpServletResponse response)
+            throws NoApiKeyException, ApiException, InputRequiredException {
+        Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
 
-    @GetMapping("/streamChat")
-    public void streamChat(String content) {
-        // OpenAiUtils.createStreamChatCompletion(content, System.out);
-        // 下面的默认和上面这句代码一样，是输出结果到控制台
-        OpenAiUtils.createStreamChatCompletion(content);
+        String command = "接下来我会给出我的笔记，你需要提炼、 缩写我的笔记，尽量精简。\n" +
+                "要求：1、最终输出为markdown格式；" +
+                "2、你需要将最重要的那些信息在markdown中进行加粗、加红色等；" +
+                "3、充分使用多级标题；" +
+                "4、最终不需要回答其他信息，返回markdown结果即可。"+
+                "给出的笔记是：\n";
+
+        String prompt = command + q;
+
+        Generation gen = new Generation();
+
+        Message userMsg = Message
+                .builder()
+                .role(Role.USER.getValue())
+                .content(prompt)
+                .build();
+        QwenParam param =
+                QwenParam.builder().model("qwen-max").messages(Arrays.asList(userMsg))
+                        .resultFormat(QwenParam.ResultFormat.MESSAGE)
+                        .topP(0.8)
+                        .incrementalOutput(true) // get streaming output incrementally
+                        .build();
+        Flowable<GenerationResult> result = gen.streamCall(param);
+        StringBuilder fullContent = new StringBuilder();
+
+        // 需要指定response的ContentType为流式输出，且字符编码为UTF-8
+        response.setContentType("text/event-stream");
+        response.setCharacterEncoding("UTF-8");
+
+        // 禁用缓存
+        response.setHeader("Cache-Control", "no-cache");
+
+        result.blockingForEach(message -> {
+            fullContent.append(message.getOutput().getChoices().get(0).getMessage().getContent());
+            response.getOutputStream().write(message.getOutput().getChoices().get(0).getMessage().getContent().getBytes());
+            response.getOutputStream().flush();
+        });
+        System.out.println("Full content: \n" + fullContent.toString());
+        System.out.println(fullContent.toString());
     }
 
     @GetMapping("/streamChatWithWeb")
