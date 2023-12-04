@@ -10,10 +10,11 @@ import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
+import io.reactivex.Flowable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.UUID;
 
 @Service
 public class QAndAService {
@@ -45,7 +46,7 @@ public class QAndAService {
         msgManager.add(assistantMsg);
     }
 
-    public String answer(String question) throws NoApiKeyException, ApiException, InputRequiredException {
+    public void answer(String question, HttpServletResponse response) throws NoApiKeyException, ApiException, InputRequiredException {
 
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
         Message usrMessage = Message.builder().role(Role.USER.getValue()).content(question).build();
@@ -55,17 +56,29 @@ public class QAndAService {
                         .resultFormat(QwenParam.ResultFormat.MESSAGE)
                         .topP(0.8)
                         .enableSearch(false)    //只让其根据笔记内容回答问题，不可通过其他渠道进行搜索
+                        .incrementalOutput(true)
                         .build();
 
-        GenerationResult result = gen.call(param);
-        Message assistantMsg = Message.builder().role(Role.ASSISTANT.getValue()).content(result.getOutput().getChoices().get(0).getMessage().getContent()).build();
+        Flowable<GenerationResult> result = gen.streamCall(param);
+        StringBuilder fullContent = new StringBuilder();
+
+        response.setContentType("text/event-stream");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Cache-Control", "no-cache");
+
+        result.blockingForEach(message -> {
+            fullContent.append(message.getOutput().getChoices().get(0).getMessage().getContent());
+            response.getOutputStream().write(message.getOutput().getChoices().get(0).getMessage().getContent().getBytes());
+            response.getOutputStream().flush();
+        });
+        System.out.println(fullContent.toString());
+
+        Message assistantMsg = Message.builder().role(Role.ASSISTANT.getValue()).content(fullContent.toString()).build();
         msgManager.add(assistantMsg);
-        System.out.println(result.getOutput().getChoices().get(0).getMessage().getContent());
-        //System.out.println(JsonUtils.toJson(result));
-        return result.getOutput().getChoices().get(0).getMessage().getContent();
     }
 
-    // 新版的知识问答方法，调用了python脚本
+
+    // 新版的知识问答方法，调用了python脚本（目前由于加入的逐字输出，这个不可实现逐字输出，先不考虑）
     public void initNew(String note) throws IOException {
         String path = System.getProperty("user.dir") + "/MagicNote/src/main/resources/test.txt";
         File newFile = new File(path);

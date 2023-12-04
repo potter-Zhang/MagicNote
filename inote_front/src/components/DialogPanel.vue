@@ -6,6 +6,8 @@ import { currentNote } from '../global';
 import { initAPI, answerAPI, streamAnswerAPI } from '@/api/ai'
 import { getNoteAPI } from '@/api/note'
 import { Loading } from 'element-plus/es/components/loading/src/service';
+import { ElMessage } from 'element-plus';
+import axios from 'axios'
 
 const isDragging = ref(false)
 const left = ref(500)
@@ -72,7 +74,7 @@ function addMessage(msgRole, msg) {
   }
 }
 
-function sendMessage (msg) {
+async function sendMessage (msg) {
   if (msg !== '') {
     
     messages.value.push({ role: 'user', content: msg })
@@ -84,22 +86,41 @@ function sendMessage (msg) {
       str: msg,
       num: 0
     }
-   
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `http://localhost:8081/ai/streamChatWithWeb?content=${msg}`);
-    xhr.setRequestHeader('Content-Type', 'text/event-stream');
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 3) {
-          // 将数据添加到文本框中
-          messages.value[messages.value.length - 1].content = xhr.responseText
-        }
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          messages.value[messages.value.length - 1].content = xhr.responseText
-          }
-          thinking.value = false
-        }
-      }
+
+        axios({
+      method: 'get',
+      url: 'http://localhost:8081/ai/streamQwen?content=' + msg,
+      responseType: 'stream'
+    })
+    .then(response => {
+
+      response.data.on('data', (chunk) => {
+        // logic to process stream data
+      });
+
+      response.data.on('end', () => {
+        // logic for stream complete
+      });
+
+    }); 
+
+    // const xhr = new XMLHttpRequest();
+    // xhr.open('GET', `http://localhost:8081/ai/streamQwen?content=${msg}`);
+    // xhr.setRequestHeader('Content-Type', 'text/event-stream');
+    // xhr.onreadystatechange = () => {
+    //   if (xhr.readyState === 3) {
+    //       // 将数据添加到文本框中
+    //       messages.value[messages.value.length - 1].content = xhr.responseText
+    //     }
+    //   if (xhr.readyState === 4) {
+    //     if (xhr.status === 200) {
+    //       messages.value[messages.value.length - 1].content = xhr.responseText
+    //       }
+    //       thinking.value = false
+    //     }
+    //   }
+
+    // xhr.send()
     
       
   //   answerAPI(data)

@@ -31,14 +31,6 @@ export const answerAPI = (text) => {
 }
 
 export const streamAnswerAPI = (text) => {
-    return axios({
-        method: 'get', 
-        headers: {
-            Accept: 'text/event-stream',
-        },
-        url: 'http://localhost:8081/ai/streamChatWithWeb', 
-        responseType: 'stream',
-        data: text
-        })
+    return axios.get('/ai/streamQwen?content=${text}', {responseType: 'stream'})
 }
 
