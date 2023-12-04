@@ -6,7 +6,11 @@ import com.alibaba.dashscope.aigc.generation.models.QwenParam;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
+import io.github.asleepyfish.util.OpenAiUtils;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Service
 public class AIFunctionService {
@@ -27,6 +31,25 @@ public class AIFunctionService {
 
         System.out.println(result.getOutput().getText());
         return result.getOutput().getText();
+    }
+
+    public void abstractNoteGPT(String note, HttpServletResponse response) throws IOException {
+        String command = "接下来我会给出我的笔记，你需要提炼、 缩写我的笔记，尽量精简。\n" +
+                "要求：1、最终输出为markdown格式；" +
+                "2、你需要将最重要的那些信息在markdown中进行加粗、加红色等；" +
+                "3、充分使用多级标题；" +
+                "4、最终不需要回答其他信息，返回markdown结果即可。"+
+                "给出的笔记是：\n";
+
+        // 需要指定response的ContentType为流式输出，且字符编码为UTF-8
+        response.setContentType("text/event-stream");
+        response.setCharacterEncoding("UTF-8");
+
+        // 禁用缓存
+        response.setHeader("Cache-Control", "no-cache");
+
+        String content = command + note;
+        OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
     }
 
     // 扩写笔记的方法
