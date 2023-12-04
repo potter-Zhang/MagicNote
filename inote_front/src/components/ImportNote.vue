@@ -1,8 +1,4 @@
 <script setup>
-  import filePdfOne from "@icon-park/vue-next/lib/icons/FilePdfOne";
-  import filePpt from "@icon-park/vue-next/lib/icons/FilePpt";
-  import videoTwo from "@icon-park/vue-next/lib/icons/VideoTwo";
-  import wavesLeft from "@icon-park/vue-next/lib/icons/WavesLeft";
   import notebookIcon from "@icon-park/vue-next/lib/icons/Notebook"
 
   import upload from "@icon-park/vue-next/lib/icons/Upload"
@@ -15,7 +11,7 @@
   import '@/static/editor.md/editormd.min.js'
   import {ElMessage} from "element-plus";
   import {addNoteAPI} from "@/api/note";
-  import { transformPdfAPI, transformPptAPI  } from "../api/ocr";
+  import { transformPdfAPI, transformPptAPI  } from "@/api/ocr";
   import { transformAudioVideoAPI } from "@/api/transcribe";
 import { Loading } from "@icon-park/vue-next";
 
@@ -123,39 +119,6 @@ import { Loading } from "@icon-park/vue-next";
 
 <template>
   <div id="import-body">
-    <!-- 选项 
-    <div id="option-bar">
-      <el-button class="upload-btn" type="primary" @click="importFromPDF">
-        <div style="display: flex; align-items: center">
-          <file-pdf-one theme="outline" size="30" fill="#ffffff"/>
-          <div class="btn-text">从pdf导入</div>
-          <input type="file" id="file-uploader-pdf" accept=".pdf">
-        </div>
-      </el-button>
-      <el-button class="upload-btn" type="primary" @click="importFromPPT">
-        <div style="display: flex; align-items: center">
-          <file-ppt theme="outline" size="30" fill="#ffffff"/>
-          <div class="btn-text">从ppt导入</div>
-        </div>
-        <input type="file" id="file-uploader-ppt" accept=".pptx">
-      </el-button>
-      <el-button class="upload-btn" type="primary" @click="importFromVideo">
-        <div style="display: flex; align-items: center">
-          <video-two theme="outline" size="30" fill="#ffffff"/>
-          <div class="btn-text">从视频导入</div>
-        </div>
-        <input type="file" id="file-uploader">
-      </el-button>
-      <el-button class="upload-btn" type="primary" @click="importFromAudio">
-        <div style="display: flex; align-items: center">
-          <waves-left theme="outline" size="30" fill="#ffffff"/>
-          <div class="btn-text">从音频导入</div>
-        </div>
-        <input type="file" id="file-uploader">
-      </el-button>
-    </div>
-    -->
-
     <div style="display: flex; flex-grow: 1; flex-wrap: wrap; justify-content: center; width: 100%; ">
       <!-- 预览 -->
       <div id="preview">
@@ -200,7 +163,7 @@ import { Loading } from "@icon-park/vue-next";
             <div>新笔记的名称：</div>
           </div>
           <el-input v-model="newNoteName" style="margin-bottom: 20px"/>
-          <el-button type="primary" @click="addNote">确定</el-button>
+          <el-button type="primary" @click="addNote">创建新笔记</el-button>
         </div>
 
       </div>
