@@ -17,9 +17,8 @@ const noteInEditor = ref({
 
 var editor = null
 
-const uploadURL = ref('http://localhost:8081/upload/photo')
+const imageUploadURL = 'http://localhost:8081/upload/photo'
 
-const flip = ref(false)
 const showBubble = ref(false)
 
 const selectedText = ref('')
@@ -107,7 +106,6 @@ onMounted(() => {
       
       imageUpload : true,
       imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-      imageUploadURL : 'http://localhost:5173/upload/photo',
       width  : "100%",
       height : "700px",
       path   : "./editor.md/lib/",
@@ -207,10 +205,6 @@ onMounted(() => {
                   setBubble('generateTable', selection)
               }
             },
-            callback: function() {
-              //console.log(this.settings)
-              //this.settings.imageUploadURL = 'http://localhost:8081/upload/photo/' + currentUser.value.id + '/' + currentNote.value.noteId
-            },
             generateFlowChart: function(cm, icon, cursor, selection) {
               if(selection === "") {
                   cm.setCursor(cursor.line, cursor.ch + 1);
@@ -218,6 +212,10 @@ onMounted(() => {
                   setBubble('generateFlowChart', selection)
               }
             },
+            getImageUploadURL: function() {
+              return imageUploadURL + '/' + currentUser.value.id + '/' + currentNote.value.noteId
+            }
+            ,
             save: function(cm, icon, cursor, selection) {
                 
                 var note = noteInEditor.value
