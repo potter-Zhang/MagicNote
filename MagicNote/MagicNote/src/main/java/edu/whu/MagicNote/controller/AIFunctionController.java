@@ -24,8 +24,8 @@ public class AIFunctionController {
 
 
     // 获取输入文字的摘要，或者说将输入文字精简、提取关键信息（通义千问版）
-    @PostMapping("/abstract")
-    public ResponseEntity<Void> abstractNote(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/abstract")
+    public ResponseEntity<Void> abstractNote(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.abstractNote(aiObject.getStr(),response);
             return ResponseEntity.ok().build();
@@ -35,8 +35,8 @@ public class AIFunctionController {
     }
 
     // 获取笔记摘要（GPT版）
-    @PostMapping("/abstractGPT")
-    public ResponseEntity<Void> abstractNoteGPT(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/abstractGPT")
+    public ResponseEntity<Void> abstractNoteGPT(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.abstractNoteGPT(aiObject.getStr(), response);
             return ResponseEntity.ok().build();
@@ -46,8 +46,8 @@ public class AIFunctionController {
     }
 
     // 扩写输入文字（通义千问版）
-    @PostMapping("/expand")
-    public ResponseEntity<Void> expandNote(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/expand")
+    public ResponseEntity<Void> expandNote(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.expandNote(aiObject.getStr(),response);
             return ResponseEntity.ok().build();
@@ -57,8 +57,8 @@ public class AIFunctionController {
     }
 
     // 扩写输入文字（GPT版）
-    @PostMapping("/expandGPT")
-    public ResponseEntity<Void> expandNoteGPT(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/expandGPT")
+    public ResponseEntity<Void> expandNoteGPT(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.expandNoteGPT(aiObject.getStr(),response);
             return ResponseEntity.ok().build();
@@ -68,8 +68,8 @@ public class AIFunctionController {
     }
 
     // 将输入文字分段
-    @PostMapping("/segment")
-    public ResponseEntity<Void> segmentNote(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/segment")
+    public ResponseEntity<Void> segmentNote(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.segmentNote(aiObject.getStr(), response);
             return ResponseEntity.ok().build();
@@ -78,8 +78,8 @@ public class AIFunctionController {
         }
     }
 
-    @PostMapping("/segmentGPT")
-    public ResponseEntity<Void> segmentNoteGPT(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/segmentGPT")
+    public ResponseEntity<Void> segmentNoteGPT(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.segmentNoteGPT(aiObject.getStr(),response);
             return ResponseEntity.ok().build();
@@ -90,8 +90,8 @@ public class AIFunctionController {
 
 
     // 根据关键词，自动生成笔记
-    @PostMapping("/generate")
-    public ResponseEntity<Void> generateNote(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/generate")
+    public ResponseEntity<Void> generateNote(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.generateNote(aiObject.getStr(),aiObject.getNum(),response);
             return ResponseEntity.ok().build();
@@ -100,8 +100,8 @@ public class AIFunctionController {
         }
     }
 
-    @PostMapping("/generateGPT")
-    public ResponseEntity<Void> generateNoteGPT(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/generateGPT")
+    public ResponseEntity<Void> generateNoteGPT(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.generateNoteGPT(aiObject.getStr(),aiObject.getNum(),response);
             return ResponseEntity.ok().build();
@@ -111,8 +111,8 @@ public class AIFunctionController {
     }
 
     // 根据笔记的合适内容生成表格
-    @PostMapping("/generateTable")
-    public ResponseEntity<Void> generateTable(@RequestBody AIObject aiObject, HttpServletResponse response) throws NoApiKeyException, InputRequiredException {
+    @GetMapping("/generateTable")
+    public ResponseEntity<Void> generateTable(AIObject aiObject, HttpServletResponse response) throws NoApiKeyException, InputRequiredException {
         try {
             aiFunctionService.generateTable(aiObject.getStr(),response);
             return ResponseEntity.ok().build();
@@ -121,8 +121,8 @@ public class AIFunctionController {
         }
     }
 
-    @PostMapping("/generateTableGPT")
-    public ResponseEntity<Void> generateTableGPT(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/generateTableGPT")
+    public ResponseEntity<Void> generateTableGPT(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.generateTableGPT(aiObject.getStr(),response);
             return ResponseEntity.ok().build();
@@ -132,8 +132,8 @@ public class AIFunctionController {
     }
 
     // 根据笔记的合适内容生成流程图
-    @PostMapping("/generateFlowChart")
-    public ResponseEntity<Void> generateFlowChart(@RequestBody AIObject aiObject, HttpServletResponse response) throws NoApiKeyException, InputRequiredException {
+    @GetMapping("/generateFlowChart")
+    public ResponseEntity<Void> generateFlowChart(AIObject aiObject, HttpServletResponse response) throws NoApiKeyException, InputRequiredException {
         try {
             aiFunctionService.generateFlowChart(aiObject.getStr(),response);
             return ResponseEntity.ok().build();
@@ -142,8 +142,8 @@ public class AIFunctionController {
         }
     }
 
-    @PostMapping("/generateFlowGPT")
-    public ResponseEntity<Void> generateFlowGPT(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/generateFlowGPT")
+    public ResponseEntity<Void> generateFlowGPT(AIObject aiObject, HttpServletResponse response) {
         try {
             aiFunctionService.generateFlowChartGPT(aiObject.getStr(),response);
             return ResponseEntity.ok().build();
@@ -160,10 +160,10 @@ public class AIFunctionController {
     }
 
     // 回答问题时调用的接口
-    @PostMapping("/answer")
-    public ResponseEntity<String> getAnswer(@RequestBody AIObject aiObject, HttpServletResponse response) {
+    @GetMapping("/answer")
+    public ResponseEntity<String> getAnswer(String str, HttpServletResponse response) {
         try {
-            qAndAService.answer(aiObject.getStr(),response);
+            qAndAService.answer(str,response);
             return ResponseEntity.ok().build();
         } catch (NoApiKeyException | InputRequiredException e) {
             return ResponseEntity.badRequest().build();
