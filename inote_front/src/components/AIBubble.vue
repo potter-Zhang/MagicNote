@@ -15,7 +15,7 @@
         <button class="ai-btn" @click="replace">替换</button>
         
     </div>
-    <div class="ai-text" v-loading="loading">
+    <div class="ai-text" >
         <textarea class="ai-text-area" v-model="processedText"></textarea> 
     </div>
 </div>
@@ -26,7 +26,7 @@
 /* eslint-disable */
 import { computed } from '@vue/reactivity';
 import { ref, defineProps, watch } from 'vue'
-import { generateTableAPI, getAbstractAPI, getExpandAPI, getSegmentAPI, generateFlowChartAPI } from '@/api/ai';
+import { streamGenerateTableAPI, streamGetAbstractAPI, streamGetExpandAPI, streamGetSegmentAPI, streamGenerateFlowChartAPI } from '@/api/ai';
 import { ElLoading } from 'element-plus';
 
 
@@ -83,7 +83,7 @@ const processedText = computed({
     get() {
         if (!callFlag.value) {
             callFlag.value = true
-            
+            console.log(props.text)
             loading.value = true
             AIFunctions.value[props.func](props.text)
         } 
@@ -139,8 +139,7 @@ function errorHandler(err) {
 }
 
 function setTextBuffer(msg) {
-    console.log("hhhhhhhhhhhhhhhh")
-    //loadingInstance.close()
+    
     loading.value = false
     textBuffer.value = msg
 }
@@ -152,9 +151,10 @@ function abstract (text) {
         num: 0
     }
     console.log(data)
-    getAbstractAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
-        .catch((err) => { errorHandler(err) })
+    streamGetAbstractAPI(data)
+        .withDataHandler((msg) => { setTextBuffer(msg) })
+        .withErrorHandler((err) => { errorHandler(err) })
+        .send()
 }
 
 function expand (text) {
@@ -162,9 +162,10 @@ function expand (text) {
         str: text,
         num: 0
     }
-    getExpandAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
-        .catch((err) => { errorHandler(err) })
+    streamGetExpandAPI(data)
+        .withDataHandler((msg) => { setTextBuffer(msg) })
+        .withErrorHandler((err) => { errorHandler(err) })
+        .send()
 }
 
 
@@ -173,9 +174,10 @@ function segment (text) {
         str: text,
         num: 0
     }
-    getSegmentAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
-        .catch((err) => { errorHandler(err) })
+    streamGetSegmentAPI(data)
+        .withDataHandler((msg) => { setTextBuffer(msg) })
+        .withErrorHandler((err) => { errorHandler(err) })
+        .send()
 }
 
 async function generateTable (text) {
@@ -183,9 +185,10 @@ async function generateTable (text) {
         str: text,
         num: 0
     }
-    generateTableAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
-        .catch((err) => { errorHandler(err) })
+    streamGenerateTableAPI(data)
+        .withDataHandler((msg) => { setTextBuffer(msg) })
+        .withErrorHandler((err) => { errorHandler(err) })
+        .send()
 }
 
 async function generateFlowChart (text) {
@@ -193,9 +196,10 @@ async function generateFlowChart (text) {
         str: text,
         num: 0
     }
-    generateFlowChartAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
-        .catch((err) => { errorHandler(err) })
+    streamGenerateFlowChartAPI(data)
+        .withDataHandler((msg) => { setTextBuffer(msg) })
+        .withErrorHandler((err) => { errorHandler(err) })
+        .send()
 }
 
 

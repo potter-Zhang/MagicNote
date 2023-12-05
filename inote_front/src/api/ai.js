@@ -8,20 +8,40 @@ export const getAbstractAPI = (text) => {
     return request.post("/ai/abstract", text);
 }
 
+export const streamGetAbstractAPI = (text) => {
+    return new streamAPI().get(baseURL + "/ai/abstract", text)
+}
+
 export const getExpandAPI = (text) => {
     return request.post("/ai/expand", text);
+}
+
+export const streamGetExpandAPI = (text) => {
+    return new streamAPI().get(baseURL + "/ai/expand", text)
 }
 
 export const getSegmentAPI = (text) => {
     return request.post('/ai/segment', text)
 }
 
+export const streamGetSegmentAPI = (text) => {
+    return new streamAPI().get(baseURL + "/ai/segment", text)
+}
+
 export const generateTableAPI = (text) => {
     return request.post('/ai/generateTable', text)
 }
 
+export const streamGenerateTableAPI = (text) => {
+    return new streamAPI().get(baseURL + "/ai/generateTable", text)
+}
+
 export const generateFlowChartAPI = (text) => {
     return request.post('/ai/generateFlowChart', text)
+}
+
+export const streamGenerateFlowChartAPI = (text) => {
+    return new streamAPI().get(baseURL + "/ai/generateFlowChart", text)
 }
 
 export const initAPI = (text) => {
@@ -33,7 +53,7 @@ export const answerAPI = (text) => {
 }
 
 export var streamAnswerAPI = (text) => {
-    return new streamAPI().post(baseURL + '/ai/answer', text)
+    return new streamAPI().get(baseURL + '/ai/answer', text)
 }
 
 export const streamInitAPI = (text) => {
@@ -45,16 +65,20 @@ export class streamAPI {
     data;
     dataHandler = (res) => {}
     endHandler = (res) => {}
-    errorHandler = (err) => {}
+    errorHandler = () => {}
 
     constructor() {
         this.xhr = new XMLHttpRequest()
         return this
     }
-    post(url, AIObj) {
-        this.xhr.open('POST', url, true)
+    get(url, AIObj) {
+        if (AIObj.num)
+            url = url + "?num=" + AIObj.num + "&str=" + AIObj.str
+        else 
+            url = url + "?str=" + AIObj.str
+        this.xhr.open('GET', url)
         this.xhr.setRequestHeader('Content-Type', 'text/event-stream')
-        this.data = "num=" + AIObj.num + "&str=" + AIObj.str
+        
         return this
     }
     withDataHandler(handler) {
@@ -81,10 +105,10 @@ export class streamAPI {
               else {
                 this.errorHandler(this.xhr.responseText)
               }
-                this.endHandler(this.xhr.responseText)
+                this.endHandler()
               }
             }
-        this.xhr.send(this.data)
+        this.xhr.send()
     }
 
     

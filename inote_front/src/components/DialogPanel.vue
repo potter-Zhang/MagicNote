@@ -3,7 +3,7 @@ import CustomDialog from './CustomDialog.vue'
 import arrowRight from "@icon-park/vue-next/lib/icons/ArrowRight";
 import { ref, computed, watch, nextTick } from 'vue'
 import { currentNote } from '../global';
-import { initAPI, answerAPI, streamAnswerAPI, streamInitAPI, streamAPI } from '@/api/ai'
+import { initAPI, answerAPI, streamAnswerAPI, streamAPI } from '@/api/ai'
 import { getNoteAPI } from '@/api/note'
 import { Loading } from 'element-plus/es/components/loading/src/service';
 import { ElMessage } from 'element-plus';
@@ -83,35 +83,35 @@ async function sendMessage (msg) {
     thinking.value = true
     userMsg.value = "";
     const AIObj = {
-      str: msg,
-      num: 0
+      str: msg
     }
     let stream = streamAnswerAPI(AIObj)
     console.log(stream)
-    // streamAnswerAPI(AIObj)
-    // .withDataHandler((data) => {
-    //   messages.value[messages.value.length - 1].content = data
-    // })
-    // .send()
+    streamAnswerAPI(AIObj)
+    .withDataHandler((data) => {
+      messages.value[messages.value.length - 1].content = data
+    })
+    .withEndHandler(() => thinking.value = false)
+    .send()
 
    
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `http://localhost:8081/ai/answer?num=0&str=hi`);
-    xhr.setRequestHeader('Content-Type', 'text/event-stream');
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 3) {
-          // 将数据添加到文本框中
-          messages.value[messages.value.length - 1].content = xhr.responseText
-        }
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          messages.value[messages.value.length - 1].content = xhr.responseText
-          }
-          thinking.value = false
-        }
-      }
+    // const xhr = new XMLHttpRequest();
+    // xhr.open('GET', `http://localhost:8081/ai/answer?num=0&str=hi`);
+    // xhr.setRequestHeader('Content-Type', 'text/event-stream');
+    // xhr.onreadystatechange = () => {
+    //   if (xhr.readyState === 3) {
+    //       // 将数据添加到文本框中
+    //       messages.value[messages.value.length - 1].content = xhr.responseText
+    //     }
+    //   if (xhr.readyState === 4) {
+    //     if (xhr.status === 200) {
+    //       messages.value[messages.value.length - 1].content = xhr.responseText
+    //       }
+    //       thinking.value = false
+    //     }
+    //   }
 
-    xhr.send("num=0&str=hi")
+    // xhr.send("num=0&str=hi")
     
       
   //   answerAPI(data)
