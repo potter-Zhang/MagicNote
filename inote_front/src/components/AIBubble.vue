@@ -1,148 +1,85 @@
 <template>
-<div class="bubble-container">
-    <!--
-    <div class="ai-text" v-if="showTextArea && props.flip">
-        <textarea class="ai-text-area" v-model="text"></textarea>
-    </div>
-    <div class="ai-buttons">
-        <button class="ai-button" v-for="(btn, id) in buttons" :key="id" @click="wrapper(btn.func)">{{ btn.label }}</button>
-    </div>
--->
+<div id="bubble" class="bubble-container">
     <div class="ai-header">
-        <label class="ai-function">{{ props.func }}</label>
-        <button class="ai-btn" @click="close">关闭</button>
-        <button class="ai-btn" @click="insert">插入</button>
-        <button class="ai-btn" @click="replace">替换</button>
-        
+        <label class="ai-function">{{ funcName }}</label>
+        <div style="display: flex;">
+          <el-button class="ai-btn" @click="insert">插入</el-button>
+          <el-button class="ai-btn" @click="replace">替换</el-button>
+          <el-button class="ai-btn" @click="close">关闭</el-button>
+        </div>
     </div>
     <div class="ai-text" v-loading="loading">
-        <textarea class="ai-text-area" v-model="processedText"></textarea> 
+        <textarea class="ai-text-area" v-model="processedText"></textarea>
     </div>
+    <div id="tail"></div>
+    <div id="tail-shadow"></div>
 </div>
-
 </template>
 
 <script setup>
-/* eslint-disable */
-import { computed } from '@vue/reactivity';
 import { ref, defineProps, watch } from 'vue'
 import { generateTableAPI, getAbstractAPI, getExpandAPI, getSegmentAPI, generateFlowChartAPI } from '@/api/ai';
-import { ElLoading } from 'element-plus';
 
 
 const textBuffer = ref('')
 
 const loading = ref(true)
 
-const callFlag = ref(false)
-
 const props = defineProps({
     text: { type: String, default: ''},
-    // x: { type: Number, required: true, default: 100},
-    // y: { type: Number, required: true, default: 100},
-    // width: { type: Number, required: true, default: 100},
-    // height: { type: Number, required: true, default: 100},
-    func: { type: String, required: true, default: ''}
+    func: { type: String, required: true, default: ''},
 })
 
-const emit = defineEmits(['close', 'insert', 'replace'])
+const emit = defineEmits(['close', 'insert', 'replace', 'functionDone'])
 
 function close() {
-    callFlag.value = false
     textBuffer.value = ''
-    loading.value = false
     emit('close')
 }
 
 function insert() {
     console.log('insert')
-    emit('insert', textBuffer.value)
+    emit('insert', processedText.value)
 }
 
 function replace() {
-    emit('replace', textBuffer.value)
+    emit('replace', processedText.value)
 }
 
-const func = computed({
-    get() {
-        return props.func
-    },
-    set(value) {
-        props.func = value
-    }
+const funcName = ref("");
+
+const translate = (name) => {
+  switch (name) {
+    case 'abstract': return "缩写";
+    case 'expand': return "扩写";
+    case 'segment': return "分段";
+    case 'generateTable': return "生成表格";
+    case 'generateFlowChart': return "流程图";
+    default: return "ai";
+  }
+}
+
+watch(() => props.func, () => {
+  // api调用完毕后发送functionDone事件，父组件清空props.func属性
+  // 当props.func属性不为空时调用api
+  if (props.func === "")
+    return;
+  loading.value = true;
+  // 使用funcName存储函数名，避免props.func被清空时标题消失
+  funcName.value = translate(props.func);
+  processedText.value = AIFunctions.value[props.func](props.text);
 })
 
-watch(() => { return [props.func, props.text] }, ([f, t]) => {
-    callFlag.value = false
-},
-{
-    immediate: true
-})
-
-const processedText = computed({
-    get() {
-        if (!callFlag.value) {
-            callFlag.value = true
-            
-            loading.value = true
-            AIFunctions.value[props.func](props.text)
-        } 
-        return textBuffer.value
-    },
-    set(value) {
-        textBuffer.value = value
-    }
-})
-
-const text = computed({
-    get() {
-        return props.text
-    },
-    set(value) {
-        props.text = value
-    }
-})
-
-const bubbleWidth = computed({
-    get() {
-        return props.width + 'px'
-    }
-})
-
-const bubbleHeight = computed({
-    get() {
-        return props.height + 'px'
-    }
-})
-
-const top = computed({
-    get() {
-        console.log(props.x)
-        return props.x + 'px'
-        
-    }
-})
-
-
-const left = computed({
-    get() {
-        return props.y + 'px'
-    }
-})
-
-
+const processedText = ref("");
 
 function errorHandler(err) {
     console.log(err)
-    loading.value = false
     textBuffer.value = err.response.data.error
 }
 
 function setTextBuffer(msg) {
-    console.log("hhhhhhhhhhhhhhhh")
-    //loadingInstance.close()
     loading.value = false
-    textBuffer.value = msg
+    processedText.value = msg;
 }
 
 
@@ -153,7 +90,7 @@ function abstract (text) {
     }
     console.log(data)
     getAbstractAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
+        .then((msg) => { setTextBuffer(msg); emit("functionDone"); })
         .catch((err) => { errorHandler(err) })
 }
 
@@ -163,7 +100,7 @@ function expand (text) {
         num: 0
     }
     getExpandAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
+        .then((msg) => { setTextBuffer(msg); emit("functionDone"); })
         .catch((err) => { errorHandler(err) })
 }
 
@@ -174,7 +111,7 @@ function segment (text) {
         num: 0
     }
     getSegmentAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
+        .then((msg) => { setTextBuffer(msg); emit("functionDone"); })
         .catch((err) => { errorHandler(err) })
 }
 
@@ -184,7 +121,7 @@ async function generateTable (text) {
         num: 0
     }
     generateTableAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
+        .then((msg) => { setTextBuffer(msg); emit("functionDone"); })
         .catch((err) => { errorHandler(err) })
 }
 
@@ -194,7 +131,7 @@ async function generateFlowChart (text) {
         num: 0
     }
     generateFlowChartAPI(data)
-        .then((msg) => { setTextBuffer(msg) })
+        .then((msg) => { setTextBuffer(msg); emit("functionDone"); })
         .catch((err) => { errorHandler(err) })
 }
 
@@ -213,26 +150,27 @@ const AIFunctions = ref({
 
 .bubble-container {
     position: absolute;
-    bottom: 0;
-    left: 50%;
+    transform: translate(-95%, -105%);
     z-index: 15;
     width: 50%;
+    max-width: 400px;
     height: 40%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
-    border-radius: 0.75em;
-    box-shadow: 0.75em;
-    background-color: var(--el-color-primary-light-3);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 2px 2px 3px 3px rgb(200,200,200, 0.5);
 }
 
 .ai-text {
-    padding: 0.01em;
-    border-radius: 0.75em;
+    position: relative;
+    padding: 5px;
+    box-sizing: border-box;
     max-height: 500px;
-    height: 80%;
+    height: 100%;
     width: 100%;
+    background-color: white;
 }
 
 .ai-text-area {
@@ -245,6 +183,8 @@ const AIFunctions = ref({
     margin-left: 1%;
     resize: none;
     font-size: medium;
+    border: 0;
+    outline: none;
 }
 
 
@@ -253,49 +193,65 @@ const AIFunctions = ref({
 }
 
 .ai-header {
-    padding: 0.01em;
+    padding: 0.5em;
     width: 100%;
-}
-
-.ai-loading-mask {
-    width: 100%;
-    height: 100%;
-    background-color: var(--el-color-primary-light-3);
+    box-sizing: border-box;
+    background-color: #a5d63f;
+    box-shadow: 0 2px 1px rgb(200,200,200);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px 10px 0 0;
 }
 
 .ai-function {
     float: left;
     margin-left: 2%;
     font-size: medium;
-    font-family: fantasy;
+    color: white;
+    font-weight: bold;
 }
 
 .ai-btn {
-    background-color: var(--el-color-primary);
-    float: right;
+    background-color: white;
     margin-right: 3%;
     width: 8%;
     height: 100%;
-    border-radius: 0.75em;
-    border-color: rgb(216, 234, 250);
+    border-radius: 5px;
+    min-width: 50px;
+}
+.ai-btn:hover {
+  background-color: rgb(245,245,245);
+}
+.ai-btn, .ai-btn:focus:not(.ai-btn:hover){
+  /*点击后自动失焦*/
+  color: var(--el-button-text-color);
+  background-color: var(--el-button-bg-color);
+  border-color: var(--el-button-border-color);
 }
 
-.ai-buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    background-color: rgb(12, 155, 121);
-    border-radius: 0.75em;
-    width: 100%;
-    height: 50px;
+#tail {
+  position: absolute;
+  top: 99.5%;
+  left: 100%;
+  transform: translate(-100%, 0);
+  height: 0;
+  width: 0;
+  border-top: 10px solid white;
+  border-left: 30px solid transparent;
+  border-right: 5px solid transparent;
 }
-
-.ai-button {
-    background-color: rgb(12, 192, 63);
-    border-radius: 0.75em;
-    padding: 0.75em;
-    box-shadow: 5px;
+#tail-shadow {
+  position: absolute;
+  top: 100%;
+  left: 100%;
+  z-index: -1;
+  transform: translate(-90%, 0);
+  height: 0;
+  width: 0;
+  border-top: 16px solid rgb(200,200,200,0.6);
+  border-left: 40px solid transparent;
+  border-right: 10px solid transparent;
+  filter: blur(2px);
 }
 </style>

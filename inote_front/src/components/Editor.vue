@@ -24,14 +24,6 @@ const showBubble = ref(false)
 
 const selectedText = ref('')
 
-const x = ref(111)
-
-const y = ref(Math.round(window.innerWidth / 2))
-
-const width = ref(0)
-
-const height = ref(0)
-
 const func = ref('')
 
 function reset() {
@@ -59,13 +51,14 @@ function replace(content) {
 }
 
 function setBubble(AIFunction, select) {
-//   const editorPanel = document.getElementById('editor');
-//   const rect = editorPanel.getBoundingClientRect()
-//   x.value = Math.round(rect.top + rect.height / 2)
-//   y.value = Math.round(rect.left + rect.width / 2)
+  const floatBall = document.getElementById("ball");
+  const bubble = document.getElementById("bubble");
+  const ballTop = floatBall.offsetTop;
+  const ballLeft = floatBall.offsetLeft;
+  // 让ai-bubble出现在float-ball左上方
+  bubble.style.top = ballTop + "px";
+  bubble.style.left = ballLeft + "px";
   func.value = AIFunction
-//   width.value = Math.round(rect.width / 2)
-//   height.value = Math.round(rect.height / 2)
   selectedText.value = select
   showBubble.value = true
 }
@@ -282,8 +275,10 @@ function initMarkdown() {
   <div id="editor-container">
     <div id="currentEditing">正在编辑：{{currentNote.name}} </div>
     <div id="editor">
-      <bubble @insert="insert" @replace="replace" @close="reset" v-if="showBubble" :text="selectedText" :x="x" :y="y" :width="width" :height="height" :func="func"></bubble>
+
     </div>
+    <bubble @insert="insert" @replace="replace" @close="reset" @function-done="func=''"
+            v-show="showBubble" :text="selectedText" :func="func"></bubble>
     <float-ball @synEditor="saveNote"/>
   </div>
 </template>
