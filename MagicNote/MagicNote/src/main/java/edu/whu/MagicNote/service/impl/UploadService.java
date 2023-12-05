@@ -1,7 +1,10 @@
 package edu.whu.MagicNote.service.impl;
 
+import com.alibaba.dashscope.exception.InputRequiredException;
+import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.fastjson.JSONObject;
 import edu.whu.MagicNote.domain.Photo;
+import edu.whu.MagicNote.exception.TodoException;
 import edu.whu.MagicNote.service.IPhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

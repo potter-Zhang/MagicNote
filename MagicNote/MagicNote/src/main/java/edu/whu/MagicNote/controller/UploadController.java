@@ -41,10 +41,16 @@ public class UploadController {
         JSONObject res = new JSONObject();
         try {
             res = uploadService.photoUpload(file,userid,noteid);
-            return res;
+            //return res;
         }
         catch(Exception e) {
-            res.put("error",e.getMessage());
+            res.put("error", e.getMessage());
+            //return res;
+        }
+        finally{
+            if(res.size()==0){
+                res.put("message", "unknown error");
+            }
             return res;
         }
     }
