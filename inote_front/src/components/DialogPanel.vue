@@ -3,7 +3,7 @@ import CustomDialog from './CustomDialog.vue'
 import arrowRight from "@icon-park/vue-next/lib/icons/ArrowRight";
 import { ref, computed, watch, nextTick } from 'vue'
 import { currentNote } from '../global';
-import { initAPI, answerAPI, streamAnswerAPI } from '@/api/ai'
+import { initAPI, answerAPI, streamAnswerAPI, streamInitAPI, streamAPI } from '@/api/ai'
 import { getNoteAPI } from '@/api/note'
 import { Loading } from 'element-plus/es/components/loading/src/service';
 import { ElMessage } from 'element-plus';
@@ -82,45 +82,36 @@ async function sendMessage (msg) {
    
     thinking.value = true
     userMsg.value = "";
-    const data = {
+    const AIObj = {
       str: msg,
       num: 0
     }
+    let stream = streamAnswerAPI(AIObj)
+    console.log(stream)
+    // streamAnswerAPI(AIObj)
+    // .withDataHandler((data) => {
+    //   messages.value[messages.value.length - 1].content = data
+    // })
+    // .send()
 
-        axios({
-      method: 'get',
-      url: 'http://localhost:8081/ai/streamQwen?content=' + msg,
-      responseType: 'stream'
-    })
-    .then(response => {
+   
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `http://localhost:8081/ai/answer?num=0&str=hi`);
+    xhr.setRequestHeader('Content-Type', 'text/event-stream');
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 3) {
+          // 将数据添加到文本框中
+          messages.value[messages.value.length - 1].content = xhr.responseText
+        }
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          messages.value[messages.value.length - 1].content = xhr.responseText
+          }
+          thinking.value = false
+        }
+      }
 
-      response.data.on('data', (chunk) => {
-        // logic to process stream data
-      });
-
-      response.data.on('end', () => {
-        // logic for stream complete
-      });
-
-    }); 
-
-    // const xhr = new XMLHttpRequest();
-    // xhr.open('GET', `http://localhost:8081/ai/streamQwen?content=${msg}`);
-    // xhr.setRequestHeader('Content-Type', 'text/event-stream');
-    // xhr.onreadystatechange = () => {
-    //   if (xhr.readyState === 3) {
-    //       // 将数据添加到文本框中
-    //       messages.value[messages.value.length - 1].content = xhr.responseText
-    //     }
-    //   if (xhr.readyState === 4) {
-    //     if (xhr.status === 200) {
-    //       messages.value[messages.value.length - 1].content = xhr.responseText
-    //       }
-    //       thinking.value = false
-    //     }
-    //   }
-
-    // xhr.send()
+    xhr.send("num=0&str=hi")
     
       
   //   answerAPI(data)
@@ -155,6 +146,7 @@ watch(() => props.visible, (newValue) => {
         str: msg.content,
         num: 0
       }
+      
       initAPI(data).then().catch((err) => console.log(err))
     }).catch((err) => console.log(err))
 
