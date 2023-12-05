@@ -13,8 +13,11 @@
 
   function dragElement() {
     const element = document.getElementById("ball");
+    // 让ai-bubble跟着一起移动
+    const bubble = document.getElementById("bubble");
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     element.onmousedown = dragMouseDown;
+    let move = false;
 
     function dragMouseDown(e) {
       e.preventDefault();
@@ -28,6 +31,8 @@
 
     function elementDrag(e) {
       visible.value = false;
+      // 拖动元素时丢失mousedown事件，避免拖动完成后触发click事件
+      element.style.pointerEvents = 'none';
       e.preventDefault();
       // 计算新的光标位置:
       pos1 = pos3 - e.clientX;
@@ -37,9 +42,13 @@
       // 设置元素的新位置:
       element.style.top = (element.offsetTop - pos2) + "px";
       element.style.left = (element.offsetLeft - pos1) + "px";
+      bubble.style.top = (element.offsetTop - pos2) + "px";
+      bubble.style.left = (element.offsetLeft - pos1) + "px";
     }
 
     function closeDragElement() {
+      // 重新开始监听事件，恢复点击行为
+      element.style.pointerEvents = null;
       // 释放鼠标按钮时停止移动:
       document.onmouseup = null;
       document.onmousemove = null;
