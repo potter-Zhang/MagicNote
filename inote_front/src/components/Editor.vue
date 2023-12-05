@@ -63,10 +63,12 @@ function setBubble(AIFunction, select) {
 //   const rect = editorPanel.getBoundingClientRect()
 //   x.value = Math.round(rect.top + rect.height / 2)
 //   y.value = Math.round(rect.left + rect.width / 2)
+selectedText.value = select
   func.value = AIFunction
 //   width.value = Math.round(rect.width / 2)
 //   height.value = Math.round(rect.height / 2)
-  selectedText.value = select
+  console.log(select)
+  
   showBubble.value = true
 }
 
