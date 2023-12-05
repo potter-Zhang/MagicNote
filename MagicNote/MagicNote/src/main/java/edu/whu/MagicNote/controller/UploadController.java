@@ -41,11 +41,10 @@ public class UploadController {
         JSONObject res = new JSONObject();
         try {
             res = uploadService.photoUpload(file,userid,noteid);
+            return res;
         }
         catch(Exception e) {
             res.put("error",e.getMessage());
-        }
-        finally {
             return res;
         }
     }
@@ -54,7 +53,7 @@ public class UploadController {
     // 处理上传视频与音频操作，将上传的视频和音频保存
     @PostMapping("/videoAndAudio")
     @ResponseBody
-    public ResponseEntity<Void> fileUpload(MultipartFile file) throws Exception {
+    public ResponseEntity<Void> fileUpload(MultipartFile file) {
         try {
             uploadService.fileUpload(file);
             return ResponseEntity.ok().build();
