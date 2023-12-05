@@ -13,7 +13,6 @@
   import {addNoteAPI} from "@/api/note";
   import { transformPdfAPI, transformPptAPI  } from "@/api/ocr";
   import { transformAudioVideoAPI } from "@/api/transcribe";
-import { Loading } from "@icon-park/vue-next";
 
   const reader = new FileReader()
 
@@ -67,18 +66,6 @@ import { Loading } from "@icon-park/vue-next";
 
 
   const importFromPDF = () => {
-
-  }
-
-  const importFromPPT = () => {
-
-  }
-
-  const importFromVideo = () => {
-
-  }
-
-  const importFromAudio = () => {
 
   }
 
@@ -178,13 +165,6 @@ import { Loading } from "@icon-park/vue-next";
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-
-  #option-bar {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    flex-wrap: wrap;
   }
 
   #file-uploader, #file-uploader-pdf, #file-uploader-ppt {
