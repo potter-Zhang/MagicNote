@@ -3104,9 +3104,8 @@
         },
 
         image : function() {
-            this.settings.toolbarHandlers.callback()
-            //console.log(this.toolbarHandlers['save'])
-            //this.defaults.toolbarHandlers.callback()
+            if (this.settings.toolbarHandlers.getImageUploadURL)
+                this.settings.imageUploadURL = this.settings.toolbarHandlers.getImageUploadURL()
             this.executePlugin("imageDialog", "image-dialog/image-dialog");
         },
         

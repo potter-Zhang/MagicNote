@@ -1,6 +1,7 @@
 package edu.whu.MagicNote.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -14,6 +15,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/upload/**")
                 .addResourceLocations("file:"+System.getProperty("user.dir")+"/MagicNote/src/main/resources/static/upload/");
     }
+
 
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry){
