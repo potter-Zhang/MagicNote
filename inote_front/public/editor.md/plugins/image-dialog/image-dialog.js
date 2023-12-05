@@ -172,10 +172,11 @@
 
                         //     return false;
                         // };
-                        
+                        //formData.append('file', file)
                         var form = dialog.find("[enctype=\"multipart/form-data\"]")[0];
+                        console.log(form)
                         var formData = new FormData(form);
-                        
+                        console.log(formData)
                         $.ajax({
                             type: 'post',
                             // url: "http://localhost:8080/attachment/image/upload", // 你的服务器端的图片上传接口。如果你设置了 imageUploadURL，那么可以使用下面的方式
@@ -188,21 +189,26 @@
                                 // console.log(data);
                                 // console.log(textStatus);
                                 // console.log(jqXHR);
-                                if (data.success === 1) { // 上传成功
+                                if (data.error) { // 上传失败
+                                    alert(data.error);
+                                }
+                                else if (data.success === 1) {
                                     dialog.find("[data-url]").val(data.url); // 设置图片地址
                                 }
                                 else {
                                     alert(data.message); // 上传失败，弹出警告信息
                                 }
+                                loading(false); // 关闭加载效果
                             },
                             error: function(XMLHttpRequest, textStatus, errorThrown) {
                                 // console.log(XMLHttpRequest);
                                 // console.log(textStatus);
                                 // console.log(errorThrown);
+                                loading(false); // 关闭加载效果
                             }
                         });
                         
-                        loading(false); // 关闭加载效果
+                        
                         return false;
                         
                     };
