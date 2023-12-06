@@ -107,12 +107,12 @@
   <div id="import-body">
     <div style="display: flex; flex-grow: 1; flex-wrap: wrap; justify-content: center; width: 100%; ">
       <!-- 预览 -->
-      <div id="preview">
+      <div id="preview" v-loading="uploading">
         <div id="preview-hint-text">
           <div class="rect-before"></div>
           <div>导入预览：</div>
         </div>
-        <span id="preview-text" v-loading="uploading" placeholder="导入你的笔记吧~">{{ previewText }}</span>
+        <span id="preview-text" placeholder="导入你的笔记吧~">{{ previewText }}</span>
       </div>
 
       <!-- 选择笔记本和笔记 -->
