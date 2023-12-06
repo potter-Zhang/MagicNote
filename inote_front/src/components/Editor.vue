@@ -36,6 +36,7 @@ function insert(content) {
 }
 
 function saveNote() {
+  console.log('saveNote')
     var note = noteInEditor.value
     note.content = editor.getMarkdown()
     updateNoteAPI(note)
@@ -214,6 +215,9 @@ onMounted(() => {
             },
             getImageUploadURL: function() {
               return imageUploadURL + '/' + currentUser.value.id + '/' + currentNote.value.noteId
+            },
+            saveImage: function() {
+              saveNote()
             }
             ,
             save: function(cm, icon, cursor, selection) {

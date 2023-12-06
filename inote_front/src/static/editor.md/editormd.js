@@ -3107,6 +3107,8 @@
             if (this.settings.toolbarHandlers.getImageUploadURL)
                 this.settings.imageUploadURL = this.settings.toolbarHandlers.getImageUploadURL()
             this.executePlugin("imageDialog", "image-dialog/image-dialog");
+            //if (this.settings.toolbarHandlers.saveImage)
+            //    this.settings.toolbarHandlers.saveImage()
         },
         
         code : function() {

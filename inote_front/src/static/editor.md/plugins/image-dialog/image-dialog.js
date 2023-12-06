@@ -107,7 +107,8 @@
                             }
 
                             this.hide().lockScreen(false).hideMask();
-
+                            if (settings.toolbarHandlers.saveImage)
+                                settings.toolbarHandlers.saveImage()
                             return false;
                         }],
 
