@@ -136,7 +136,7 @@
             <div class="rect-before"></div>
             <div>选择笔记本：</div>
           </div>
-          <el-select v-model="selectedNotebook" style="margin-bottom: 20px" placeholder="请选择笔记本">
+          <el-select v-model="selectedNotebook" value-key="id" style="margin-bottom: 20px" placeholder="请选择笔记本">
             <el-option v-for="item in currentNotebooks" :key="item.id" :label="item.name" :value="item">
               <div style="display: flex; align-items: center">
                 <notebook-icon class="icon" theme="multi-color" size="18" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
