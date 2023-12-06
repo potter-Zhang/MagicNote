@@ -9,6 +9,7 @@ import { globalEventBus } from '@/util/eventBus'
 
 import { getNoteAPI, updateNoteAPI } from '@/api/note.js'
 import {ElMessage} from "element-plus";
+import {globalEventBus} from "@/util/eventBus";
 
 
 const noteInEditor = ref({
@@ -63,6 +64,8 @@ function setBubble(AIFunction, select) {
   func.value = AIFunction
   selectedText.value = select
   showBubble.value = true
+  // 通知ai对话框关闭
+  globalEventBus.emit("AIBubbleOpen");
 }
 
 watch(() => currentNote.value.noteId, (note, prevNote) => {
@@ -265,10 +268,6 @@ const initGraph = () => {
         $(content).insertAfter(preDom);
         $(preDom).remove();
     })
-}
-
-function initMarkdown() {
-    
 }
 
 </script>
