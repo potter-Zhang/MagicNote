@@ -71,6 +71,10 @@
 
   const addNote = () => {
     const notebook = selectedNotebook.value;
+    if (uploading.value) {
+      ElMessage("请等待上传完成！")
+      return
+    }
     if (notebook === "") {
       ElMessage.error("请选择笔记本！");
       return;
@@ -114,7 +118,7 @@
       <!-- 选择笔记本和笔记 -->
       <div id="choose-box">
         <div class="upload-area">
-          <el-button class="upload-btn" type="primary" @click="importFromPDF">
+          <el-button class="upload-btn" type="primary">
             <div style="display: flex; align-items: center">
               <upload theme="outline" size="30" fill="#ffffff"/>
               <div class="btn-text">导入</div>
