@@ -9,7 +9,7 @@ import { globalEventBus } from '@/util/eventBus'
 
 import { getNoteAPI, updateNoteAPI } from '@/api/note.js'
 import {ElMessage} from "element-plus";
-import {globalEventBus} from "@/util/eventBus";
+
 
 
 const noteInEditor = ref({
