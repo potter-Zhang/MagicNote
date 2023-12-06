@@ -6,9 +6,6 @@ import { currentNote } from '../global';
 import { globalEventBus } from '@/util/eventBus.js'
 import { initAPI, answerAPI, streamAnswerAPI, streamAPI } from '@/api/ai'
 import { getNoteAPI } from '@/api/note'
-import { Loading } from 'element-plus/es/components/loading/src/service';
-import { ElMessage } from 'element-plus';
-import axios from 'axios'
 
 const userMsg = ref('')
 
