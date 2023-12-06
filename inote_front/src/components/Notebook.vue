@@ -251,6 +251,9 @@
     overflow: scroll;
     flex-grow: 0;
   }
+  #content::-webkit-scrollbar {
+    display: none;
+  }
 
   .operationBar {
     display: flex;
