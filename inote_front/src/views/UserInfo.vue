@@ -139,7 +139,7 @@
                   <agreement theme="outline" fill="#ffffff" size="96"/>
                   <div style="font-weight: bolder; color: white">个人介绍</div>
                 </div>
-                <div style="margin: 3%; max-height: 100px; max-width: 60%;overflow: scroll">
+                <div class="text-box">
                   <span>{{currentUser.profile}}</span>
                 </div>
               </div>
@@ -148,7 +148,7 @@
                   <tips theme="outline" size="96" fill="#ffffff"/>
                   <div style="font-weight: bolder; color: white">每日灵感</div>
                 </div>
-                <div style="margin: 3%; max-height: 100px; max-width: 60%;overflow: scroll">
+                <div class="text-box">
                   <span>暂无</span>
                 </div>
               </div>
@@ -287,6 +287,16 @@
     height: 100%;
     width: 30%;
     background-color: #a5d63f;
+  }
+
+  .text-box {
+    margin: 3%;
+    max-height: 100px;
+    max-width: 60%;
+    overflow: scroll
+  }
+  .text-box::-webkit-scrollbar {
+    display: none;
   }
 
   #timeline {
