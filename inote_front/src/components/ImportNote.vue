@@ -64,11 +64,6 @@
     return msg
   }
 
-
-  const importFromPDF = () => {
-
-  }
-
   const previewText = ref('导入你的笔记吧~')
 
   const selectedNotebook = ref("");
@@ -126,7 +121,7 @@
               <input type="file" id="file-uploader" accept=".pdf, .pptx, image/*, video/*">
             </div>
           </el-button>
-          <el-input type="textarea" resize="none" rows="1" readonly="true" v-model="fileName"></el-input>
+          <el-input type="textarea" resize="none" rows="1" :readonly="true" v-model="fileName"></el-input>
           <div class="file-type-prompt"> 
             <label>支持pdf, ppt, 视频和音频导入</label>
           </div>

@@ -98,7 +98,7 @@
 
       <el-container>
         <!-- 侧边栏 -->
-        <el-menu id="side-bar" active-text-color="#a5d63f">
+        <el-menu id="side-bar" active-text-color="#a5d63f" default-active="1">
           <div>
             <el-menu-item index="1" @click="changeTab('start');">
               <all-application class="icon" theme="outline" size="24" fill="#333"/>
