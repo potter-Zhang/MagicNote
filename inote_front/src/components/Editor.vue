@@ -234,7 +234,8 @@ onMounted(() => {
                     .catch((err) => console.log(err))
             }
           },
-      emoji: true
+      emoji: true,
+      tex : true
       });
 
       globalEventBus.on('SyncNote', () => {
