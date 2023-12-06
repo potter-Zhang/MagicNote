@@ -100,6 +100,11 @@
         .catch((err) => {
           ElMessage.error(err.response.data.message)
         })
+        .finally(() => {
+          notebook = ""
+          newNoteName.value = ""
+          previewText.value === ""
+        })
   }
 </script>
 
