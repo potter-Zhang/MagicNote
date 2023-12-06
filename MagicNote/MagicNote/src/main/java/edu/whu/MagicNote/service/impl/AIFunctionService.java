@@ -75,7 +75,7 @@ public class AIFunctionService {
         response.setHeader("Cache-Control", "no-cache");
 
         String content = command + note;
-        OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
+        //OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
     }
 
     // 扩写笔记的方法
@@ -130,7 +130,7 @@ public class AIFunctionService {
         response.setHeader("Cache-Control", "no-cache");
 
         String content = command + note;
-        OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
+        //OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
     }
 
     // 根据关键词生成笔记的方法
@@ -185,7 +185,7 @@ public class AIFunctionService {
         response.setHeader("Cache-Control", "no-cache");
 
         String content = command + words;
-        OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
+        //OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
     }
 
     // 将笔记分段
@@ -240,7 +240,7 @@ public class AIFunctionService {
         response.setHeader("Cache-Control", "no-cache");
 
         String content = command + note;
-        OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
+        //OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
     }
 
     // 根据笔记的合适内容生成表格
@@ -297,7 +297,7 @@ public class AIFunctionService {
         response.setHeader("Cache-Control", "no-cache");
 
         String content = command + note;
-        OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
+        //OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
     }
 
     // 根据笔记的合适内容生成流程图
@@ -349,7 +349,7 @@ public class AIFunctionService {
         response.setHeader("Cache-Control", "no-cache");
 
         String content = command + note;
-        OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
+        //OpenAiUtils.createStreamChatCompletion(content, response.getOutputStream());
     }
 
     // 对多模态识别结果进行错误修改
