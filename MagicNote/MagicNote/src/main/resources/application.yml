@@ -1,4 +1,4 @@
-server:
+houserver:
   port: 8081
 
 spring:
