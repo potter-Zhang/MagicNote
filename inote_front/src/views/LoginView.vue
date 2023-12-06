@@ -11,7 +11,7 @@
     {
       label: '邮箱地址',
       value: '',
-      type: 'email',
+      type: '',
       class: 'login__input'
     },
     {
@@ -49,15 +49,8 @@
     currentUser.value.id = apiResponse.id;
     currentUser.value.name = apiResponse.name;
     currentUser.value.profile = apiResponse.profile;
+    currentUser.value.photo = apiResponse.photo;
     currentUser.value.token = apiResponse.token;
-  }
-
-  const successMsg = (content) => {
-    ElMessage.success(content);
-  }
-
-  const failMsg = (content) => {
-    ElMessage.error(content);
   }
 
   const loginByUsername = () => {
@@ -71,11 +64,13 @@
               .then((response) => {
                 setCurrentUser(response);
                 module.default.push("/dashboard");
-                successMsg("登录成功");
+                ElMessage.success("登录成功");
               })
               .catch((err) => {
-                // 登录失败则注册
-                register();
+                if (err.response.data.error === "用户不存在")
+                  register();
+                else
+                  ElMessage.error(err.response.data.error);
               })
         });
   }
@@ -91,11 +86,13 @@
               .then((response) => {
                 setCurrentUser(response);
                 module.default.push("/dashboard");
-                successMsg("登录成功");
+                ElMessage.success("登录成功");
               })
               .catch((err) => {
-                // 登录失败则注册
-                register();
+                if (err.response.data.error === "用户不存在")
+                  register();
+                else
+                  ElMessage.error(err.response.data.error);
               })
         });
   }
@@ -119,10 +116,10 @@
               .then((response) => {
                 setCurrentUser(response);
                 module.default.push("/dashboard");
-                successMsg("注册成功");
+                ElMessage.success("注册成功");
               })
               .catch((err) => {
-                failMsg(err);
+                ElMessage.error(err.response.data.error);
               })
         });
   }
@@ -132,16 +129,17 @@
         .then(async (module) => {
           const data = {
             "email": inputs.value[0]['value'],
+            "name": inputs.value[0]['value'],
             "password": inputs.value[1]['value']
           };
           registerByEmailAPI(data)
               .then((response) => {
                 setCurrentUser(response);
                 module.default.push("/dashboard");
-                successMsg("注册成功");
+                ElMessage.success("注册成功");
               })
               .catch((err) => {
-                failMsg(err);
+                ElMessage.error(err.response.data.error);
               })
         });
   }

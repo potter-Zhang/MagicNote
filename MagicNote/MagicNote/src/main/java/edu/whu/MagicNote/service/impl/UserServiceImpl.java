@@ -1,18 +1,24 @@
 package edu.whu.MagicNote.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import edu.whu.MagicNote.dao.*;
-import edu.whu.MagicNote.domain.*;
-import edu.whu.MagicNote.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import edu.whu.MagicNote.dao.*;
+import edu.whu.MagicNote.domain.User;
+import edu.whu.MagicNote.service.IUserService;
+import io.minio.errors.*;
+import org.apache.commons.math3.analysis.function.Min;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Blob;
+import java.sql.SQLException;
 /**
  * <p>
  *  服务实现类
@@ -35,6 +41,15 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Autowired
     LogDao logDao;
+
+    @Autowired
+    UserDao userDao;
+
+    @Autowired
+    UploadService uploadService;
+
+    @Autowired
+    MinioService minioService;
 
     @Override
     public User getUserById(int id){
@@ -60,6 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     @Override
     public User addUser(User user){
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setPhoto("");
         this.baseMapper.insert(user);
         return user;
     }
@@ -92,6 +108,30 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         newUser.setPhoto(oldUser.getPhoto());
         newUser.setEmail(oldUser.getEmail());
         newUser.setProfile(profile);
+        return this.updateById(newUser);
+    }
+
+    @Override
+    public boolean updateUserPhoto(int id, MultipartFile file) throws Exception {
+        User newUser = new User();
+        User oldUser = this.getById(id);
+        newUser.setId(oldUser.getId());
+        newUser.setName(oldUser.getName());
+        newUser.setPassword(oldUser.getPassword());
+        newUser.setEmail(oldUser.getEmail());
+        newUser.setProfile(oldUser.getProfile());
+
+        // 删除用户原本头像文件（若有的话）
+        String path = oldUser.getPhoto();
+        if(!path.isEmpty()){
+            String previousFileName = path.substring(path.lastIndexOf("/") + 1);
+            if(minioService.fileExists("userphoto", previousFileName))
+                minioService.deleteFile("userphoto",previousFileName);
+        }
+        // 上传新头像，并修改user的photo属性
+        String photoPath = uploadService.userPhotoUpload(file);
+        newUser.setPhoto(photoPath);
+
         return this.updateById(newUser);
     }
 

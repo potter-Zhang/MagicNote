@@ -3,6 +3,10 @@ package edu.whu.MagicNote.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.whu.MagicNote.domain.User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * <p>
@@ -27,6 +31,8 @@ public interface IUserService extends IService<User> {
     public boolean updateUserName(int id, String name);
 
     public boolean updateUserProfile(int id, String profile);
+
+    public boolean updateUserPhoto(int id, MultipartFile file) throws Exception;
 
     public boolean deleteUser(int id);
 }

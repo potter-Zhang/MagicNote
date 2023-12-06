@@ -8,6 +8,8 @@
       currentUser.value.id = store['id'];
       currentUser.value.name = store['name'];
       currentUser.value.token = store['token'];
+      currentUser.value.profile = store['profile'];
+      currentUser.value.photo = store['photo'];
     }
 
     // 在页面刷新时保存用户信息
