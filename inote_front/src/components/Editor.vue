@@ -2,9 +2,11 @@
 import floatBall from "@/components/FloatBall.vue"
 import '@/static/zepto/distrib/zepto.js'
 import '@/static/editor.md/editormd.min.js' 
-import { onMounted, ref, computed, watch } from 'vue'
+import { onMounted, ref, computed, watch, onBeforeUnmount } from 'vue'
 import bubble from '@/components/AIBubble.vue'
 import { currentNote, currentUser  } from "../global"
+import { globalEventBus } from '@/util/eventBus'
+
 import { getNoteAPI, updateNoteAPI } from '@/api/note.js'
 import {ElMessage} from "element-plus";
 
@@ -62,15 +64,6 @@ function setBubble(AIFunction, select) {
   selectedText.value = select
   showBubble.value = true
 }
-
-watch(() => currentNote.value.updateCode, (newCode) => {
-    if (newCode === 1) {
-        saveNote()
-    }
-},
-{
-    immediate: true
-})
 
 watch(() => currentNote.value.noteId, (note, prevNote) => {
     console.log(note)
@@ -233,15 +226,24 @@ onMounted(() => {
                 updateNoteAPI(note)
                     .then(() => {
                       ElMessage.success("保存成功")
-                      currentNote.value.updateCode = 2
+                      globalEventBus.emit('SyncDialog')
                     })
                     .catch((err) => console.log(err))
             }
           },
       emoji: true
       });
+
+      globalEventBus.on('SyncNote', () => {
+        saveNote()
+      })
   
 	});
+
+
+onBeforeUnmount(() => {
+  globalEventBus.all.clear()
+})
 
 const mermaidHtml = (str) => {
       return `<pre><code class="language-mermaid"><div class="mermaid">${str}</div></code></pre>`

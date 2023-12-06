@@ -1,8 +1,9 @@
 <script setup>
 import CustomDialog from './CustomDialog.vue'
 import arrowRight from "@icon-park/vue-next/lib/icons/ArrowRight";
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import { currentNote } from '../global';
+import { globalEventBus } from '@/util/eventBus.js'
 import { initAPI, answerAPI, streamAnswerAPI, streamAPI } from '@/api/ai'
 import { getNoteAPI } from '@/api/note'
 import { Loading } from 'element-plus/es/components/loading/src/service';
@@ -22,6 +23,14 @@ const thinking = ref(false)
 
 const props = defineProps({
   visible: { type: Boolean, required: true, default: false }
+})
+
+onMounted(() => {
+  globalEventBus.on('SyncDialog', () => {
+    clearMessages()
+    emit('close')
+    noteId = -1
+  })
 })
 
 
@@ -122,13 +131,6 @@ async function sendMessage (msg) {
 }
 }
 
-watch(() => currentNote.value.updateCode, (newCode) => {
-  if (newCode === 2) {
-    clearMessages()
-    emit('close')
-    noteId = -1
-  }
-})
 
 watch(() => props.visible, (newValue) => {
   console.log(newValue)
@@ -138,8 +140,9 @@ watch(() => props.visible, (newValue) => {
     // do nothing
   }
   else {
+    console.log('reinit')
     noteId = currentNote.value.noteId
-    currentNote.value.updateCode = 1
+    globalEventBus.emit('SyncNote')
     clearMessages()
     getNoteAPI(noteId).then((msg) => { 
       const data = {

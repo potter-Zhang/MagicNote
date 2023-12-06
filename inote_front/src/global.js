@@ -23,6 +23,7 @@ export const currentNote = ref({
     updateCode: -1
 })
 
+
 export const setCurrentNote = (noteid, name, notebookid) => {
     currentNote.value.noteId = noteid;
     currentNote.value.name = name;
