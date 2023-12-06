@@ -4,18 +4,17 @@
   import {addNotebookAPI, getNotebooksAPI} from "@/api/notebook";
   import {addNoteAPI} from "@/api/note";
   import {logAPI} from "@/api/log";
-  import {currentUser} from "@/global";
+  import {currentUser, currentNotebooks, setCurrentNote, updateNotebooks} from "@/global";
 
-  import {ref, onBeforeMount} from 'vue'
+  import {ref, onBeforeMount, defineEmits } from 'vue'
   import {ElMessage, ElMessageBox} from "element-plus";
-  import {globalEventBus} from "@/util/eventBus";
 
+  const emit = defineEmits(['jumpToNote'])
   let historyNotes = ref([]);
 
   const addNoteDialogVisible = ref(false);
   const selectedNotebook = ref(""); // 新建笔记时选择的笔记本
   const addNoteInput = ref("");  // 新建笔记的名称
-  const notebooks = ref([]);  // 用于新建笔记时选择笔记本
 
   const loadLog = async () => {
     const response = await logAPI(currentUser.value.id);
@@ -23,29 +22,23 @@
     historyNotes.value.push.apply(historyNotes.value, response);
     historyNotes.value.reverse();
 
-    // 找出已经被删除了的笔记名称
+    // 找出已经被删除了的笔记id
     const deletedNotes = historyNotes.value
         .filter((item) => { return item.operation === "delete"; })
-        .map((item) => item.notename);
+        .map((item) => item.noteid);
     historyNotes.value = historyNotes.value.filter((item, index, self) => {
       // 裁切时间
       item.timestamp = item.timestamp.split("T")[0];
-      const firstIndex = self.findIndex((t) => t.notename === item.notename)
-      // 去除被删除的日志、同时按照笔记名字来进行去重
-      return !deletedNotes.includes(item.notename) && index === firstIndex;
+      // 日志中可能会出现noteid相同但是notename不同(重命名的笔记)，因此还需要根据noteid来进行一次去重
+      const idIndex = self.findIndex((t) => t.noteid === item.noteid)
+      // 去除被删除的日志、同时按照笔记名字和id来进行去重
+      return !deletedNotes.includes(item.noteid) && index === idIndex;
     });
   }
 
-  const loadNotebooks = async () => {
-    notebooks.value.splice(0, notebooks.value.length);
-    const response = await getNotebooksAPI(currentUser.value.id);
-    notebooks.value.push.apply(notebooks.value, response);
-  }
-
   // 挂载时加载历史记录和笔记本
-  onBeforeMount(async () => {
-    await loadLog();
-    await loadNotebooks();
+  onBeforeMount(() => {
+    loadLog();
   });
 
   const addNotebook = () => {
@@ -59,8 +52,8 @@
           const data = {"name": value, "userid": currentUser.value.id};
           await addNotebookAPI(data)
               .then(() => {
-                // 发出事件通知Notebook.vue组件更新要展示的笔记本
-                globalEventBus.emit("addNotebook");
+                // 更新笔记本
+                updateNotebooks();
                 ElMessage({
                   type: 'success',
                   message: `创建成功`,
@@ -120,8 +113,8 @@
             <div>笔记本：</div>
           </el-col>
           <el-col :span="12">
-            <el-select v-model="selectedNotebook" placeholder="请选择笔记本" style="width: 100%">
-              <el-option v-for="item in notebooks" :key="item.id" :label="item.name" :value="item">
+            <el-select v-model="selectedNotebook" value-key="id" placeholder="请选择笔记本" style="width: 100%">
+              <el-option v-for="item in currentNotebooks" :key="item.id" :label="item.name" :value="item">
                 <div style="display: flex; align-items: center">
                   <notebook class="icon" theme="multi-color" size="18" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
                   <div style="margin-left: 5px; font-size: 16px">{{item.name}}</div>
@@ -172,13 +165,14 @@
     <!--历史文档区-->
     <div class="title" style="margin-top: 1rem">最近</div>
     <div v-if="historyNotes.length>0">
-      <div v-for="history in historyNotes" style="cursor: default">
+      <div v-for="history in historyNotes">
         <div class="history-card">
           <div style="display: flex; align-items: center; cursor: pointer">
             <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
-            <div style="margin-left: 0.5rem">{{history.notename}}</div>
+            <div style="margin-left: 0.5rem" @click="setCurrentNote(history.noteid, history.notename, -1);emit('jumpToNote')">
+              {{history.notename}}
+            </div>
           </div>
-<!--          <div style="color: rgb(200,200,200); width: 20%">笔记本: {{history.notebookName}}</div>-->
           <div style="color: rgb(200,200,200); margin-right: 10%">{{history.timestamp}}</div>
         </div>
       </div>
@@ -200,6 +194,7 @@
     height: 100%;
     width: 100%;
     padding: 1rem;
+    box-sizing: border-box;
   }
 
   .title {

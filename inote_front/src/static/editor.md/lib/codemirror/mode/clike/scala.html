@@ -1,0 +1,323 @@
+<!doctype html>
+
+<title>CodeMirror: Scala mode</title>
+<meta charset="utf-8"/>
+<link rel=stylesheet href="../../doc/docs.css">
+
+<link rel="stylesheet" href="../../lib/codemirror.css">
+<link rel="stylesheet" href="../../theme/ambiance.css">
+<script src="../../lib/codemirror.js"></script>
+<script src="../../addon/edit/matchbrackets.js"></script>
+<script src="clike.js"></script>
+<div id=nav>
+  <a href="http://codemirror.net"><h1>CodeMirror</h1><img id=logo src="../../doc/logo.png"></a>
+
+  <ul>
+    <li><a href="../../index.html">Home</a>
+    <li><a href="../../doc/manual.html">Manual</a>
+    <li><a href="https://github.com/codemirror/codemirror">Code</a>
+  </ul>
+  <ul>
+    <li><a href="../index.html">Language modes</a>
+    <li><a class=active href="#">Scala</a>
+  </ul>
+</div>
+
+<article>
+<h2>Scala mode</h2>
+<form>
+<textarea id="code" name="code">
+
+  /*                     __                                               *\
+  **     ________ ___   / /  ___     Scala API                            **
+  **    / __/ __// _ | / /  / _ |    (c) 2003-2011, LAMP/EPFL             **
+  **  __\ \/ /__/ __ |/ /__/ __ |    http://scala-lang.org/               **
+  ** /____/\___/_/ |_/____/_/ | |                                         **
+  **                          |/                                          **
+  \*                                                                      */
+
+  package scala.collection
+
+  import generic._
+  import mutable.{ Builder, ListBuffer }
+  import annotation.{tailrec, migration, bridge}
+  import annotation.unchecked.{ uncheckedVariance => uV }
+  import parallel.ParIterable
+
+  /** A template trait for traversable collections of type `Traversable[A]`.
+   *  
+   *  $traversableInfo
+   *  @define mutability
+   *  @define traversableInfo
+   *  This is a base trait of all kinds of $mutability Scala collections. It
+   *  implements the behavior common to all collections, in terms of a method
+   *  `foreach` with signature:
+   * {{{
+   *     def foreach[U](f: Elem => U): Unit
+   * }}}
+   *  Collection classes mixing in this trait provide a concrete 
+   *  `foreach` method which traverses all the
+   *  elements contained in the collection, applying a given function to each.
+   *  They also need to provide a method `newBuilder`
+   *  which creates a builder for collections of the same kind.
+   *  
+   *  A traversable class might or might not have two properties: strictness
+   *  and orderedness. Neither is represented as a type.
+   *  
+   *  The instances of a strict collection class have all their elements
+   *  computed before they can be used as values. By contrast, instances of
+   *  a non-strict collection class may defer computation of some of their
+   *  elements until after the instance is available as a value.
+   *  A typical example of a non-strict collection class is a
+   *  <a href="../immutable/Stream.html" target="ContentFrame">
+   *  `scala.collection.immutable.Stream`</a>.
+   *  A more general class of examples are `TraversableViews`.
+   *  
+   *  If a collection is an instance of an ordered collection class, traversing
+   *  its elements with `foreach` will always visit elements in the
+   *  same order, even for different runs of the program. If the class is not
+   *  ordered, `foreach` can visit elements in different orders for
+   *  different runs (but it will keep the same order in the same run).'
+   * 
+   *  A typical example of a collection class which is not ordered is a
+   *  `HashMap` of objects. The traversal order for hash maps will
+   *  depend on the hash codes of its elements, and these hash codes might
+   *  differ from one run to the next. By contrast, a `LinkedHashMap`
+   *  is ordered because it's `foreach` method visits elements in the
+   *  order they were inserted into the `HashMap`.
+   *
+   *  @author Martin Odersky
+   *  @version 2.8
+   *  @since   2.8
+   *  @tparam A    the element type of the collection
+   *  @tparam Repr the type of the actual collection containing the elements.
+   *
+   *  @define Coll Traversable
+   *  @define coll traversable collection
+   */
+  trait TraversableLike[+A, +Repr] extends HasNewBuilder[A, Repr] 
+                                      with FilterMonadic[A, Repr]
+                                      with TraversableOnce[A]
+                                      with GenTraversableLike[A, Repr]
+                                      with Parallelizable[A, ParIterable[A]]
+  {
+    self =>
+
+    import Traversable.breaks._
+
+    /** The type implementing this traversable */
+    protected type Self = Repr
+
+    /** The collection of type $coll underlying this `TraversableLike` object.
+     *  By default this is implemented as the `TraversableLike` object itself,
+     *  but this can be overridden.
+     */
+    def repr: Repr = this.asInstanceOf[Repr]
+
+    /** The underlying collection seen as an instance of `$Coll`.
+     *  By default this is implemented as the current collection object itself,
+     *  but this can be overridden.
+     */
+    protected[this] def thisCollection: Traversable[A] = this.asInstanceOf[Traversable[A]]
+
+    /** A conversion from collections of type `Repr` to `$Coll` objects.
+     *  By default this is implemented as just a cast, but this can be overridden.
+     */
+    protected[this] def toCollection(repr: Repr): Traversable[A] = repr.asInstanceOf[Traversable[A]]
+
+    /** Creates a new builder for this collection type.
+     */
+    protected[this] def newBuilder: Builder[A, Repr]
+
+    protected[this] def parCombiner = ParIterable.newCombiner[A]
+
+    /** Applies a function `f` to all elements of this $coll.
+     *  
+     *    Note: this method underlies the implementation of most other bulk operations.
+     *    It's important to implement this method in an efficient way.
+     *  
+     *
+     *  @param  f   the function that is applied for its side-effect to every element.
+     *              The result of function `f` is discarded.
+     *              
+     *  @tparam  U  the type parameter describing the result of function `f`. 
+     *              This result will always be ignored. Typically `U` is `Unit`,
+     *              but this is not necessary.
+     *
+     *  @usecase def foreach(f: A => Unit): Unit
+     */
+    def foreach[U](f: A => U): Unit
+
+    /** Tests whether this $coll is empty.
+     *
+     *  @return    `true` if the $coll contain no elements, `false` otherwise.
+     */
+    def isEmpty: Boolean = {
+      var result = true
+      breakable {
+        for (x <- this) {
+          result = false
+          break
+        }
+      }
+      result
+    }
+
+    /** Tests whether this $coll is known to have a finite size.
+     *  All strict collections are known to have finite size. For a non-strict collection
+     *  such as `Stream`, the predicate returns `true` if all elements have been computed.
+     *  It returns `false` if the stream is not yet evaluated to the end.
+     *
+     *  Note: many collection methods will not work on collections of infinite sizes. 
+     *
+     *  @return  `true` if this collection is known to have finite size, `false` otherwise.
+     */
+    def hasDefiniteSize = true
+
+    def ++[B >: A, That](that: GenTraversableOnce[B])(implicit bf: CanBuildFrom[Repr, B, That]): That = {
+      val b = bf(repr)
+      if (that.isInstanceOf[IndexedSeqLike[_, _]]) b.sizeHint(this, that.seq.size)
+      b ++= thisCollection
+      b ++= that.seq
+      b.result
+    }
+
+    @bridge
+    def ++[B >: A, That](that: TraversableOnce[B])(implicit bf: CanBuildFrom[Repr, B, That]): That =
+      ++(that: GenTraversableOnce[B])(bf)
+
+    /** Concatenates this $coll with the elements of a traversable collection.
+     *  It differs from ++ in that the right operand determines the type of the
+     *  resulting collection rather than the left one.
+     * 
+     *  @param that   the traversable to append.
+     *  @tparam B     the element type of the returned collection. 
+     *  @tparam That  $thatinfo
+     *  @param bf     $bfinfo
+     *  @return       a new collection of type `That` which contains all elements
+     *                of this $coll followed by all elements of `that`.
+     * 
+     *  @usecase def ++:[B](that: TraversableOnce[B]): $Coll[B]
+     *  
+     *  @return       a new $coll which contains all elements of this $coll
+     *                followed by all elements of `that`.
+     */
+    def ++:[B >: A, That](that: TraversableOnce[B])(implicit bf: CanBuildFrom[Repr, B, That]): That = {
+      val b = bf(repr)
+      if (that.isInstanceOf[IndexedSeqLike[_, _]]) b.sizeHint(this, that.size)
+      b ++= that
+      b ++= thisCollection
+      b.result
+    }
+
+    /** This overload exists because: for the implementation of ++: we should reuse
+     *  that of ++ because many collections override it with more efficient versions.
+     *  Since TraversableOnce has no '++' method, we have to implement that directly,
+     *  but Traversable and down can use the overload.
+     */
+    def ++:[B >: A, That](that: Traversable[B])(implicit bf: CanBuildFrom[Repr, B, That]): That =
+      (that ++ seq)(breakOut)
+
+    def map[B, That](f: A => B)(implicit bf: CanBuildFrom[Repr, B, That]): That = {
+      val b = bf(repr)
+      b.sizeHint(this) 
+      for (x <- this) b += f(x)
+      b.result
+    }
+
+    def flatMap[B, That](f: A => GenTraversableOnce[B])(implicit bf: CanBuildFrom[Repr, B, That]): That = {
+      val b = bf(repr)
+      for (x <- this) b ++= f(x).seq
+      b.result
+    }
+
+    /** Selects all elements of this $coll which satisfy a predicate.
+     *
+     *  @param p     the predicate used to test elements.
+     *  @return      a new $coll consisting of all elements of this $coll that satisfy the given
+     *               predicate `p`. The order of the elements is preserved.
+     */
+    def filter(p: A => Boolean): Repr = {
+      val b = newBuilder
+      for (x <- this) 
+        if (p(x)) b += x
+      b.result
+    }
+
+    /** Selects all elements of this $coll which do not satisfy a predicate.
+     *
+     *  @param p     the predicate used to test elements.
+     *  @return      a new $coll consisting of all elements of this $coll that do not satisfy the given
+     *               predicate `p`. The order of the elements is preserved.
+     */
+    def filterNot(p: A => Boolean): Repr = filter(!p(_))
+
+    def collect[B, That](pf: PartialFunction[A, B])(implicit bf: CanBuildFrom[Repr, B, That]): That = {
+      val b = bf(repr)
+      for (x <- this) if (pf.isDefinedAt(x)) b += pf(x)
+      b.result
+    }
+
+    /** Builds a new collection by applying an option-valued function to all
+     *  elements of this $coll on which the function is defined.
+     *
+     *  @param f      the option-valued function which filters and maps the $coll.
+     *  @tparam B     the element type of the returned collection.
+     *  @tparam That  $thatinfo
+     *  @param bf     $bfinfo
+     *  @return       a new collection of type `That` resulting from applying the option-valued function
+     *                `f` to each element and collecting all defined results.
+     *                The order of the elements is preserved.
+     *
+     *  @usecase def filterMap[B](f: A => Option[B]): $Coll[B]
+     *  
+     *  @param pf     the partial function which filters and maps the $coll.
+     *  @return       a new $coll resulting from applying the given option-valued function
+     *                `f` to each element and collecting all defined results.
+     *                The order of the elements is preserved.
+    def filterMap[B, That](f: A => Option[B])(implicit bf: CanBuildFrom[Repr, B, That]): That = {
+      val b = bf(repr)
+      for (x <- this) 
+        f(x) match {
+          case Some(y) => b += y
+          case _ =>
+        }
+      b.result
+    }
+     */
+
+    /** Partitions this $coll in two ${coll}s according to a predicate.
+     *
+     *  @param p the predicate on which to partition.
+     *  @return  a pair of ${coll}s: the first $coll consists of all elements that 
+     *           satisfy the predicate `p` and the second $coll consists of all elements
+     *           that don't. The relative order of the elements in the resulting ${coll}s
+     *           is the same as in the original $coll.
+     */
+    def partition(p: A => Boolean): (Repr, Repr) = {
+      val l, r = newBuilder
+      foÚ_´(Aà_NŸ_Ì(APŸ_Ç _„ÔÖĞ _¡_˜(A ¡_¡_)A€¡_µ¡_0)AÀ¡_¢_D)A ¢_S¢_„
+@`¢_¶¢_h
+@À¢_£_ø	A £_K£_œ8?P£_{£_œ8?€£_‹£_¨@?£_·£_h?À£_¤_ø	A ¤_`¤_L9?`¤_u¤_°8?€¤_Œ¤_Ln?¤_¿¤_À®?À¤_ï¤_À®?ğ¤_ÿ¤_,S? ¥_F¥_@P¥_n¥_ÌÎ?p¥_•¥_”+? ¥_¦_ @¦_5¦_ğ@@¦_m¦_X
+@p¦_ˆ¦_à@¦_%§_À@0§_9§_Á?@§_^§_x=?`§_p§_¸4?p§_|§_Ln?€§_“§_´@ §_Ä§_t)AĞ§_¨_€^A¨_'¨_n?0¨_G¨_n?P¨__¨_,S?`¨_o¨_,S?p¨_}¨_Øg?€¨_ø©_,@ø©_/ª_H“?0ª_éª_°@ğª_«_ @ «_½«_d@À«_¬_L@ ¬_G¬_h?P¬_»¬_”^AÀ¬_Æ¬_”?Ğ¬_R­_àf?`­_‡­_ g?­_õ­_ì®? ®_Y®_Ô®?`®_f®_”?p®_}®_Øg?€®_¤®_ ?°®_à®_°)Aà®_%¯_A@0¯_H¯_¬ò?P¯_¯_ÈG× ¯_¦¯_”?°¯_½¯_Øg?À¯_ğ¯_°)Ağ¯_=°_ÔÛ@°_`°_¬w?`°_‚°_`A°_–°_”? °_¦°_”?°°_Ê°_øm?Ğ°_ò°_xìA ±_±_0@ ±_:±_øm?@±_ƒ±_($B±_ª±_0@°±_¶±_”?À±_‰³_ –Ö³_÷´_(—Ö µ_Îµ_X—ÖĞµ_¶_\A¶_%¶_tA0¶_E¶_¬N@P¶_e¶_¬N@p¶_…¶_¬N@¶_u·_¨—Ö€·_z¸_ø—Ö€¸_—¸_<A ¸_¼¸_ÀĞ?À¸_Ù¸_LAà¸_¹_Hä? ¹_X¹_Hä?`¹_‚¹_`A¹_¤¹_pA°¹_´º_P˜ÖÀº_»_àA»_:»_øA@»_k»_Ap»_Ú»_ ;?à»_¼_”@¼_$¼_ôc?0¼_w¼_äkA€¼_º¼_¤xAÀ¼_ß¼_TAà¼_õ¼_¬N@ ½_½_pu? ½_?½_lA@½_y½_€A€½_¬½_”A°½_Å½_tAĞ½_å½_tAğ½_¾_¤A¾_%¾_tA0¾_I¾_8à@P¾_ğ¾_¬˜Öğ¾_
+¿_ØA¿_,¿_ìA0¿_Ÿ¿_,lA ¿_Æ¿_ AĞ¿_7À_DlA@À_±À_\lAÀÀ_ÙÀ_hAàÀ_Á_xAÁ_'Á_<A0Á_¼Á_™ÖÀÁ_wÂ_4™Ö€Â_—Â_<A Â_µÂ_AÀÂ_ÕÂ_tAàÂ_íÂ_Øg?ğÂ_bÃ_¸BCpÃ_‡Ã_DAÃ_ŞÃ_TAàÃ_Ä_lA Ä_]Ä_„A`Ä_µÄ_ŒFCÀÄ_êÄ_øAğÄ_Å_°A Å_ÒÅ_ĞAàÅ_Æ_äAÆ_Æ_ FCÆ_–Æ_”? Æ_ÇÆ_È
+AĞÆ_êÆ_0@ğÆ_Ç_¬j×Ç_RÇ_Äj×`Ç_uÇ_Üj×€Ç_™Ç_8Ñ Ç_ŞÇ_ìj×àÇ_ùÇ_8Ñ È_"È_k×0È_nÈ_ìj×pÈ_œÊ_ k×œÊ_ÓÊ_Ä?àÊ_'Ë_Äk×0Ë_gË_àk×pË_zË_Œ	?€Ë_ÍË_ÜØĞË_Ì_øØ Ì_fÌ_ØpÌ_ Ì_(Ø Ì_¦Ì_”?°Ì_FÍ_xE?PÍ_Î_¨E? Î_Î_F? Î_àÏ_¸ŸÜàÏ_Ğ_L-AĞ_Ğ_„? Ğ_EĞ_”+?PĞ_MÑ_ğŸÜPÑ_YÑ_Á?`Ñ_jÑ_Œ	?pÑ_˜Ñ_06A Ñ_ñÑ_ NÓ Ò_Ò_ÀNÓ Ò_ÃÔ_ CÚÃÔ_Õ_ 4?Õ_vÕ_ 4?vÕ_ÎÕ_ 4?ĞÕ_/Ö_OÓ0Ö_FÙ_dDÚFÙ_‡Ù_ 4?‡Ù_ÈÙ_ 4?ĞÙ_4Ü_EÚ@Ü_Yß_ĞEÚYß_–ß_8@? ß_gà_ˆFÚgà_´à_Ä?Àà_â_ÔFÚ â_–ä_<GÚ–ä_Óä_8@?àä_‚å_Óå_]æ_ĞGÚ]æ_ªæ_Ä?°æ_½ç_$HÚ½ç_öç_x	? è_‘è_¸Ó è_Šë_|HÚë_ğì_HIÚğì_!í_CÑ0í_¤í_UÓ°í_õí_8UÓ î_¡ï_¨IÚ°ï_ºï_Œ	?Àï_ğ_HÓğ_rñ_ Ó€ñ_–ñ_ìÊĞ ñ_úò_ VÓ ó_mô_JÚmô_©ô_x	?°ô_ö_LWÓ ö_<÷_€WÓ@÷_œø_ÜWÓ ø_¦ù_XÓ°ù_£ú_DXÓ°ú_ü_„JÚü_Dü_x	?Pü_ˆı_YÓı_¾ş_ğJÚ¾ş_÷ş_x	? ÿ_cÿ_TÓpÿ_ƒÿ_äøAÿ_”`TKÚ `ğ`<ZÓğ`›`”¢Ò `K`”¢ÒP`Ã`¸¢ÒĞ`Ø`„?à`é`D?ğ`-` KÚ0`C`@6?P`°`4LÚ°`õ`HÑ 	`	`pË? 	`V	`(HÑ`	`q	`„à?€	`Ù
+`œLÚà
+`&`\Ó0`ƒ`T\Ó`ğ`p\Óğ`A`ˆ\ÓP`›`¤\Ó `Ê`ğÓĞ`5` MÚ@`b`8Ap``(Ó `&`”?0```	Ó``w`(¬@€`à`ÀæÖà`ò` MÚò`L` 4?P`“`DçÖ `ğ`hçÖğ`*`€çÖ0``  Ü`«`ÀNÓ°`Ï`@ ÜÏ``x	?`o`x	?o`¿`x	?À``OÓ ``à Ü`X` 4?X`™` 4? `„`ˆ¡Ü`q`¢Üq`®`8@?°`U`´¢ÜU`Ÿ`Ä? ` `ø¢Ü `È"`D£ÜÈ"`#`8@?#`{#`AÑ€#`1$`Ì£Ü1$`{$`Ä?€$`b%` ™Õb%`›%`x	? %`&`$BÑ &`(`¤Ü(`Ø)`¬¤Üà)`*`CÑ *`”*`UÓ *`å*`8UÓğ*`h,`¥Üp,`z,`Œ	?€,`-`”CÑ-`Æ-`ÜCÑĞ-`æ-`ìÊĞğ-`J/` VÓP/`”0`h¥Ü”0`Í0`x	?Ğ0`62`LWÓ@2`\3`€WÓ`3`¼4`ÜWÓÀ4`Æ5`XÓĞ5`Ã6`DXÓĞ6`8`Ì¥Ü8`;8`x	?@8`x9`YÓ€9`ƒ:`0¦Üƒ:`¼:`x	?À:`;`¼FÑ ;`3;`äøA@;`%=`ˆ¦Ü0=`€>`<ZÓ€>`ù>`UĞ ?`y?`UĞ€?`º?`œ©BÀ?`È?`„?Ğ?`Ù?`D?à?`´A`Ô¦ÜÀA`ÓA`@6?àA`ÚB`T§ÜàB`%C`HÑ0C`AC`pË?PC`†C`(HÑC`¡C`„à?°C`äD` §ÜğD`6F`\Ó@F`“F`T\Ó F` G`p\Ó G`QG`ˆ\Ó`G`«G`¤\Ó°G`ÓG`IÑàG`=H`ü§Ü@H`JH`Œ	?PH`éH`HIÑğH`öH`”? I`+I`ÜaĞ0I`GI`(¬@PI`°I`ÀæÖ°I`‘J`¨Ü‘J`çJ`8@?ğJ`3K`DçÖ@K`K`hçÖK`ÊK`€çÖĞK`!L` NÓ0L`KL`ÀNÓPL`¼O`p¨Ü¼O`P`x	?P`_P`x	?_P`²P`x	?ÀP`Q`OÓ Q`†T` ©Ü†T`ÇT` 4?ÇT`U` 4?U`ÊW`Ø©ÜĞW`)[``ªÜ)[`f[`8@?p[`¡\`«Ü¡\`î\`Ä?ğ\`º^``«ÜÀ^`‡a`¼«Ü‡a`Äa`8@?Ğa`Ïb`P¬ÜĞb`ßc`Œ¬Üßc`,d`Ä?0d`]e`Ü¬Ü]e`Ÿe`x	? e`3f`4­Ü@f`‚i`P­Üi`k`ğ­Ük`Ak`CÑPk`Äk`UÓĞk`l`8UÓ l`Ùm`P®Üàm`êm`Œ	?ğm` o`À®Ü o`p`¯Üp`&p`ìÊĞ0p`Šq` VÓq`'s`œ¯Ü's`is`x	?ps`Öt`LWÓàt`üu`€WÓ v`\w`ÜWÓ`w`fx`XÓpx`cy`DXÓpy`ëz`°Üëz`-{`x	?0{`h|`YÓp|`¾}`p°Ü¾}` ~`x	? ~`o~`Ô°Üp~`ƒ~`äøA~`²€`ì°ÜÀ€`‚`<ZÓ‚`Ñ‚`  Úà‚`¡ƒ`  Ú°ƒ`9„`Ä Ú@„`H„`„?P„`Y„`D?`„`‡`8±Ü ‡`3‡`@6?@‡`‰`´±Ü ‰`e‰`HÑp‰`‰`pË?‰`Æ‰`(HÑĞ‰`á‰`„à?ğ‰`j‹`²Üp‹`¶Œ`\ÓÀŒ``T\Ó `€`p\Ó€`Ñ`ˆ\Óà`+`¤\Ó0`d`<Üp`×`lÅ×à``$m?`¾`x²ÜÀ`Æ`”?Ğ`
+`dÜÕ`'`(¬@0``ÀæÖ`İ‘`Ä²Üİ‘`*’`Ä?0’`s’`DçÖ€’`Ğ’`hçÖĞ’`
+“`€çÖ“`[“`Ô>×`“`f“`”?p“`}“`Øg?€“`Ä“`˜AĞ“`'”`À0Ø0”`P”`¬w?P”`r”``A€”`†”`”?”`&•`xE?0•`ñ•`¨E? –`~–`F?€–`Ñ–` NÓà–`û–`ÀNÓ —`š`³Üš`Rš`x	?Rš`¥š`x	?¥š`øš`x	? ›`_›`OÓ`›`¹`Ø³Ü¹`ú` 4?ú`;Ÿ` 4?@Ÿ`Ä¡`”´ÜĞ¡`÷¤`(µÜ÷¤`4¥`8@?@¥`A¦`àµÜA¦`¦`Ä?¦`¨`0¶Ü ¨`¤ª`”¶Ü¤ª`áª`8@?ğª`Â«`,·ÜĞ«`¾¬`l·Ü¾¬`­`Ä?­`!®`À·Ü!®`]®`x	?`®`ù®`´ã× ¯`	²`¸Ü²`ƒ³`À¸Ü³`Á³`CÑĞ³`D´`UÓP´`•´`8UÓ ´`T¶` ¹Ü`¶`j¶`Œ	?p¶`S·`¹Ü`·`k¸`à¹Üp¸`†¸`ìÊĞ¸`ê¹` VÓğ¹`a»`pºÜa»`»`x	? »`½`LWÓ½`,¾`€WÓ0¾`Œ¿`ÜWÓ¿`–À`XÓ À`“Á`DXÓ Á`ÿÂ`àºÜÿÂ`;Ã`x	?@Ã`xÄ`YÓ€Ä`²Å`P»Ü²Å`îÅ`x	?ğÅ``Æ`dç×`Æ`sÆ`äøA€Æ`—È`°»Ü È`ğÉ`<ZÓğÉ`­Ê`8Ú°Ê`mË`8ÚpË`õË``Ú Ì`Ì`„?Ì`Ì`D? Ì`‡Î` ¼ÜÎ`£Î`@6?°Î`>Ğ`„¼Ü@Ğ`…Ğ`HÑĞ`¡Ğ`pË?°Ğ`æĞ`(HÑğĞ`Ñ`„à?Ñ`|Ò`ì¼Ü€Ò`ÆÓ`\ÓĞÓ`#Ô`T\Ó0Ô`Ô`p\ÓÔ`áÔ`ˆ\ÓğÔ`;Õ`¤\Ó@Õ`oÕ`HÇÓpÕ`İÕ`ì×àÕ`
+Ö` ŒAÖ`¿Ö`<ì×ÀÖ`ÆÖ`”?ĞÖ`×`0¼A×`'×`(¬@0×`×`ÀæÖ×`ÀØ`P½ÜÀØ`Ù`Ä?Ù`SÙ`DçÖ`Ù`°Ù`hçÖ°Ù`êÙ`€çÖğÙ`>Ú`ÈG×@Ú`FÚ`”?PÚ`]Ú`Øg?`Ú`Ú`ìAÚ`ÃÚ`àf×ĞÚ`ğÚ`¬w?ğÚ`Û``A Û`kÛ`Ô>×pÛ`vÛ`”?€Û`Û`Øg?Û`ÔÛ`˜AàÛ`3Ü`Äo×@Ü``Ü`¬w?`Ü`‚Ü``AÜ`–Ü`”? Ü`6İ`xE?@İ`Ş`¨E?Ş`Ş`F?Ş`üŞ`HXĞ ß`·ß`p‘AÀß`=à`¬Ğ@à`á`¬½Üá`Gá`?Gá`•á`? á`Ùá`”Aàá`©â`¾Ü©â`äâ`?äâ`2ã`?@ã`çã`¨ÓÓğã`ÿã`d4@ ä`ä`d4@ä`ä`„? ä`(ä`„?0ä`fä` :Apä`xä`„?€ä`7å`p‘A@å`2è`x¾Ü2è`uè`Œ?€è`è`l`?è`˜è`„? è`òè`Õ é`Oé`¬ÔÓPé`Xë`ÔÓ`ë`í`ØÇĞ í`Hí`ü‘ĞPí`ğ`H¿Üğ`ó`ø¿Ü ó`Çó`“ĞĞó`õ`ÈÉĞ õ`nö`0”Ğpö`'÷`p‘A0÷`³÷`¤m?À÷`íø`¸ÀÜğø`uù`ÁÜ€ù`˜ù`¡A ù`ú`(•Ğú`Şú`8ÁÜàú`•û`TÁÜ û`âû`pÁÜğû`
+ü`H—Õü`'ü`|ÌĞ0ü`mü` ËĞpü`Öü`Ô•Ğàü`Fı`Ô•ĞPı`¶ı`Ô•ĞÀı`&ş`Ô•Ğ0ş`–ş`Ô•Ğ ş`ÿ`Ô•Ğÿ`ÿ`Ln? ÿ`*ÿ`Œ	?0ÿ`]ÿ`ğ•Ğ`ÿ`Ë a€ÁÜË aa 4?a"a(‚A0aŸaxËĞ a´a‚AÀaÒa ‚AàaôaìA aGaìuÙPa…a¬ËĞaaìÁÜaDaØËĞPaoaÂÜpava”?€aaxm? a³a0ÂÜÀa÷at,A aa4ä? a(a„?0a¶a€ÂÜ¶aöaŒ? a¥a 2C°aU	a 2C`	az	aØ#A€	a”	aA 	a·	aÂÖÀ	aÔ	aAà	aë	a¨@?ğ	a
+aÜ¬@
+aĞ
+aìÂÜĞ
+a;aŒ2C@a^a bĞ`aaÈÆÖaÑaÜÆÖàaêaô?ğaa$ÃÜ€a†a”?a¹aØAÀaÜa4ä?àaèa„?ğa‚aæÖ‚a¾aÜ1?ÀaCaìAPaÓaìAàa÷aÂÖ aaÅA a4aA@aTaA`aka¨@?pa‚aÜ¬@a<apæÖ@anahApaa bĞa½aÈÆÖÀağaPÃÜğaúaŒ	? aa ,Û a¦a”?°aÙaØAàaa´>Ña+aÔ.C0aa¤mÓaÌağ>ÑĞaGaÌmÓGaŒaÜ1?ŒaÑaÜ1?àajadnÓpaaÀnÓaVa8@?`aÛaXoÓàašatoÓ aa¬oÓaÚa8@?àaH a(pÓP aÌ aTpÓĞ ap!appÓp!a¥!a?°!a"a°pÓ "a$aÀpÓ$a3%a,qÓ@%aq%aCÑ€%aÓ%a CÑà%a&ax? &aH'a|qÓP'aZ'aŒ	?`'aâ'aĞqÓğ'a†(arÓ(a¦(aìÊĞ°(a‰)aTDÑ)aŒ*a€rÓŒ*aÁ*a?Ğ*a¶+aĞDÑÀ+a_,aôDÑ`,a8-a<EÑ@-aô-a`EÑ .a¢.a€EÑ°.a˜/aÔrÓ˜/aÍ/a?Ğ/a‰0a FÑ0aO1a$sÓO1a„1a?1aã1alsÓğ1aÿ1a`? 2aZ3a„sÓ`3aR4aGÑ`4a¯4a¼sÓ°4aÿ4a¼sÓ 5a35a„
+@@5aH5a„?P5aY5aD?`5aæ6aØsÓğ6a7a@6?7aÕ7a,tÓà7a%8aHÑ08a?8a`?@8av8a(HÑ€8a‘8a„à? 8a¬9adtÓ°9a{:a˜HÑ€:a·:alÑÀ:a;aÀHÑ;aE;aÔHÑP;a;aôHÑ€;a¢;a uÓ°;aì;a8uÓğ;aù;aD? <a‡<aPuÓ<a–<a”? <aÊ<a Ã?Ğ<aç<a(¬@ğ<a&=aHØ0=a°=a€¬Ø°=aÉ=a8HØĞ=a>aÀHÑ >aN>aôAP>ar>a´>Ñ€>a›>aÔ.C >aşAah‘Ú Ba<Bağ>Ñ@BaüDa¤‘ÚüDaAEaÜ1?AEa†EaÜ1?Ea“GaH’Ú Ga‡JaÀ’Ú‡JaÄJa8@?ĞJaìKap“ÚğKaMa”“ÚMaWOaà“ÚWOa”Oa8@? OalPal”ÚpPawQa¨”Ú€QaNRaÈ”ÚNRa…RaÄ?Ra"SaÄìÕ0SašUa•Ú UaWa¤•Ú WaQWaCÑ`Wa³Wa CÑÀWaıWax? Xa€Ya–Ú€YaŠYaŒ	?YamZap–ÚpZah[a¼–Úp[a†[aìÊĞ[ai\aTDÑp\a™]aH—Ú™]aÓ]aÄ?à]aÆ^aĞDÑĞ^ao_aôDÑp_aH`a<EÑP`aaa`EÑaa²aa€EÑÀaaÕba¤—ÚÕbacaÄ?caÉca FÑĞcaÀda ˜ÚÀda÷daÄ? eaeea ğÕpeaƒeaäøAeagaT˜Ú gahaGÑ ha¨haÈÙ°ha8iaÈÙ@ia¼iaàÙÀiaÈia„?ĞiaÙiaD?àiaækaŒ˜Úğkala@6?la8ma ™Ú@ma…maHÑma¡mapË?°maæma(HÑğmana„à?naRoaL™Ú`oa+pa˜HÑ0pagpalÑppa´paÀHÑÀpaõpaÔHÑ qa/qaôHÑ0qa^qamÓ`qa²qa¸ñÕÀqaàqaXTAàqa„ra‘Úra–ra”? raÖra”mÓàra÷ra(¬@ sa6saHØ@saPta¤™ÚPtaita8HØpta´taÀHÑÀtaîtaôAğtaua´>Ñ ua;uaÔ.C@uaşwadÃÜ xa<xağ>Ñ@xaåza ÃÜåza*{aÜ1?*{ao{aÜ1?p{aH}aDÄÜP}a:€aÀÄÜ:€aw€a8@?€€a^alÅÜ`aS‚aÖ`‚a „aÅÜ „aİ„a8@?à„aœ…a ÆÜ …an†adÆÜp†aE‡a„ÆÜE‡a|‡aÄ?€‡aˆa gÓˆaOŠaĞÆÜPŠa¶‹a`ÇÜÀ‹añ‹aCÑ ŒaSŒa CÑ`ŒaŒax? ŒaaPÖ a*aŒ	?0aaÄÇÜaaÈÜa&aìÊĞ0a	‘aTDÑ‘a=’a¬ÈÜ=’at’aÄ?€’af“aĞDÑp“a”aôDÑ”aè”a<EÑğ”a¤•a`EÑ°•aR–a€EÑ`–a|—aÉÜ|—a³—aÄ?À—ay˜a FÑ€˜aw™alÉÜw™a®™aÄ?°™aša`kÓša#šaäøA0šaª›aÌ‘Ö°›a¢œaGÑ°œa.ahÒ0a®ahÒ°aa€Ò a(a„?0a9aD?@a a’Ö  a3 a@6?@ a>¡at’Ö@¡a…¡aHÑ¡a¡¡apË?°¡aæ¡a(HÑğ¡a¢a„à?¢aA£aÄ’ÖP£a¤a˜HÑ ¤aW¤alÑ`¤a¤¤aÀHÑ°¤aå¤aÔHÑğ¤a¥aôHÑ ¥aJ¥ağÓP¥a ¥ad“Ö ¥a¾¥axm?À¥a^¦aÔtÓ`¦af¦a”?p¦a ¦a	Ó ¦a·¦a(¬@À¦aö¦aHØ §aÙ§aÀÉÜà§aù§a8HØ ¨aD¨aÀHÑP¨a~¨aôA€¨a¢¨a´>Ñ°¨aË¨aÔ.CĞ¨a.¬ah‘Ú0¬al¬ağ>Ñp¬a,¯a¤‘Ú,¯aq¯aÜ1?q¯a¶¯aÜ1?À¯aÃ±aH’ÚĞ±a·´aÀ’Ú·´aô´a8@? µa¶ap“Ú ¶a=·a”“Ú@·a‡¹aà“Ú‡¹aÄ¹a8@?Ğ¹aœºal”Ú ºa§»a¨”Ú°»a~¼aÈ”Ú~¼aµ¼aÄ?À¼aR½aÄìÕ`½aÊ¿a•ÚĞ¿aLÁa¤•ÚPÁaÁaCÑÁaãÁa CÑğÁa-Âax?0Âa°Ãa–Ú°ÃaºÃaŒ	?ÀÃaÄap–Ú Äa˜Åa¼–Ú Åa¶ÅaìÊĞÀÅa™ÆaTDÑ ÆaÉÇaH—ÚÉÇaÈaÄ?ÈaöÈaĞDÑ ÉaŸÉaôDÑ ÉaxÊa<EÑ€Êa4Ëa`EÑ@ËaâËa€EÑğËaÍa¤—ÚÍa<ÍaÄ?@ÍaùÍa FÑ ÎağÎa ˜ÚğÎa'ÏaÄ?0Ïa•Ïa ğÕ Ïa³ÏaäøAÀÏaKÑaT˜ÚPÑaBÒaGÑPÒaØÒaÈÙàÒahÓaÈÙpÓaìÓaàÙğÓaøÓa„? Ôa	ÔaD?ÔaÖaŒ˜Ú Öa3Öa@6?@Öah×a ™Úp×aµ×aHÑÀ×aÑ×apË?à×aØa(HÑ Øa1Øa„à?@Øa‚ÙaL™ÚÙa[Úa˜HÑ`Úa—ÚalÑ ÚaäÚaÀHÑğÚa%ÛaÔHÑ0Ûa_ÛaôHÑ`ÛaÛamÓÛaâÛa¸ñÕğÛaÜaXTAÜa´Üa‘ÚÀÜaÆÜa”?ĞÜaİa”mÓİa'İa(¬@0İafİaHØpİa€Şa¤™Ú€Şa™Şa8HØ ŞaäŞaÀHÑğŞaßaôA ßaBßa´>ÑPßakßaÔ.CpßaˆâaàÉÜâaÌâağ>ÑĞâa“åa$ÊÜ“åaØåaÜ1?ØåaæaÜ1? æa'èa$§Û0èa ëa §Û ëa]ëa8@?`ëaYìaÌÊÜ`ìa}ía|¨Û€íaÎïaôÊÜÎïağa8@?ğaİğa`©ÛàğaËñaˆËÜĞña¥òa¨ËÜ¥òaÜòaÄ?àòavóaÀ×€óaîõaªÛğõaf÷aôËÜp÷a¡÷aCÑ°÷aøa CÑøaMøax?PøaÔùa«ÛàùaêùaŒ	?ğùaÔúat«ÛàúaßûaXÌÜàûaöûaìÊĞ üaÙüaTDÑàüaşaøÌÜşaJşaÄ?Pşa6ÿaĞDÑ@ÿaßÿaôDÑàÿa¸ b<EÑÀ btb`EÑ€b"b€EÑ0bLb\ÍÜLbƒbÄ?bIb FÑPbGbÀÍÜGb~bÄ?€béb´Ã×ğbbäøAb›bŒ­Û b’bGÑ b,	b ¦Ø0	b¼	b ¦ØÀ	b@
+b¸¦Ø@
+bH
+b„?P
+bY
+bD?`
+bfbÄ­Ûpbƒb@6?b¸b<®ÛÀbbHÑb!bpË?0bfb(HÑpbb„à?bÒbŒ®Ûàb«b˜HÑ°bçblÑğb4bÀHÑ@bubÔHÑ€b¯bôHÑ°bŞbmÓàb6bä®Û@bdb$m?pbbŒÅ× b&b”?0bfb”mÓpb‡b(¬@bÆbHØĞbÄbÎÜĞbéb8HØğb4bÀHÑ@bnbôApb•bh'Ö b»bÔ.CÀb/b8ÎÜ0blbğ>Ñpbèb`ÎÜèb-bÜ1?-brbÜ1?€bbøÎÜ bËbXÏÜËbb8@?b“bğÏÜ b] bĞÜ` b_"bDĞÜ_"bœ"b8@? "b
+#bÄĞÜ#b“#bğĞÜ #bA$bÑÜA$bv$b?€$bè$b°pÓğ$bê&bLÑÜğ&b(b¼ÑÜ (bQ(bCÑ`(b³(b CÑÀ(bı(bx? )b)*bÒÜ0*b:*bŒ	?@*bÃ*b`ÒÜĞ*bi+b ÒÜp+b†+bìÊĞ+bi,bTDÑp,bm-bÓÜm-b¢-b?°-b–.bĞDÑ .b?/bôDÑ@/b0b<EÑ 0bÔ0b`EÑà0b‚1b€EÑ1by2b`ÓÜy2b®2b?°2bi3b FÑp3b04b°ÓÜ04be4b?p4bÈ4bøÓÜĞ4bâ4b8€Õğ4bK6bÔFÑP6bB7bGÑP7b¥7b8†Ù°7b8b8†Ù8bG8b\GÑP8bX8b„?`8bi8bD?p8bø9bÔÜ :b:b@6? :bè:bdÔÜğ:b5;bHÑ@;bR;b8€Õ`;b–;b(HÑ ;b±;b„à?À;bÍ<bœÔÜĞ<b›=b˜HÑ =b×=blÑà=b$>bÀHÑ0>be>bÔHÑp>bŸ>bôHÑ >bÃ>bIÑĞ>b?bìÔÜ?b?bô? ?b©?bÕÜ°?b¶?b”?À?bé?bØAğ?b@b(¬@@bF@bHØP@bÕ@b@ÕÜà@bù@b8HØ AbDAbÀHÑPAb~AbôA€Ab¢Ab´>Ñ°AbËAbÔ.CĞAbøEb\ÕÜ Fb<Fbğ>Ñ@Fb'Ib¬ÕÜ'IblIbÜ1?lIb±IbÜ1?ÀIbêKbXÖÜğKb	ObØÖÜ	ObFOb8@?PObÒPbˆ×ÜàPbRb´×Ü RbTbØÜTb¼Tb8@?ÀTb³Ub”ØÜÀUbWbÔØÜ WbşWbüØÜşWb8XbÄ?@XbÛXbLÙÜàXbq[bhÙÜ€[b]büÙÜ ]bQ]bCÑ`]b³]b CÑÀ]bı]bx? ^b—_b`ÚÜ _bª_bŒ	?°_b´`bÌÚÜÀ`bÖabÛÜàaböabìÊĞ bbÙbbTDÑàbbdb¬ÛÜdbPdbÄ?Pdb6ebĞDÑ@ebßebôDÑàeb¸fb<EÑÀfbtgb`EÑ€gb"hb€EÑ0hbUibÜÜUibibÄ?ibIjb FÑPjbPkbpÜÜPkbŠkbÄ?kblbÈÜÜlb#lbäøA0lbÆmbàÜÜĞmbÂnbGÑĞnbnobHdÙpobpbHdÙpb¢pbddÙ°pb¸pb„?ÀpbÉpbD?ĞpbsbİÜsb#sb@6?0sbvtbİÜ€tbÅtbHÑĞtbátbpË?ğtb&ub(HÑ0ubAub„à?Pub vbàİÜ vbkwb˜HÑpwb§wblÑ°wbôwbÀHÑ xb5xbÔHÑ@xboxbôHÑpxb£xb°]Õ°xbyb<ŞÜyb<yb 
+@@ybõyb\ŞÜ zbzb”?zbKzb^ÕPzbgzb(¬@pzb¦zbHØ°zb|b¨ŞÜ |b9|b8HØ@|b„|bÀHÑ|b¾|bôAÀ|bâ|b´>Ñğ|b}bÔ.C}b(€bàÉÜ0€bl€bğ>Ñp€b3ƒb$ÊÜ3ƒbxƒbÜ1?xƒb½ƒbÜ1?ÀƒbÇ…b$§ÛĞ…bÀˆb §ÛÀˆbıˆb8@? ‰bù‰bÌÊÜ Šb‹b|¨Û ‹bnbôÊÜnb«b8@?°b}b`©Û€bkbˆËÜpbEb¨ËÜEb|bÄ?€b‘bÀ× ‘b“bªÛ“b•bôËÜ•bA•bCÑP•b£•b CÑ°•bí•bx?ğ•bt—b«Û€—bŠ—bŒ	?—bt˜bt«Û€˜b™bXÌÜ€™b–™bìÊĞ ™byšbTDÑ€šb°›bøÌÜ°›bê›bÄ?ğ›bÖœbĞDÑàœbbôDÑ€bXb<EÑ`bŸb`EÑ ŸbÂŸb€EÑĞŸbì b\ÍÜì b#¡bÄ?0¡bé¡b FÑğ¡bç¢bÀÍÜç¢b£bÄ? £b‰£b´Ã×£b££bäøA°£b;¥bŒ­Û@¥b2¦bGÑ@¦bÌ¦b ¦ØĞ¦b\§b ¦Ø`§bà§b¸¦Øà§bè§b„?ğ§bù§bD? ¨bªbÄ­Ûªb#ªb@6?0ªbX«b<®Û`«b¥«bHÑ°«bÁ«bpË?Ğ«b¬b(HÑ¬b!¬b„à?0¬br­bŒ®Û€­bK®b˜HÑP®b‡®blÑ®bÔ®bÀHÑà®b¯bÔHÑ ¯bO¯bôHÑP¯b~¯bmÓ€¯bÖ¯bä®Ûà¯b°b$m?°b¸°bŒÅ×À°bÆ°b”?Ğ°b±b”mÓ±b'±b(¬@0±bf±bHØp±bd²bÎÜp²b‰²b8HØ²bÔ²bÀHÑà²b³bôA³b2³b´>Ñ@³b[³bÔ.C`³b¶bĞŞÜ ¶b\¶bğ>Ñ`¶b¹bßÜ¹bI¹bÜ1?I¹b¹bÜ1?¹bh»bDÄÜp»bY¾b´ßÜY¾b–¾b8@? ¾b}¿bdàÜ€¿bsÀbÖ€Àb¿ÂbˆàÜ¿ÂbüÂb8@? Ãb»ÃbáÜÀÃbÄb\áÜÄbdÅb|áÜdÅb›ÅbÄ? Åb-Æb gÓ0ÆboÈbĞÆÜpÈbÕÉbÈáÜàÉbÊbCÑ ÊbsÊb CÑ€Êb½Êbx?ÀÊb<ÌbPÖ@ÌbJÌbŒ	?PÌb&Íb,âÜ0Íb!Îb€âÜ0ÎbFÎbìÊĞPÎb)ÏbTDÑ0Ïb\ĞbãÜ\Ğb“ĞbÄ? Ğb†ÑbĞDÑÑb/ÒbôDÑ0ÒbÓb<EÑÓbÄÓb`EÑĞÓbrÔb€EÑ€Ôb›ÕbtãÜ›ÕbÒÕbÄ?àÕb™Öb FÑ Öb–×bÔãÜ–×bÍ×bÄ?Ğ×b/Øb`kÓ0ØbCØbäøAPØbÊÙbÌ‘ÖĞÙbÂÚbGÑĞÚbNÛbhÒPÛbÎÛbhÒĞÛb<Üb€Ò@ÜbHÜb„?PÜbYÜbD?`Üb7Şb’Ö@ŞbSŞb@6?`Şb^ßbt’Ö`ßb¥ßbHÑ°ßbÁßbpË?Ğßbàb(HÑàb!àb„à?0àbaábÄ’Öpáb;âb˜HÑ@âbwâblÑ€âbÄâbÀHÑĞâbãbÔHÑãb?ãbôHÑ@ãbjãbğÓpãbÀãbd“ÖÀãbŞãbxm?àãb~äbÔtÓ€äb†äb”?äbÀäb	ÓÀäb×äb(¬@àäbåbHØ åbøåb(äÜ æbæb8HØ æbdæbÀHÑpæbæbôA æbÂæb´>ÑĞæbëæbÔ.CğæbëbHäÜ ëb\ëbğ>Ñ`ëbGîb¬äÜGîbŒîbÜ1?ŒîbÑîbÜ1?àîbñb\åÜ ñb9ôbàåÜ9ôbvôb8@?€ôböb”æÜöbK÷bÄæÜP÷b¯ùbçÜ¯ùbìùb8@?ğùbãúb°ØğúbHüb¨çÜPüb.ıbØçÜ.ıbhıbÄ?pıbşb°Ø şb¹ c,èÜÀ c^cÄèÜ`c‘cCÑ cóc CÑ c=cx?@cßc,éÜàcêcŒ	?ğcôcPØ cc¤Ø c6cìÊ

@@ -5,19 +5,21 @@
   import agreement from "@icon-park/vue-next/lib/icons/Agreement";
   import tips from "@icon-park/vue-next/lib/icons/Tips";
   import userBackground from "@/assets/userBackground.jpg"
+  import defaultAvatar from '@/assets/default.png'
 
   import {onBeforeMount, ref} from 'vue';
   import {ElMessageBox} from "element-plus";
   import {logAPI} from "@/api/log";
-  import {updateUsernameAPI, updateProfileAPI} from "@/api/user";
+  import {updateUsernameAPI, updateProfileAPI, updateAvatarAPI} from "@/api/user";
   import {currentUser} from "@/global";
 
   const logs = ref([]);
   const loadLog = async () => {
     const response = await logAPI(currentUser.value.id);
     logs.value = [];
-    logs.value.push.apply(logs.value, response.splice(10));
+    logs.value.push.apply(logs.value, response);
     logs.value.reverse();
+    logs.value.splice(10);
     logs.value = logs.value.filter((item) => {
       // 生成展示内容
       switch (item.operation) {
@@ -56,8 +58,16 @@
     profile: currentUser.value.profile
   });
 
+  // 用户头像
+  const photo = ref();
+
+  const changeFile = (file) =>{
+    photo.value = file;
+  }
+
   const cancelSetting = () => {
     settingDialogVisible.value = false;
+    photo.value = null;
     newUserInfo.value.name = currentUser.value.name;
     newUserInfo.value.profile = currentUser.value.profile;
   }
@@ -78,6 +88,12 @@
     }
     await updateUsernameAPI(data);
     await updateProfileAPI(data);
+    if (photo.value !== undefined) {
+      updateAvatarAPI(photo.value.raw, currentUser.value.id)
+          .then((response) => {
+            currentUser.value.photo = response;
+          })
+    }
     currentUser.value.name = newUserInfo.value.name;
     currentUser.value.profile = newUserInfo.value.profile;
   }
@@ -104,11 +120,11 @@
         <!-- 主体部分 -->
         <div style="display: flex; flex-direction: column; flex: 1; align-items: center">
           <!-- 用户信息部分 -->
-          <div style="display: flex; width: 70%; margin-top: 3%; margin-bottom: 3%">
+          <div style="display: flex; width: 70%; margin-top: 3%; flex-wrap: wrap;">
             <div id="avatarCard" :style="{backgroundImage: `url(${userBackground})`}">
               <div class="mask">
                 <div class="avatar-and-name" style="z-index: 1; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                  <img src="../assets/avatar.jpg" class="avatar">
+                  <img :src=currentUser.photo class="avatar" @error="e=>{e.target.src = defaultAvatar}">
                   <div style="font-size: 1.5rem; color: white; font-weight: bolder">{{currentUser.name}}</div>
                 </div>
               </div>
@@ -123,16 +139,16 @@
                   <agreement theme="outline" fill="#ffffff" size="96"/>
                   <div style="font-weight: bolder; color: white">个人介绍</div>
                 </div>
-                <div style="margin: 3%; max-height: 100px; max-width: 60%;overflow: scroll">
+                <div class="text-box">
                   <span>{{currentUser.profile}}</span>
                 </div>
               </div>
-              <div class="content-card" style="margin: 5px 5px 0 15px">
+              <div class="content-card" style="margin: 5px 5px 50px 15px">
                 <div class="icon-box">
                   <tips theme="outline" size="96" fill="#ffffff"/>
                   <div style="font-weight: bolder; color: white">每日灵感</div>
                 </div>
-                <div style="margin: 3%; max-height: 100px; max-width: 60%;overflow: scroll">
+                <div class="text-box">
                   <span>暂无</span>
                 </div>
               </div>
@@ -144,7 +160,7 @@
                      :show-close="false" style="border-radius: 10px">
             <div style="display: flex; align-items: center">
               <me theme="outline" size="96" fill="#333"/>
-              <el-upload action="localhost:8080/upload" style="margin-left: 10%">
+              <el-upload :on-change="changeFile" :auto-upload="false" style="margin-left: 10%">
                 <el-button type="primary">上传头像</el-button>
               </el-upload>
             </div>
@@ -161,7 +177,7 @@
           <!-- 时间线 -->
           <div id="beneath" style="width: 55%; margin-top: 10px">
             <div style="font-size: 20px">动态</div>
-            <el-timeline id="timeline">
+            <el-timeline v-if="logs.length > 0" id="timeline">
               <el-timeline-item v-for="(log, index) in logs" :key="index" :timestamp="log.timestamp" :placement="'top'" :color="log.color">
                 <el-card>
                   <template #header>
@@ -173,6 +189,7 @@
                 </el-card>
               </el-timeline-item>
             </el-timeline>
+            <el-empty v-else description="暂无"/>
           </div>
         </div>
       </div>
@@ -223,9 +240,11 @@
     flex-direction: column;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
     width: 40%;
+    min-width: 300px;
     height: 300px;
     position: relative;
-    background-size: 100% 100%
+    background-size: 100% 100%;
+    margin-bottom: 50px;
   }
 
   .avatar {
@@ -257,6 +276,7 @@
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
     display: flex;
     align-items: center;
+    min-width: 400px;
   }
 
   .icon-box {
@@ -267,6 +287,16 @@
     height: 100%;
     width: 30%;
     background-color: #a5d63f;
+  }
+
+  .text-box {
+    margin: 3%;
+    max-height: 100px;
+    max-width: 60%;
+    overflow: scroll
+  }
+  .text-box::-webkit-scrollbar {
+    display: none;
   }
 
   #timeline {

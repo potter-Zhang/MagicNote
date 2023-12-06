@@ -15,10 +15,13 @@ import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
 import edu.whu.MagicNote.service.impl.AIFunctionService;
 import edu.whu.MagicNote.service.impl.OcrService;
-import edu.whu.MagicNote.service.impl.QAndAService;
+import io.github.asleepyfish.util.OpenAiUtils;
 import io.reactivex.Flowable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.ServerSentEvent;
+import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 
@@ -39,7 +42,7 @@ public class apiTest {
             //"你需要根据笔记内容生成markdown形式思维导图，加粗‘阿根廷’字样，数字用红色字体。\n" +
             "给出的笔记是：\n";
 
-    static String s2 = "现年52岁的米莱，经济学家出身，是阿根廷“自由前进党”的创建者和主要领导人。\n" +
+    static String s2 = "闲年52岁的米莱，经济学家出身，是阿根廷“自由前进党”的创建者和主要领导人。\n" +
             "此次阿根廷总统选举得到外界普遍关注，其中一个重要原因是极端右翼政客米莱的参选。由于阿根廷通货膨胀率已经达到142.7%，且该国多年来经济增长严重放缓，米莱主张全面美元化。据参考消息8月15日报道，米莱的竞选承诺是要“炸掉”阿根廷央行，还提议大幅削减税收和公共开支。\n" +
             "此外，米莱所引发的争议还在于他支持器官买卖合法化，实行宽松的枪支管制政策，禁止堕胎合法化。因为与美国前总统特朗普有一些共同点，比如酷爱社交媒体，经常语出惊人等，米莱被一些媒体称为“阿根廷特朗普”。\n" +
             "据央视财经报道，目前，阿根廷货币贬值，通胀高企，极大地推高了当地的物价水平。为缓解生活成本压力，阿根廷民众也开始寻找一些节省开支的办法，以物换物市场再度受到青睐。据了解，阿根廷正面临严重的通胀压力。当地时间13日，阿根廷政府公布的10月通胀率达到8.3%，过去12个月累计通胀率达142.7%，创32年来新高。阿根廷央行今年内6次加息，将基准利率上调至133%，以应对当前复杂的通胀形势。\n" ;
@@ -130,6 +133,7 @@ public class apiTest {
 
     static String s8 = "接下来我会给出一篇笔记，你需要根据这篇笔记的内容回答我接下来的多个问题。这篇笔记为：";
 
+    static String s9 = "一行代码在你的项目中使用分不知所在我们项目开发中分不知所基本上都会用到现在用的最多的就是radison在实际开发中加锁和释放锁稍不注意就会出现问题为了规矩低级错误和方便使用我最近基于radison封装了一个工具类可以优雅的对我们的方法实行分不知所我们先看一下最终的时间效果我们有这样一个方法会而余额变更为了防止多实地并发现下的余额初段问题我们需要对当前会而进行加锁加锁时我们只需要在方法上加制定了lock住解在方法参数中加lock key住解根据耶五我们这里是需要对当前会而加锁所以我们在memoryd上加了lock key住解加上这两个住解后加锁就完成了我们看一下代码实现原理首先我们定了三个住解引用boreadison它可以放在我们的smean boat的啟动类上面表示我们当前项目需要中到分不知所根据配置我们会把当前分不知所的相关类出手挂到sprey容器中lock住解主要装营方法上第一所的一些相关属性可以试证所的类型为支援所住在所所得持续时间支援时间所得前锐呼启所失败后的提示lock key住解装营方法的参数上容易所小说的范围最核心的一个类lock manor项目通过引爆redison会把它引入到我们的sprey容器中它拦结了所有lock住解的方法多了一个签面然后根据住解计算出分不知所的key然后在方法掉入前进行加速翻牢里方法里撕放锁整个过程就是这样的如果您也想写这样一个工具类欢迎点赞收场方便以后参考";
     @Autowired
     OcrService ocrService;
 
@@ -180,7 +184,7 @@ public class apiTest {
         System.out.println(result.getOutput().getChoices().get(0).getMessage().getContent());
     }
 
-    public static void streamCallWithMessage()
+    public static Flux<ServerSentEvent<String>> streamCallWithMessage()
             throws NoApiKeyException, ApiException, InputRequiredException {
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
         String prompt = s1 + s5;
@@ -199,11 +203,35 @@ public class apiTest {
                         .build();
         Flowable<GenerationResult> result = gen.streamCall(param);
         StringBuilder fullContent = new StringBuilder();
-        result.blockingForEach(message -> {
-            fullContent.append(message.getOutput().getChoices().get(0).getMessage().getContent());
-            System.out.println(message.getOutput().getChoices().get(0).getMessage().getContent());
-        });
-        System.out.println("Full content: \n" + fullContent.toString());
+        //result.blockingForEach(message -> {
+        //    fullContent.append(message.getOutput().getChoices().get(0).getMessage().getContent());
+        //    System.out.println(message.getOutput().getChoices().get(0).getMessage().getContent());
+        //});
+        //System.out.println("Full content: \n" + fullContent.toString());
+
+        // 将Flowable转换成Flux<ServerSentEvent<String>>并进行处理
+        return Flux.from(result)
+                // add delay between each event
+                .delayElements(Duration.ofMillis(1000))
+                .map(message -> {
+                    String output = message.getOutput().getChoices().get(0).getMessage().getContent();
+                    System.out.println(output); // print the output
+                    return ServerSentEvent.<String>builder()
+                            .data(output)
+                            .build();
+                })
+                .concatWith(Flux.just(ServerSentEvent.<String>builder().comment("").build()))
+                .doOnError(e -> {
+                    if (e instanceof NoApiKeyException) {
+                        // 处理 NoApiKeyException
+                    } else if (e instanceof InputRequiredException) {
+                        // 处理 InputRequiredException
+                    } else if (e instanceof ApiException) {
+                        // 处理其他 ApiException
+                    } else {
+                        // 处理其他异常
+                    }
+                });
     }
 
     public static void NotOneConversationsTest(String question)
@@ -256,6 +284,13 @@ public class apiTest {
     }
 
 
+    public static void streamChat(String content) {
+        OpenAiUtils.createStreamChatCompletion(content, System.out);
+        // 下面的默认和上面这句代码一样，是输出结果到控制台
+        //OpenAiUtils.createStreamChatCompletion(content);
+    }
+
+
     public static void main(String[] args) throws NoApiKeyException, InputRequiredException {
         try {
             AIFunctionService aiFunctionService = new AIFunctionService();
@@ -265,20 +300,28 @@ public class apiTest {
             //aiFunctionService.segmentNote(s5);
             //aiFunctionService.generateTable(s2);
             //aiFunctionService.generateFlowChart(s2);
+            //aiFunctionService.polish(s9);
             //callWithMessage();
             //qwenQuickStart();
-            //NotOneConversationsTest2("国足这次的对手是谁");
+
+           /* QAndAService qAndAService = new QAndAService();
+            qAndAService.init2(s2);
+            qAndAService.answerNew("米莱的政策是什么");*/
+
+           /* QAndAService qAndAService = new QAndAService();
+            qAndAService.initNew(s2);
+            qAndAService.answerNew("米莱的政策是什么");*/
+
             //NotOneConversationsTest2("韩国这次的核心人物是谁");
             //NotOneConversationsTest2("韩国的教练是谁");
             //NotOneConversationsTest2("中国队的教练是谁");
             //NotOneConversationsTest2("重新回答我的上一个问题");
             //Generation gen = new Generation();
-            //QAndAService qAndAService = new QAndAService();
             //qAndAService.init(s2);
             //qAndAService.answer("阿根廷总统选举的重要人物是谁");
             //qAndAService.answer("阿根廷总统选举的关键人物是谁");
             //qAndAService.answer("阿根廷的新总统是谁");
-
+            streamChat(s1+s2);
         } catch (ApiException e) {
             System.out.println(String.format("Exception %s", e.getMessage()));
         }

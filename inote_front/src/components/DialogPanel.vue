@@ -1,78 +1,115 @@
 <script setup>
 import CustomDialog from './CustomDialog.vue'
-import { ref, computed } from 'vue'
+import arrowRight from "@icon-park/vue-next/lib/icons/ArrowRight";
+import { ref, computed, watch, nextTick, onMounted } from 'vue'
+import { currentNote } from '../global';
+import { globalEventBus } from '@/util/eventBus.js'
+import { initAPI, answerAPI, streamAnswerAPI, streamAPI } from '@/api/ai'
+import { getNoteAPI } from '@/api/note'
 
-const isDragging = ref(false)
-const left = ref(500)
-const top = ref(300)
 const userMsg = ref('')
 
-const leftPx = computed({
-  get () {
-    return left.value + 'px'
-  }
+var noteId = -1
+
+const emit = defineEmits(['close'])
+
+const thinking = ref(false)
+
+const props = defineProps({
+  visible: { type: Boolean, required: true, default: false }
 })
 
-const topPx = computed({
-  get () {
-    return top.value + 'px'
-  }
+onMounted(() => {
+  globalEventBus.on('SyncDialog', () => {
+    clearMessages()
+    emit('close')
+    noteId = -1
+  })
 })
 
-const dragStart = function () {
-  isDragging.value = true
-}
-
-const dragEnd = function () {
-  isDragging.value = false
-}
-
-function drag (event) {
-  if (isDragging.value === true) {
-    left.value = left.value + event.movementX
-    top.value = top.value + event.movementY
-    console.log(event.movementX)
-  }
-}
-
-function sendMessage (msg) {
-  if (msg !== '') {
-    messages.value.push({ role: 'user', content: msg })
-  }
-}
 
 const messages = ref([
   {
     role: 'assistant',
-    content: 'hello, how can I assist you?'
-  },
-  {
-    role: 'user',
-    content: 'go say bye-bye'
-  },
-  {
-    role: 'user',
-    content: 'awohefiahfiehfoiewhfaiwfewahfewahefwaheflhwaelfhwjefh'
+    content: '您好，请问有什么可以帮助您的吗？'
   }
 ])
 
+function clearMessages() {
+  messages.value = [{
+    role: 'assistant',
+    content: '您好，请问有什么可以帮助您的吗？'
+  }]
+}
+
+async function sendMessage (msg) {
+  if (msg !== '') {
+    
+    messages.value.push({ role: 'user', content: msg })
+    messages.value.push({ role: 'assistant', content: '' })
+   
+    thinking.value = true
+    userMsg.value = "";
+    const AIObj = {
+      str: msg
+    }
+    let stream = streamAnswerAPI(AIObj)
+    console.log(stream)
+    streamAnswerAPI(AIObj)
+    .withDataHandler((data) => {
+      messages.value[messages.value.length - 1].content = data
+      // 将滚动条滑动到最底
+      const container = document.getElementById("chat-container")
+      container.scrollTop = container.scrollHeight;
+    })
+    .withEndHandler(() => thinking.value = false)
+    .send()
+  }
+}
+
+
+watch(() => props.visible, (newValue) => {
+  if (!props.visible)
+    return
+  if (noteId === currentNote.value.noteId) {
+    // do nothing
+  }
+  else {
+    console.log('reinit')
+    noteId = currentNote.value.noteId
+    globalEventBus.emit('SyncNote')
+    clearMessages()
+    getNoteAPI(noteId).then((msg) => { 
+      const data = {
+        str: msg.content,
+        num: 0
+      }
+      
+      initAPI(data).then().catch((err) => console.log(err))
+    }).catch((err) => console.log(err))
+
+  }
+},
+{
+  immediate: true
+})
 </script>
 
 <template>
   <div class="panel">
     <div class="panel-header"  @mousemove="drag" @mousedown="dragStart" @mouseup="dragEnd" @mouseleave="dragEnd">
-      <h1 style="margin: 5px 0 5px 0">Chat</h1>
+      <h1 style="margin: 5px 0 5px 0">ai助手</h1>
     </div>
-    <div class="chat-container">
+    <div class="chat-container" id="chat-container">
       <CustomDialog v-for="(message, idx) in messages"
           :key="idx"
           :role="message.role"
           :content="message.content"
           ></CustomDialog>
     </div>
-    <div class="send-comp">
-      <input class="send-text" v-model="userMsg">
-      <button class="send-button" @click="sendMessage(userMsg)">Send</button>
+    <div class="send-comp" v-loading="thinking">
+      <input class="send-text" v-model="userMsg" @keyup.enter="sendMessage(userMsg)" />
+      <button class="send-button" @click="sendMessage(userMsg)"><arrow-right theme="outline" size="24" fill="#ffffff"/></button>
     </div>
   </div>
 </template>
@@ -81,7 +118,7 @@ const messages = ref([
 
   .send-comp {
     height: 50px;
-    margin-left: 0%;
+    margin-top: 3%;
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -89,12 +126,14 @@ const messages = ref([
   .send-button {
     cursor: pointer;
     font-size: medium;
-    font-weight: 100;
     margin-left: 5px;
     width: 15%;
     background-color: var(--el-color-primary-light-3);
     border-radius: 0.75em;
     border: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .send-text {
     font-size: medium;
@@ -102,24 +141,11 @@ const messages = ref([
     padding: 0.75em;
     width: 80%;
     border-radius: 0.75em;
-    border: var(--el-color-primary-light-7);
+    border: 1px solid rgb(200,200,200);
   }
-
-  .user {
-      width: 80%;
-      background-color:white;
-      float:right;
-      text-align:left;
-      margin-right: 5px;
-      word-wrap: break-word;
-  }
-
-  .assistant {
-      width: 80%;
-      background-color: var(--el-color-primary);
-      float:left;
-      text-align:left;
-      margin-left: 5px;
+  .send-text:focus {
+    outline: none;
+    border: 2px solid var(--el-color-primary);
   }
 
   .chat-container {
@@ -136,8 +162,6 @@ const messages = ref([
     flex-direction: column;
     width: 95%;
     height: 400px;
-    background-color: aliceblue;
-    border: 1px solid  var(--el-color-primary-light-7);
     border-radius: 0.75em;
     padding: 5px;
   }
@@ -145,17 +169,5 @@ const messages = ref([
   .panel-header {
       font-weight: 100;
       user-select: none;
-  }
-
-  .message {
-      padding: 0.75em;
-      margin-top:10px;
-      border-radius: 1em;
-      border: 1px solid var(--el-color-primary-light-7);
-      box-shadow: 0px 4px 6px #333;
-     -moz-box-shadow: 0px 4px 6px #333;
-     -webkit-box-shadow: 0px 4px 6px #333;
-      display: flex;
-      flex-direction: column;
   }
 </style>

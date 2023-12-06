@@ -2,10 +2,11 @@ package edu.whu.MagicNote.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.sql.Blob;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.sql.Blob;
 
 /**
  * <p>
@@ -28,7 +29,7 @@ public class User implements Serializable {
 
     private String password;
 
-    private Blob photo;
+    private String photo;
 
     private String email;
 
