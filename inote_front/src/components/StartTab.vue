@@ -113,7 +113,7 @@
             <div>笔记本：</div>
           </el-col>
           <el-col :span="12">
-            <el-select v-model="selectedNotebook" placeholder="请选择笔记本" style="width: 100%">
+            <el-select v-model="selectedNotebook" value-key="id" placeholder="请选择笔记本" style="width: 100%">
               <el-option v-for="item in currentNotebooks" :key="item.id" :label="item.name" :value="item">
                 <div style="display: flex; align-items: center">
                   <notebook class="icon" theme="multi-color" size="18" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
