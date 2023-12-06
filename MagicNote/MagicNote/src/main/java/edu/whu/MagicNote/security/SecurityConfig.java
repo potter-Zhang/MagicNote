@@ -23,6 +23,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors();
         http.csrf().disable();   //关闭csrf过滤器
+
         http.authorizeRequests()
                 .antMatchers("/login").permitAll() //login接口直接放行
                 .antMatchers("/register").permitAll() //register接口直接放行
@@ -33,6 +34,7 @@ public class SecurityConfig {
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

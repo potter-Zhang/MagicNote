@@ -1,11 +1,19 @@
 package edu.whu.MagicNote.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import edu.whu.MagicNote.domain.User;
+import edu.whu.MagicNote.exception.TodoException;
 import edu.whu.MagicNote.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -76,6 +84,22 @@ public class UserController {
         else
             //修改失败，不存在对应id的用户
             return ResponseEntity.noContent().build();
+    }
+
+    // 只更新用户头像的接口
+    @PutMapping("/updatePhoto")
+    public ResponseEntity<String> updateUserPhoto(int id, MultipartFile photo) {
+        try {
+            if (userService.updateUserPhoto(id, photo)){
+                String photoPath = userService.getUserById(id).getPhoto();
+                return ResponseEntity.ok(photoPath);
+            } else
+                //修改失败，不存在对应id的用户
+                return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/delete/{id}")

@@ -1,6 +1,5 @@
 import axios from "axios";
 import {currentUser} from "@/global";
-import config from "@icon-park/vue-next/lib/icons/Config";
 
 const baseURL = "http://localhost:8081";
 const instance = axios.create({baseURL});

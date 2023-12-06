@@ -24,6 +24,10 @@ public interface NoteDao extends BaseMapper<Note> {
     // 根据用户id查询所有笔记
     @Select("SELECT note.* FROM note WHERE note.userid = #{userid}")
     List<Note> FindAllNoteByUserId(int userid);
+    
+    // 根据笔记名和用户id查询所有笔记
+    @Select("SELECT note.* FROM note WHERE note.userid = #{userid} and note.name=#{name}")
+    List<Note> FindAllNoteByUserIdAndName(int userid,String name);
 
     // 根据笔记本id查询所有笔记
     @Select("SELECT note.* FROM note WHERE note.notebookid = #{notebookid}")
