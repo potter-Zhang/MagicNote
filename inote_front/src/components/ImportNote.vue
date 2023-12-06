@@ -103,7 +103,7 @@
         .finally(() => {
           notebook = ""
           newNoteName.value = ""
-          previewText.value === ""
+          previewText.value = ""
         })
   }
 </script>
