@@ -64,7 +64,7 @@
     return msg
   }
 
-  const previewText = ref('导入你的笔记吧~')
+  const previewText = ref('')
 
   const selectedNotebook = ref("");
   const newNoteName = ref("");
@@ -112,7 +112,7 @@
           <div class="rect-before"></div>
           <div>导入预览：</div>
         </div>
-        <span id="preview-text" v-loading="uploading">{{ previewText }}</span>
+        <span id="preview-text" v-loading="uploading" placeholder="导入你的笔记吧~">{{ previewText }}</span>
       </div>
 
       <!-- 选择笔记本和笔记 -->
