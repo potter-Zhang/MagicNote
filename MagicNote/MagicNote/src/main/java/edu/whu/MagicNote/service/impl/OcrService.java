@@ -90,7 +90,7 @@ public class OcrService {
         }
         String resultStr = result.toString();
         resultStr = resultStr.replaceAll(" +","");
-        return result.toString();
+        return resultStr;
     }
 
     public String recognizePPT(MultipartFile pptFile) throws TodoException {
