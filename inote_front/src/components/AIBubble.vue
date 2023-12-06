@@ -17,8 +17,9 @@
 </template>
 
 <script setup>
-import {ref, defineProps, watch} from 'vue'
+import {ref, defineProps, watch, onMounted, onBeforeUnmount} from 'vue'
 import { streamGenerateTableAPI, streamGetAbstractAPI, streamGetExpandAPI, streamGetSegmentAPI, streamGenerateFlowChartAPI } from '@/api/ai';
+import {globalEventBus} from "@/util/eventBus";
 
 const loading = ref(true)
 
@@ -30,6 +31,17 @@ const props = defineProps({
 const processedText = ref("");
 
 const emit = defineEmits(['close', 'insert', 'replace', 'functionDone'])
+
+onMounted(() => {
+  // ai对话窗口打开时关闭AIBubble
+  globalEventBus.on("DialogPanelOpen", () => {
+    emit("close");
+  })
+})
+
+onBeforeUnmount(() => {
+  globalEventBus.off("DialogPanelOpen");
+})
 
 function close() {
     processedText.value = ''

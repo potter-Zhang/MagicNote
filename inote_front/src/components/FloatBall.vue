@@ -3,13 +3,33 @@
   import close from "@icon-park/vue-next/lib/icons/Close"
   import aiDialog from "./DialogPanel.vue"
 
-  import {ref} from 'vue'
+  import {onBeforeUnmount, onMounted, ref} from 'vue'
+  import {globalEventBus} from "@/util/eventBus";
 
   const visible = ref(false);
 
   function hide() {
     visible.value = false
   }
+
+  function toggle() {
+    if (visible.value === false) {
+      // 通知AIBubble关闭
+      globalEventBus.emit("DialogPanelOpen");
+    }
+    visible.value = !visible.value;
+  }
+
+  onMounted(() => {
+    // AIBubble打开则对话窗口关闭
+    globalEventBus.on("AIBubbleOpen", () => {
+      visible.value = false;
+    })
+  })
+
+  onBeforeUnmount(() => {
+    globalEventBus.off("AIBubbleOpen");
+  })
 
   function dragElement() {
     const element = document.getElementById("ball");
@@ -59,7 +79,7 @@
 <template>
   <el-popover :visible="visible" placement="top-end" :width="400" >
     <template #reference>
-      <div id="ball" @click="visible=!visible" @mousedown="dragElement">
+      <div id="ball" @click="toggle" @mousedown="dragElement">
         <robot-one v-if="!visible" class="icon" theme="outline" size="24" fill="#ffffff"/>
         <close v-else class="icon" theme="outline" size="20" fill="#ffffff"/>
       </div>

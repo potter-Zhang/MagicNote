@@ -9,9 +9,6 @@ import { Loading } from 'element-plus/es/components/loading/src/service';
 import { ElMessage } from 'element-plus';
 import axios from 'axios'
 
-const isDragging = ref(false)
-const left = ref(500)
-const top = ref(300)
 const userMsg = ref('')
 
 var noteId = -1
@@ -39,41 +36,6 @@ function clearMessages() {
   }]
 }
 
-const leftPx = computed({
-  get () {
-    return left.value + 'px'
-  }
-})
-
-const topPx = computed({
-  get () {
-    return top.value + 'px'
-  }
-})
-
-const dragStart = function () {
-  isDragging.value = true
-}
-
-const dragEnd = function () {
-  isDragging.value = false
-}
-
-function drag (event) {
-  if (isDragging.value === true) {
-    left.value = left.value + event.movementX
-    top.value = top.value + event.movementY
-    console.log(event.movementX)
-  }
-}
-
-function addMessage(msgRole, msg) {
-  if (msg !== '') {
-    messages.value.push({ role: msgRole, content: msg })
-    userMsg.value = "";
-  }
-}
-
 async function sendMessage (msg) {
   if (msg !== '') {
     
@@ -90,36 +52,13 @@ async function sendMessage (msg) {
     streamAnswerAPI(AIObj)
     .withDataHandler((data) => {
       messages.value[messages.value.length - 1].content = data
+      // 将滚动条滑动到最底
+      const container = document.getElementById("chat-container")
+      container.scrollTop = container.scrollHeight;
     })
     .withEndHandler(() => thinking.value = false)
     .send()
-
-   
-    // const xhr = new XMLHttpRequest();
-    // xhr.open('GET', `http://localhost:8081/ai/answer?num=0&str=hi`);
-    // xhr.setRequestHeader('Content-Type', 'text/event-stream');
-    // xhr.onreadystatechange = () => {
-    //   if (xhr.readyState === 3) {
-    //       // 将数据添加到文本框中
-    //       messages.value[messages.value.length - 1].content = xhr.responseText
-    //     }
-    //   if (xhr.readyState === 4) {
-    //     if (xhr.status === 200) {
-    //       messages.value[messages.value.length - 1].content = xhr.responseText
-    //       }
-    //       thinking.value = false
-    //     }
-    //   }
-
-    // xhr.send("num=0&str=hi")
-    
-      
-  //   answerAPI(data)
-  //   .then((returnMsg) => {addMessage('assistant', returnMsg);})
-  //   .catch((err) => {console.log(err)})
-  //   .finally(() => thinking.value = false)
-  // 
-}
+  }
 }
 
 watch(() => currentNote.value.updateCode, (newCode) => {
@@ -131,7 +70,6 @@ watch(() => currentNote.value.updateCode, (newCode) => {
 })
 
 watch(() => props.visible, (newValue) => {
-  console.log(newValue)
   if (!props.visible)
     return
   if (noteId === currentNote.value.noteId) {
@@ -155,17 +93,6 @@ watch(() => props.visible, (newValue) => {
 {
   immediate: true
 })
-
-
-watch(messages.value, () => {
-  // 消息渲染出来后再将滚动条拉到最底
-  nextTick(() => {
-    const container = document.getElementById("chat-container")
-    container.scrollTop = container.scrollHeight;
-  })
-});
-
-
 </script>
 
 <template>
