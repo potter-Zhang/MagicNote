@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="ai-text" >
-        <textarea class="ai-text-area" v-model="processedText"></textarea> 
+        <textarea class="ai-text-area" id="ai-text-area" v-model="processedText"></textarea>
     </div>
     <div id="tail"></div>
     <div id="tail-shadow"></div>
@@ -17,12 +17,8 @@
 </template>
 
 <script setup>
-import { ref, defineProps, watch } from 'vue'
+import {ref, defineProps, watch} from 'vue'
 import { streamGenerateTableAPI, streamGetAbstractAPI, streamGetExpandAPI, streamGetSegmentAPI, streamGenerateFlowChartAPI } from '@/api/ai';
-import { ElLoading } from 'element-plus';
-
-
-const textBuffer = ref('')
 
 const loading = ref(true)
 
@@ -31,10 +27,12 @@ const props = defineProps({
     func: { type: String, required: true, default: ''},
 })
 
+const processedText = ref("");
+
 const emit = defineEmits(['close', 'insert', 'replace', 'functionDone'])
 
 function close() {
-    textBuffer.value = ''
+    processedText.value = ''
     emit('close')
 }
 
@@ -71,16 +69,16 @@ watch(() => props.func, () => {
   processedText.value = AIFunctions.value[props.func](props.text);
 })
 
-const processedText = ref("");
-
 function errorHandler(err) {
     console.log(err)
-    textBuffer.value = err.response.data.error
+    processedText.value = err.response.data.error
 }
 
 function setTextBuffer(msg) {
     loading.value = false
     processedText.value = msg;
+    const container = document.getElementById("ai-text-area")
+    container.scrollTop = container.scrollHeight;
 }
 
 
