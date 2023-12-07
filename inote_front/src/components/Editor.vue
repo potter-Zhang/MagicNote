@@ -247,6 +247,9 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   globalEventBus.all.clear()
+  if (noteInEditor.value.noteId !== -1) {
+    saveNote()
+  }
 })
 
 const mermaidHtml = (str) => {
