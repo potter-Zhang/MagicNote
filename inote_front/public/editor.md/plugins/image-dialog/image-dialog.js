@@ -193,12 +193,11 @@
                                 if (data.error) { // 上传失败
                                     alert(data.error);
                                 }
-                                else if (data.message) {
-                                    alert(data.message); // 上传失败，弹出警告信息
-                                    
-                                }
                                 else if (data.success && data.success === 1){
                                     dialog.find("[data-url]").val(data.url); // 设置图片地址
+                                }
+                                else if (data.message) {
+                                    alert(data.message); // 上传失败，弹出警告信息  
                                 }
                                 else {
                                     alert('未知错误')
