@@ -22,7 +22,7 @@ const catalogVisible = ref(true);
         <div class="catalog-item">二、AI辅助</div>
       </a>
       <a class="catalog-link" href="#paragraph3">
-        <div class="catalog-item">三、导入</div>
+        <div class="catalog-item">三、导入笔记</div>
       </a>
       <a class="catalog-link" href="#paragraph4">
         <div class="catalog-item">四、鸣谢</div>

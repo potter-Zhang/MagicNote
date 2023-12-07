@@ -100,11 +100,11 @@ function abstract (text) {
         num: 0
     }
     console.log(data)
-    streamGetAbstractAPI(data)
+    streamGetAbstractAPI()
         .withDataHandler((msg) => { setTextBuffer(msg) })
         .withErrorHandler((err) => { errorHandler(err) })
         .withEndHandler(() => emit("functionDone"))
-        .send()
+        .send(data)
 }
 
 function expand (text) {
@@ -112,11 +112,11 @@ function expand (text) {
         str: text,
         num: 0
     }
-    streamGetExpandAPI(data)
+    streamGetExpandAPI()
         .withDataHandler((msg) => { setTextBuffer(msg) })
         .withErrorHandler((err) => { errorHandler(err) })
         .withEndHandler(() => emit("functionDone"))
-        .send()
+        .send(data)
 }
 
 
@@ -125,11 +125,11 @@ function segment (text) {
         str: text,
         num: 0
     }
-    streamGetSegmentAPI(data)
+    streamGetSegmentAPI()
         .withDataHandler((msg) => { setTextBuffer(msg) })
         .withErrorHandler((err) => { errorHandler(err) })
         .withEndHandler(() => emit("functionDone"))
-        .send()
+        .send(data)
 }
 
 async function generateTable (text) {
@@ -137,11 +137,11 @@ async function generateTable (text) {
         str: text,
         num: 0
     }
-    streamGenerateTableAPI(data)
+    streamGenerateTableAPI()
         .withDataHandler((msg) => { setTextBuffer(msg) })
         .withErrorHandler((err) => { errorHandler(err) })
         .withEndHandler(() => emit("functionDone"))
-        .send()
+        .send(data)
 }
 
 async function generateFlowChart (text) {
@@ -149,11 +149,11 @@ async function generateFlowChart (text) {
         str: text,
         num: 0
     }
-    streamGenerateFlowChartAPI(data)
+    streamGenerateFlowChartAPI()
         .withDataHandler((msg) => { setTextBuffer(msg) })
         .withErrorHandler((err) => { errorHandler(err) })
         .withEndHandler(() => emit("functionDone"))
-        .send()
+        .send(data)
 }
 
 

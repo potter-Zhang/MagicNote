@@ -19,7 +19,15 @@
   const emits = defineEmits(['collapse'])
 
   const currentMode = ref('notebook'); // 显示笔记本或者笔记本中的文档
-  const selectedNotebook = ref(-1);  // 当前正在浏览的笔记本id，在笔记本中新增笔记时需要使用
+  const selectedNotebook = ref({
+    id: -1,
+    name: ""
+  });  // 当前正在浏览的笔记本，在笔记本中新增笔记时需要使用
+
+  const setSelectedNotebook = (notebookId, name) => {
+    selectedNotebook.value.id = notebookId;
+    selectedNotebook.value.name = name;
+  }
 
   const changeMode = (type: string) =>{
     currentMode.value = type;
@@ -124,7 +132,7 @@
           "userid": currentUser.value.id,
           "content": "",
           "name": value,
-          "notebookid": selectedNotebook.value
+          "notebookid": selectedNotebook.value.id
         })
             .then((response) => {
               notes.value.push(response);
@@ -153,6 +161,7 @@
           <return-icon class="icon" theme="outline" size="20" fill="#333" style="align-self: start" @click="changeMode('notebook')"/>
         </el-tooltip>
       </div>
+      <div style="font-size: 14px">{{selectedNotebook.name}}</div>
       <el-tooltip effect="dark" content="新增笔记" placement="bottom">
         <file-addition-one class="icon" theme="outline" size="20" @click="addNote"/>
       </el-tooltip>
@@ -167,7 +176,7 @@
         </div>
       </div>
       <div v-else-if="currentMode==='notebook' && currentNotebooks.length > 0"  v-for="notebook in currentNotebooks" class="display-item">
-        <div class="display-item-icon-and-text"  @click="selectedNotebook=notebook.id; displayNotes(notebook.id);">
+        <div class="display-item-icon-and-text"  @click="setSelectedNotebook(notebook.id, notebook.name); displayNotes(notebook.id);">
           <notebook class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
           <div style="margin-left: 0.5rem; font-size: 0.8rem; font-weight: bold">{{notebook.name}}</div>
         </div>
@@ -201,7 +210,7 @@
         </div>
       </div>
       <div v-else-if="currentMode==='note' && notes.length > 0" class="display-item" v-for="note in notes">
-        <div class="display-item-icon-and-text" @click="setCurrentNote(note.id, note.name, selectedNotebook)">
+        <div class="display-item-icon-and-text" @click="setCurrentNote(note.id, note.name, selectedNotebook.id)">
          <note-icon class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
          <div style="margin-left: 5%; font-size: 0.8rem; font-weight: bold">{{note.name}}</div>
         </div>

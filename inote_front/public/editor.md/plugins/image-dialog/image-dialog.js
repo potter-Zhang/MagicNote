@@ -190,14 +190,15 @@
                                 // console.log(data);
                                 // console.log(textStatus);
                                 // console.log(jqXHR);
+                                
                                 if (data.error) { // 上传失败
                                     alert(data.error);
                                 }
-                                else if (data.success === 1) {
+                                else if (data.success){
                                     dialog.find("[data-url]").val(data.url); // 设置图片地址
                                 }
                                 else {
-                                    alert(data.message); // 上传失败，弹出警告信息
+                                    alert('未知错误')
                                 }
                                 loading(false); // 关闭加载效果
                             },
@@ -205,16 +206,19 @@
                                 // console.log(XMLHttpRequest);
                                 // console.log(textStatus);
                                 // console.log(errorThrown);
+                                
                                 loading(false); // 关闭加载效果
                             }
                         });
+
                         
                         
                         return false;
                         
                     };
-
-                    dialog.find("[type=\"submit\"]").bind("click", submitHandler).trigger("click");
+                    //console.log(dialog.find("[type=\"submit\"]"))
+                    //dialog.find("[type=\"submit\"]").bind("click", submitHandler).trigger("click");
+                    submitHandler()
 				});
             }
 
