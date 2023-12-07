@@ -193,11 +193,15 @@
                                 if (data.error) { // 上传失败
                                     alert(data.error);
                                 }
-                                else if (data.success === 1) {
+                                else if (data.message) {
+                                    alert(data.message); // 上传失败，弹出警告信息
+                                    
+                                }
+                                else if (data.success && data.success === 1){
                                     dialog.find("[data-url]").val(data.url); // 设置图片地址
                                 }
                                 else {
-                                    alert(data.message); // 上传失败，弹出警告信息
+                                    alert('未知错误')
                                 }
                                 loading(false); // 关闭加载效果
                             },
@@ -213,8 +217,9 @@
                         return false;
                         
                     };
-
-                    dialog.find("[type=\"submit\"]").bind("click", submitHandler).trigger("click");
+                    //console.log(dialog.find("[type=\"submit\"]"))
+                    //dialog.find("[type=\"submit\"]").bind("click", submitHandler).trigger("click");
+                    submitHandler()
 				});
             }
 
