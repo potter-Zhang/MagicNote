@@ -22,7 +22,7 @@ public class AIFunctionService {
     public void abstractNote(String note, HttpServletResponse response) throws NoApiKeyException, InputRequiredException {
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
 
-        String command = "接下来我会给出我的笔记，你需要提炼、 缩写我的笔记，尽量精简。\n" +
+        String command = "接下来我会给出我的笔记，你需要提炼、 缩写我的笔记，尽量精简，要比之前的笔记字数少。\n" +
                 "要求：1、最终输出为markdown格式；" +
                 "2、你需要将最重要的那些信息在markdown中进行加粗、加红色等；" +
                 "3、充分使用多级标题；" +
@@ -60,7 +60,7 @@ public class AIFunctionService {
 
     // 缩写笔记GPT版
     public void abstractNoteGPT(String note, HttpServletResponse response) throws IOException {
-        String command = "接下来我会给出我的笔记，你需要提炼、 缩写我的笔记，尽量精简。\n" +
+        String command = "接下来我会给出我的笔记，你需要提炼、 缩写我的笔记，尽量精简，要比之前的笔记字数少\n" +
                 "要求：1、最终输出为markdown格式；" +
                 "2、你需要将最重要的那些信息在markdown中进行加粗、加红色等；" +
                 "3、充分使用多级标题；" +
@@ -252,6 +252,7 @@ public class AIFunctionService {
                 "2、根据笔记的内容主旨生成简短扼要的表格标题" +
                 "3、表格内容能够保持和表格列标题一致时，用一个表格概括；否则可以用多个表格概括，但必须都要保持表格的格式"+
                 "4、使用Markdown的表格语法创建表格。" +
+                "5、最终不需要回答其他信息，返回markdown结果即可。"+
                 "给出的笔记是：\n";
 
         String prompt = command + note;
@@ -288,6 +289,7 @@ public class AIFunctionService {
                 "2、根据笔记的内容主旨生成简短扼要的表格标题" +
                 "3、表格内容能够保持和表格列标题一致时，用一个表格概括；否则可以用多个表格概括，但必须都要保持表格的格式"+
                 "4、使用Markdown的表格语法创建表格。" +
+                "5、最终不需要回答其他信息，返回markdown结果即可。"+
                 "给出的笔记是：\n";
 
         response.setContentType("text/event-stream");
@@ -305,6 +307,7 @@ public class AIFunctionService {
         String command ="请从我的笔记中提取出关键词，并通过合理的逻辑关系以makedowm格式的mermaid流程图表示。\n" +
                 "要求：1、类似的结点要多进行分支的流程图表示"+
                 "2、使用Markdown语法创建流程图"+
+                "3、最终不需要回答其他信息，返回markdown结果即可。"+
                 "给出的笔记是：\n";
         String prompt = command + note;
         Generation gen = new Generation();
@@ -338,6 +341,7 @@ public class AIFunctionService {
         String command ="请从我的笔记中提取出关键词，并通过合理的逻辑关系以makedowm格式的mermaid流程图表示。\n" +
                 "要求：1、类似的结点要多进行分支的流程图表示"+
                 "2、使用Markdown语法创建流程图"+
+                "3、最终不需要回答其他信息，返回markdown结果即可。"+
                 "给出的笔记是：\n";
 
         response.setContentType("text/event-stream");

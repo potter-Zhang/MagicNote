@@ -285,7 +285,7 @@ public class apiTest {
 
 
     public static void streamChat(String content) {
-        OpenAiUtils.createStreamChatCompletion(content, System.out);
+        //OpenAiUtils.createStreamChatCompletion(content, System.out);
         // 下面的默认和上面这句代码一样，是输出结果到控制台
         //OpenAiUtils.createStreamChatCompletion(content);
     }
