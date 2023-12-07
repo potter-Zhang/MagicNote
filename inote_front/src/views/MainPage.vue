@@ -130,8 +130,8 @@
             <start-tab @jumpToNote="changeTab('editor')" v-if="currentTab==='start'"/>
             <editor v-else-if="currentTab==='editor'"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
-            <import-note v-else-if="currentTab==='import'"/>
             <search-result-view v-else-if="currentTab==='search'" :notes="searchResult" @noteclick="changeTab('editor')"/>
+            <import-note v-show="currentTab==='import'"/>
           </div>
         </el-main>
       </el-container>

@@ -27,9 +27,11 @@ public class QAndAService {
     public void init(String note) throws NoApiKeyException, InputRequiredException {
 
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
-        msgManager = new MessageManager();
+        msgManager = new MessageManager(1000000);
         Message systemMsg = Message.builder().role(Role.SYSTEM.getValue()).content("You are a helpful assistant.").build();
-        String content1 = "接下来我会给出一篇笔记，你需要根据这篇笔记的内容回答我接下来的多个问题。这篇笔记的具体内容如下:" + note;
+        String content1 = "接下来我会给出一篇笔记，你需要根据这篇笔记的内容回答我接下来的多个问题。" +
+                "要求:你只能根据我提供的笔记回答问题，不能根据其他知识来源回答。若笔记中没有与我提的问题相关的内容，请回答\"笔记中没有提到\"。" +
+                "这篇笔记的具体内容如下:" + note;
         Message userMsg1 = Message.builder().role(Role.USER.getValue()).content(content1).build();
         msgManager.add(systemMsg);
         msgManager.add(userMsg1);
