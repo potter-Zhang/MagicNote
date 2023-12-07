@@ -53,7 +53,7 @@ async function sendMessage (msg) {
     const AIObj = {
       str: msg
     }
-    let stream = streamAnswerAPI(AIObj)
+    let stream = streamAnswerAPI()
     console.log(stream)
     streamAnswerAPI(AIObj)
     .withDataHandler((data) => {
@@ -63,7 +63,7 @@ async function sendMessage (msg) {
       container.scrollTop = container.scrollHeight;
     })
     .withEndHandler(() => thinking.value = false)
-    .send()
+    .send(AIObj)
   }
 }
 
