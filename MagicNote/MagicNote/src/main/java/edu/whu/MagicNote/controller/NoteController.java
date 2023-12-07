@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -93,9 +94,12 @@ public class NoteController {
     //更新笔记
     @PutMapping("/update")
     public ResponseEntity<String> updateNote(@RequestBody Note myNote){
+
         try {
+            Note old = noteService.getNote(myNote.getId());
             Log myLog = generateLog(myNote, "update");
-            if (noteService.updateNote(myNote)) {
+            if (!Objects.equals(old.getContent(), myNote.getContent())) {
+                noteService.updateNote(myNote);
                 logService.addLog(myLog);
                 return ResponseEntity.ok().build();
             } else return ResponseEntity.notFound().build();
