@@ -36,6 +36,7 @@
     if (response !== "") {
       searchResult.value.push.apply(searchResult.value, response);
     }
+    searchKeyword.value = "";
     changeTab("search");
   }
 
