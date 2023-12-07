@@ -16,8 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 
+
 @Service
 public class AIFunctionService {
+
     // 缩写、提炼笔记信息的方法
     public void abstractNote(String note, HttpServletResponse response) throws NoApiKeyException, InputRequiredException {
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
@@ -354,6 +356,7 @@ public class AIFunctionService {
 
     // 对多模态识别结果进行错误修改
     public String polish(String text) throws NoApiKeyException, InputRequiredException {
+
         Constants.apiKey = "sk-a513d206b66948ad8b27356775c8c829";
 
         String command ="这是我对视频，音频等的文字识别结果，其中可能包含错别字，语法错误以及乱码，请你进行改正错误并给出修改结果\n" +
@@ -371,5 +374,4 @@ public class AIFunctionService {
         System.out.println(result.getOutput().getText());
         return result.getOutput().getText();
     }
-
 }
