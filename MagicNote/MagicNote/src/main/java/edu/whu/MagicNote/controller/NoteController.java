@@ -94,7 +94,6 @@ public class NoteController {
     //更新笔记
     @PutMapping("/update")
     public ResponseEntity<String> updateNote(@RequestBody Note myNote){
-
         try {
             Note old = noteService.getNote(myNote.getId());
             Log myLog = generateLog(myNote, "update");
