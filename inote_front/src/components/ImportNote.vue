@@ -101,7 +101,7 @@
           ElMessage.error(err.response.data.message)
         })
         .finally(() => {
-          notebook = ""
+          selectedNotebook.value = ""
           newNoteName.value = ""
           previewText.value = ""
         })
