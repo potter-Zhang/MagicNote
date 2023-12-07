@@ -17,6 +17,7 @@ public class UploadController {
     @Autowired
     MinioService minioService;
 
+    // 日志成员，用于测试异步函数效果
     private static final Logger log = LoggerFactory.getLogger(UploadController.class);
 
     // 处理上传图片文件操作，将上传的图片保存（这里的设计是贴合Editor的控件来的，若不使用editor需要修改)

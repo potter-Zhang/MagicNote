@@ -16,10 +16,8 @@ public class UploadService {
 
         // 上传头像文件到服务器
         JSONObject result = minioService.uploadFile(file, "userphoto");
-
         // 设置文件路径，根据minio中路径
         String filePath = "http://118.178.241.148:9000/userphoto/" + result.get("fileName");
-
         return filePath;
     }
 }
