@@ -65,6 +65,7 @@ public class OcrService {
             // 对图片进行文字识别
             result = tesseract.doOCR(grayscaleImage);
             result = result.replaceAll(" +","");     // 将所有空格替换为空字符串，一是规范化数据，二是方便之后的根据图片中信息进行笔记搜索
+            sbs.close();
         } catch (IOException e) {
             throw new TodoException(TodoException.OCR_ERROR, "图片转换失败");
         } catch (TesseractException e) {
