@@ -8,18 +8,9 @@ import com.alibaba.dashscope.common.Role;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
-import edu.whu.MagicNote.controller.UploadController;
-import edu.whu.MagicNote.dao.PhotoDao;
-import edu.whu.MagicNote.domain.Photo;
-import edu.whu.MagicNote.exception.TodoException;
 import io.github.asleepyfish.util.OpenAiUtils;
 import io.reactivex.Flowable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
