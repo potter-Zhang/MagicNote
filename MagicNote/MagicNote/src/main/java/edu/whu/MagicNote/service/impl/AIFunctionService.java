@@ -8,16 +8,27 @@ import com.alibaba.dashscope.common.Role;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
+import edu.whu.MagicNote.controller.UploadController;
+import edu.whu.MagicNote.dao.PhotoDao;
+import edu.whu.MagicNote.domain.Photo;
+import edu.whu.MagicNote.exception.TodoException;
 import io.github.asleepyfish.util.OpenAiUtils;
 import io.reactivex.Flowable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 
+
 @Service
 public class AIFunctionService {
+
     // 缩写、提炼笔记信息的方法
     public void abstractNote(String note, HttpServletResponse response) throws NoApiKeyException, InputRequiredException {
         Constants.apiKey = "sk-4ee81ca5526343e5b3f7c6b3baac0a85";
@@ -354,6 +365,7 @@ public class AIFunctionService {
 
     // 对多模态识别结果进行错误修改
     public String polish(String text) throws NoApiKeyException, InputRequiredException {
+
         Constants.apiKey = "sk-a513d206b66948ad8b27356775c8c829";
 
         String command ="这是我对视频，音频等的文字识别结果，其中可能包含错别字，语法错误以及乱码，请你进行改正错误并给出修改结果\n" +
@@ -371,5 +383,4 @@ public class AIFunctionService {
         System.out.println(result.getOutput().getText());
         return result.getOutput().getText();
     }
-
 }
