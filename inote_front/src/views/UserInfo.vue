@@ -38,7 +38,11 @@
       }
       // 生成时间间隔
       const logDate = new Date(item.timestamp);
-      const timeDiff = Date.now() - logDate.getTime();
+      const today = new Date();
+      // 不考虑时间是否相差24小时，只考虑日期
+      logDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+      const timeDiff = today.getTime() - logDate.getTime();
       const dayDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
       item.dayDiff = dayDiff > 0 ? dayDiff + "天前" : "今天";
       // 裁切时间
