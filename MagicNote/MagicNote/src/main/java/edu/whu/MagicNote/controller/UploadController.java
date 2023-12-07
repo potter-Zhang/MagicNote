@@ -39,15 +39,14 @@ public class UploadController {
 
             // 给editormd进行回调
             res.put("url", filePath);
-            res.put("success", 1);
-            res.put("message", "upload success!");
+            res.put("success", "upload success!");
         }
         catch(Exception e) {
             res.put("error", e.getMessage());
         }
         finally{
             if(res.size()==0){
-                res.put("message", "unknown error");
+                res.put("error", "unknown error");
             }
             log.info("End");
             return res;
