@@ -36,6 +36,7 @@
     if (response !== "") {
       searchResult.value.push.apply(searchResult.value, response);
     }
+    searchKeyword.value = "";
     changeTab("search");
   }
 
@@ -73,7 +74,7 @@
     <el-container style="height: 100vh">
       <!-- 顶部栏 -->
       <el-header id="header">
-        <div id="icon-and-name" style="display: flex; align-items: center">
+        <div id="icon-and-name" style="display: flex; align-items: center; cursor: pointer" @click="changeTab('start')">
           <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
           <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
         </div>
@@ -130,8 +131,8 @@
             <start-tab @jumpToNote="changeTab('editor')" v-if="currentTab==='start'"/>
             <editor v-else-if="currentTab==='editor'"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
-            <import-note v-else-if="currentTab==='import'"/>
             <search-result-view v-else-if="currentTab==='search'" :notes="searchResult" @noteclick="changeTab('editor')"/>
+            <import-note v-show="currentTab==='import'"/>
           </div>
         </el-main>
       </el-container>

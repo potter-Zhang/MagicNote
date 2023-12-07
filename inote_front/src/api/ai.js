@@ -8,40 +8,40 @@ export const getAbstractAPI = (text) => {
     return request.post("/ai/abstract", text);
 }
 
-export const streamGetAbstractAPI = (text) => {
-    return new streamAPI().get(baseURL + "/ai/abstract", text)
+export const streamGetAbstractAPI = () => {
+    return new streamAPI().post(baseURL + "/ai/abstract")
 }
 
 export const getExpandAPI = (text) => {
     return request.post("/ai/expand", text);
 }
 
-export const streamGetExpandAPI = (text) => {
-    return new streamAPI().get(baseURL + "/ai/expand", text)
+export const streamGetExpandAPI = () => {
+    return new streamAPI().post(baseURL + "/ai/expand")
 }
 
 export const getSegmentAPI = (text) => {
     return request.post('/ai/segment', text)
 }
 
-export const streamGetSegmentAPI = (text) => {
-    return new streamAPI().get(baseURL + "/ai/segment", text)
+export const streamGetSegmentAPI = () => {
+    return new streamAPI().post(baseURL + "/ai/segment")
 }
 
 export const generateTableAPI = (text) => {
     return request.post('/ai/generateTable', text)
 }
 
-export const streamGenerateTableAPI = (text) => {
-    return new streamAPI().get(baseURL + "/ai/generateTable", text)
+export const streamGenerateTableAPI = () => {
+    return new streamAPI().post(baseURL + "/ai/generateTable")
 }
 
 export const generateFlowChartAPI = (text) => {
     return request.post('/ai/generateFlowChart', text)
 }
 
-export const streamGenerateFlowChartAPI = (text) => {
-    return new streamAPI().get(baseURL + "/ai/generateFlowChart", text)
+export const streamGenerateFlowChartAPI = () => {
+    return new streamAPI().post(baseURL + "/ai/generateFlowChart")
 }
 
 export const initAPI = (text) => {
@@ -52,13 +52,10 @@ export const answerAPI = (text) => {
     return request.post('/ai/answer', text)
 }
 
-export var streamAnswerAPI = (text) => {
-    return new streamAPI().get(baseURL + '/ai/answer', text)
+export var streamAnswerAPI = () => {
+    return new streamAPI().post(baseURL + '/ai/answer')
 }
 
-export const streamInitAPI = (text) => {
-    return new streamAPI().post(baseURL + '/ai/init', text)
-}
 
 export class streamAPI {
     xhr;
@@ -71,14 +68,10 @@ export class streamAPI {
         this.xhr = new XMLHttpRequest()
         return this
     }
-    get(url, AIObj) {
-        if (AIObj.num)
-            url = url + "?num=" + AIObj.num + "&str=" + AIObj.str
-        else 
-            url = url + "?str=" + AIObj.str
-        this.xhr.open('GET', url)
-        this.xhr.setRequestHeader('Content-Type', 'text/event-stream')
-        
+    post(url) {
+        this.xhr.open('POST', url)
+        //this.xhr.setRequestHeader('Content-Type', 'text/event-stream')
+        this.xhr.setRequestHeader ('Content-type', 'application/json');  //设置为表单方式提交
         return this
     }
     withDataHandler(handler) {
@@ -93,7 +86,7 @@ export class streamAPI {
         this.endHandler = handler
         return this
     }
-    send() {
+    send(AIObj) {
         this.xhr.onreadystatechange = () => {
             if (this.xhr.readyState === 3) {
                 this.dataHandler(this.xhr.responseText)
@@ -108,7 +101,8 @@ export class streamAPI {
                 this.endHandler()
               }
             }
-        this.xhr.send()
+
+        this.xhr.send(JSON.stringify(AIObj))
     }
 
     
@@ -116,4 +110,3 @@ export class streamAPI {
 
 
 }
-

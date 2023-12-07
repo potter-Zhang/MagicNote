@@ -125,7 +125,15 @@ onMounted(() => {
             // save : "fa-save"
       },
       onload : function() {
-                console.log('onload', this);
+                var keyMap = {
+                  "Ctrl-S": function(cm) {
+                    if (noteInEditor.value.noteId !== -1) {
+                      saveNote()
+                      ElMessage.success('保存成功')
+                    }
+                  }
+                }
+                this.addKeyMap(keyMap)
                 mermaid.init();
                 initGraph();
                 if (currentNote.value.noteId !== -1) {
@@ -247,6 +255,9 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   globalEventBus.all.clear()
+  if (noteInEditor.value.noteId !== -1) {
+    saveNote()
+  }
 })
 
 const mermaidHtml = (str) => {

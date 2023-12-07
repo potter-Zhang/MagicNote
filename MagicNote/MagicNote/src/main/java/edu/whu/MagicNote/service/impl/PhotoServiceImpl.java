@@ -22,6 +22,4 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoDao, Photo> implements IP
         this.save(photo);
         return photo;
     }
-
-
 }
