@@ -107,10 +107,12 @@
 <template>
   <el-container style="height: 100vh">
     <el-header id="header">
-      <div id="icon-and-name" style="display: flex; align-items: center">
-        <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
-        <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
-      </div>
+      <router-link to="/dashboard" style="text-decoration: none; color: black">
+        <div id="icon-and-name" style="display: flex; align-items: center">
+          <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
+          <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
+        </div>
+      </router-link>
     </el-header>
 
     <el-main id="body" style="height: 100%; padding: 0">
