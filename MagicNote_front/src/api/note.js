@@ -19,3 +19,7 @@ export const delNoteByIdAPI = (id) => {
 export const updateNoteAPI = (data) => {
     return request.put("/note/update", data);
 }
+
+export const updateNoteNameAPI = (data) => {
+    return request.put("/note/updateName", data);
+}

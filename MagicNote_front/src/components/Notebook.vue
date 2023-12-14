@@ -12,7 +12,7 @@
   import left from "@icon-park/vue-next/lib/icons/Left"
 
   import {ElMessageBox, ElMessage} from "element-plus";
-  import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI, getNoteAPI} from "@/api/note"
+  import {getAllNotesAPI, addNoteAPI, delNoteByIdAPI, updateNoteAPI, updateNoteNameAPI} from "@/api/note"
   import {getNotebooksAPI, addNotebookAPI, updateNotebookAPI, delNotebookByIdAPI} from "@/api/notebook"
   import {currentUser, currentNote, setCurrentNote, currentNotebooks, updateNotebooks} from "@/global"
 
@@ -103,7 +103,7 @@
         .then(async ({ value }) => {
           const oldName = note.name;
           note.name = value;
-          await updateNoteAPI(note)
+          await updateNoteNameAPI(note)
               .catch((err) => {
                 note.name = oldName;
                 ElMessage.error(err.response.data);
