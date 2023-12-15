@@ -1,6 +1,7 @@
-# javaEEå¤§ä½œä¸š
+# javaEE´ó×÷??
 
 
-#### å°ç»„åˆ†å·¥
+#### Ð¡×é·Ö¹¤
 
-+ æ˜“æ°ï¼ˆJerome_YJï¼‰ï¼šåŽç«¯ç¼–å†™ã€‚ä¸»è¦è´Ÿè´£åŽç«¯çš„éƒ¨åˆ†æ¡†æž¶çš„æ­å»ºï¼›åŽç«¯ä¸­éƒ¨åˆ†serviceã€controllerçš„ç¼–å†™ï¼›æ•°æ®åº“çš„è®¾è®¡ä¸Žç»´æŠ¤ï¼›AIè¾…åŠ©ç¬”è®°ä¸­å„åŠŸèƒ½çš„å®žçŽ°ï¼Œå¤§æ¨¡åž‹çš„è°ƒç”¨ï¼›AIå¯¹è¯åŠŸèƒ½çš„å®žçŽ°ï¼›AIå¯¹è¯ç­‰é€å­—è¾“å‡ºSSEå®žçŽ°
++ Ò×½Ü£¨Jerome_YJ£©£ººó¶Ë±àÐ´¡£Ö÷Òª¸ºÔðºó¶ËµÄ²¿·Ö¿ò¼ÜµÄ´î½¨£»ºó¶ËÖÐ²¿·Öservice¡¢controllerµÄ±àÐ´£»Êý¾Ý¿âµÄÉè¼ÆÓëÎ¬»¤£»AI¸¨Öú±Ê¼ÇÖÐ¸÷¹¦ÄÜµÄÊµÏÖ£¬´óÄ£ÐÍµÄµ÷ÓÃ£»AI¶Ô»°¹¦ÄÜµÄÊµÏÖ£»AI¶Ô»°µÈÖð×ÖÊä³öSSEÊµÏÖ
++ ´È¶÷(susong):ºó¶Ë±àÐ´¡£Ö÷Òª¸ºÔðºó¶ËÖÐ²¿·Öcontroller£¬serviceÒÔ¼°security£¬exceptionµÄ±àÐ´£»Í¨¹ýdocker²¿ÊðminioÊµÏÖÎÄ¼þ´æ´¢Óë²Ù×÷£»²¿ÊðOCRÄ£ÐÍtessertÊµÏÖÍ¼Æ¬ÎÄ×ÖÊ¶±ð£»ÔÚÔÆ·þÎñÆ÷ÉÏ²¿ÊðWhipserÀûÓÃjsch¿âÁ¬½Ó·þÎñÆ÷ÊµÏÖÒôÊÓÆÁÎÄ×Ö×ª»»£»ÊµÏÖAI¹¦ÄÜÖÐÉú³É±í¸ñÓëÉú³ÉÁ÷³ÌÍ¼¹¦ÄÜµÄ±àÐ´Óëµ÷ÊÔ¡£
