@@ -101,7 +101,7 @@ public class NoteController {
                 noteService.updateNote(myNote);
                 logService.addLog(myLog);
                 return ResponseEntity.ok().build();
-            } else return ResponseEntity.notFound().build();
+            } else return ResponseEntity.noContent().build();
         } catch (TodoException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
