@@ -238,6 +238,9 @@
     margin-top: 5%;
     overflow: scroll;
   }
+  #preview::-webkit-scrollbar {
+    display: none;
+  }
 
   #preview-hint-text {
     display: flex;
