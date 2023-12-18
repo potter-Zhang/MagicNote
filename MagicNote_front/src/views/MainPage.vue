@@ -128,7 +128,7 @@
 
           <!-- 工作区 -->
           <div id="workspace">
-            <start-tab @jumpToNote="changeTab('editor')" v-if="currentTab==='start'"/>
+            <start-tab v-if="currentTab==='start'" @jumpToNote="changeTab('editor')"/>
             <editor v-else-if="currentTab==='editor'"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
             <search-result-view v-else-if="currentTab==='search'" :notes="searchResult" @noteclick="changeTab('editor')"/>

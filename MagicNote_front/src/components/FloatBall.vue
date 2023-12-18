@@ -37,7 +37,6 @@
     const bubble = document.getElementById("bubble");
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     element.onmousedown = dragMouseDown;
-    let move = false;
 
     function dragMouseDown(e) {
       e.preventDefault();
