@@ -11,7 +11,6 @@ import { getNoteAPI, updateNoteAPI } from '@/api/note.js'
 import {ElMessage} from "element-plus";
 
 
-
 const noteInEditor = ref({
     notebookId: -1,
     noteId: -1,
@@ -43,7 +42,6 @@ function saveNote() {
     var note = noteInEditor.value
     note.content = editor.getMarkdown()
     updateNoteAPI(note)
-        .then()
         .catch((err) => console.log(err))
 }
 
@@ -83,13 +81,13 @@ watch(() => currentNote.value.noteId, (note, prevNote) => {
         updateNoteAPI(noteInEditor.value).then().catch((err) => console.log(err))
     }
     getNoteAPI(note)
-    .then((note) => {
-        if (editor) {
-            editor.setMarkdown(note.content)
-            noteInEditor.value = note
-        }
-    })
-    .catch((err) => console.log(err))
+        .then((note) => {
+            if (editor) {
+                editor.setMarkdown(note.content)
+                noteInEditor.value = note
+            }
+        })
+        .catch((err) => console.log(err))
 },
 {
     immediate: true
@@ -114,16 +112,6 @@ onMounted(() => {
             "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "pagebreak", "|",
             "watch", "preview", "fullscreen", "clear", "search"]
       },
-    
-      
-      toolbarIconsClass : {
-            // abstract : "far fa-file",  // 指定一个FontAawsome的图标类
-            // expand : "fal fa-edit",
-            // segment : "fal fa-align-justify",
-            // generateTable : "fal fa-table",
-            // generateFlowChart : "fa fa-connectdevelop",
-            // save : "fa-save"
-      },
       onload : function() {
                 var keyMap = {
                   "Ctrl-S": function(cm) {
@@ -138,11 +126,11 @@ onMounted(() => {
                 initGraph();
                 if (currentNote.value.noteId !== -1) {
                     getNoteAPI(currentNote.value.noteId)
-                    .then((note) => { 
-                        this.setMarkdown(note.content.toString())
-                        noteInEditor.value = note
-                    })
-                    .catch((err) => console.log(err))
+                        .then((note) => {
+                            this.setMarkdown(note.content.toString())
+                            noteInEditor.value = note
+                        })
+                        .catch((err) => console.log(err))
                 }
     },
       onchange : function() {

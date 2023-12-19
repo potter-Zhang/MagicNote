@@ -147,7 +147,7 @@
 
 <template>
   <div id="body">
-    <left id="collapse-btn" theme="outline" size="24" fill="#000000" @click="$emit('collapse')"/>
+    <left id="collapse-btn" theme="outline" size="24" fill="#000000" @click="emits('collapse')"/>
     <!-- 显示笔记本的操作栏 -->
     <div v-if="currentMode==='notebook'" class="operationBar">
       <el-tooltip effect="dark" content="新增笔记本" placement="bottom">

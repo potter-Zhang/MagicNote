@@ -44,12 +44,7 @@
         uploading.value = false
         ElMessage.error('文件类型不支持')
       }
-      
-      
     })
-
-    
-    
   })
 
   function extractPDFMeta(msg) {
@@ -117,7 +112,7 @@
           <div class="rect-before"></div>
           <div>导入预览：</div>
         </div>
-        <span id="preview-text" placeholder="导入你的笔记吧~">{{ previewText }}</span>
+        <span id="preview-text">{{ previewText }}</span>
       </div>
 
       <!-- 选择笔记本和笔记 -->
@@ -237,6 +232,9 @@
     position: relative;
     margin-top: 5%;
     overflow: scroll;
+  }
+  #preview::-webkit-scrollbar {
+    display: none;
   }
 
   #preview-hint-text {
