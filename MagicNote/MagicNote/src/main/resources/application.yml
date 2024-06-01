@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://rm-cn-wwo3hakti0001ao.rwlb.rds.aliyuncs.com:3306/magicnote
-    Username: testuser
-    password: Java-123456
+    url: jdbc:mysql://localhost:3306/magicnote
+    Username: root
+    password: 23364464178mysql
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

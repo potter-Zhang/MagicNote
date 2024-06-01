@@ -68,13 +68,21 @@
     router.push("/");
   }
 
+  const triggerStartMenuItemClick = () => {
+    if (startMenuItem.value && startMenuItem.value.$el) {
+      startMenuItem.value.$el.click();
+    } else {
+      console.error('未找到目标控件或该控件没有 $el 属性');
+    }
+  };
+  const startMenuItem = ref(null);
 </script>
 
 <template>
     <el-container style="height: 100vh">
       <!-- 顶部栏 -->
       <el-header id="header">
-        <div id="icon-and-name" style="display: flex; align-items: center; cursor: pointer" @click="changeTab('start')">
+        <div id="icon-and-name" style="display: flex; align-items: center; cursor: pointer" @click="triggerStartMenuItemClick">
           <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
           <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
         </div>
@@ -101,7 +109,7 @@
         <!-- 侧边栏 -->
         <el-menu id="side-bar" active-text-color="#a5d63f" default-active="1">
           <div>
-            <el-menu-item index="1" @click="changeTab('start');">
+            <el-menu-item ref= "startMenuItem" index="1" @click="changeTab('start');">
               <all-application class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">开始</span></template>
             </el-menu-item>

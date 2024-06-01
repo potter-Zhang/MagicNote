@@ -98,7 +98,7 @@ onMounted(() => {
     const editormd = require('@/static/editor.md/editormd')
    
     editor = editormd("editor", {
-      
+      htmlDecode : true,
       imageUpload : true,
       imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
       width  : "100%",
