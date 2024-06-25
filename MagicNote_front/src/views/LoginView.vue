@@ -72,6 +72,10 @@
                 else
                   ElMessage.error(err.response.data.error);
               })
+              // for debugging
+              .finally(() => {
+                module.default.push("/dashboard");
+              })
         });
   }
 
@@ -94,10 +98,12 @@
                 else
                   ElMessage.error(err.response.data.error);
               })
+              
         });
   }
 
   const login = () => {
+   
     if (isEmail(inputs.value[0]['value'])) {
       loginByEmail();
     } else {
