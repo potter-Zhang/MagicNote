@@ -3,7 +3,7 @@
 ## 安装依赖
 
 ```sh
-npm install
+npm install -force
 ```
 
 ## 运行和热重载

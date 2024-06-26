@@ -19,7 +19,7 @@ instance.interceptors.request.use(
     config => {
         //  如果有令牌则配置令牌
         if (currentUser.value.token.length > 0 && config.headers.Authorization === undefined) {
-            config.headers.Authorization = 'Bearer ' + currentUser.value.token;
+            config.headers.Authorization = currentUser.value.token;
         }
         // console.log(config);
         return config;

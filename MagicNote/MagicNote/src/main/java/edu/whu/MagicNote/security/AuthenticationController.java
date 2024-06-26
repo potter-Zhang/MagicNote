@@ -1,5 +1,6 @@
 package edu.whu.MagicNote.security;
 
+import edu.whu.MagicNote.constant.MessageConstant;
 import edu.whu.MagicNote.domain.User;
 import edu.whu.MagicNote.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +43,18 @@ public class AuthenticationController {
         try {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(myuser.getName());
             if (passwordEncoder.matches(myuser.getPassword(), userDetails.getPassword())) {
-                final String token = jwtTokenUtil.generateToken(userDetails);
                 User user = userService.getUserByName(myuser.getName());
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("userId", user.getId());
+                final String token = jwtTokenUtil.generateToken(claims);
                 fillMapResult(result, user, token);
                 return ResponseEntity.ok(result);
             } else {
-                result.put("error","用户认证未通过");
+                result.put("error", MessageConstant.PASSWORD_WRONG);
                 return ResponseEntity.badRequest().body(result);
             }
         }catch (UsernameNotFoundException e){
-            result.put("error","用户不存在");
+            result.put("error", MessageConstant.USER_NOT_EXIST);
             return ResponseEntity.badRequest().body(result);
         }
     }
@@ -62,16 +65,18 @@ public class AuthenticationController {
         try {
             final UserDetails userDetails = userDetailsService.loadUserByUserEmail(myuser.getEmail());
             if (passwordEncoder.matches(myuser.getPassword(), userDetails.getPassword())) {
-                final String token = jwtTokenUtil.generateToken(userDetails);
                 User user = userService.getUserByEmail(myuser.getEmail());
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("userId", user.getId());
+                final String token = jwtTokenUtil.generateToken(claims);
                 fillMapResult(result, user, token);
                 return ResponseEntity.ok(result);
             } else {
-                result.put("error","用户认证未通过");
+                result.put("error", MessageConstant.PASSWORD_WRONG);
                 return ResponseEntity.badRequest().body(result);
             }
         }catch (UsernameNotFoundException e){
-            result.put("error","用户不存在");
+            result.put("error", MessageConstant.USER_NOT_EXIST);
             return ResponseEntity.badRequest().body(result);
         }
     }
@@ -81,7 +86,7 @@ public class AuthenticationController {
         Map<String,String> result = new HashMap<>();
         // 检查用户名是否存在
         if (userDetailsService.isUserExists(myuser.getName())) {
-            result.put("error","用户名已存在");
+            result.put("error", MessageConstant.USERNAME_EXIST);
             return ResponseEntity.badRequest().body(result);
         }
         if (myuser.getEmail() == null) {
@@ -92,13 +97,15 @@ public class AuthenticationController {
                 .password(myuser.getPassword())
                 .roles("USER")
                 .build();
-        final String token = jwtTokenUtil.generateToken(userDetails);
         String message = checkAndSave(myuser);
-        if(!Objects.equals(message, "注册成功")){
+        if(!Objects.equals(message, MessageConstant.REGISTER_SUCCESS)){
             result.put("error",message);
             return ResponseEntity.badRequest().body(result);
         }
         User user = userService.getUserByName(myuser.getName());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        final String token = jwtTokenUtil.generateToken(claims);
         fillMapResult(result, user, token);
         return ResponseEntity.ok(result);
 
@@ -111,21 +118,23 @@ public class AuthenticationController {
                 .password(myuser.getPassword())
                 .roles("USER")
                 .build();
-        final String token = jwtTokenUtil.generateToken(userDetails);
         Map<String,String> result = new HashMap<>();
         // 检查用户是否存在
         if (userDetailsService.isUserExists(myuser.getEmail())) {
-            result.put("error","邮箱已注册");
+            result.put("error", MessageConstant.EMAIL_EXIST);
             return ResponseEntity.badRequest().body(result);
         }
         // 默认用户名设为邮箱地址
         myuser.setName(myuser.getEmail());
         String message = checkAndSave(myuser);
-        if(!Objects.equals(message, "注册成功")){
+        if(!Objects.equals(message, MessageConstant.EMAIL_EXIST)){
             result.put("error",message);
             return ResponseEntity.badRequest().body(result);
         }
         User user = userService.getUserByEmail(myuser.getEmail());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        final String token = jwtTokenUtil.generateToken(claims);
         fillMapResult(result, user, token);
         return ResponseEntity.ok(result);
     }
