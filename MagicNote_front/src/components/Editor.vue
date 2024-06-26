@@ -33,6 +33,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 // import { UndoRound, MoreHorizOutlined } from '@vicons/material'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
+import EditorMenu from "./EditorMenu.vue"
 
 // 
 
@@ -159,7 +160,10 @@ onBeforeUnmount(() => {
   <div class="EditMain">
     <div class="editor">
       <div class="editorcard">
-        <div class="toptools"></div>
+        
+        <div class="toptools">
+          <EditorMenu :editor="editor" />
+        </div>
         <div class="editcont">
           <EditorContent
             style="padding: 8px;  overflow-y: auto;"
@@ -194,19 +198,8 @@ onBeforeUnmount(() => {
     grid-template-columns: 100%;
   
   }
-  .lefttools{
-    background-color: rgb(111 118 177 / 60%);
-    height: 100%;
-    width: 100%;
-  }
-  .righttools{
-    background-color: rgb(206 226 117);
-    height: 100%;
-    width: 100%;
-  }
-  .editor{
  
-  }
+
   .editorcard{
     position: relative;
     width:95%;
@@ -238,6 +231,7 @@ onBeforeUnmount(() => {
   .toptools{
     background-color: rgba(207, 220, 245, 0.199);
     border-bottom: 1px dashed #9ca19f65;
+    
   }
   .bottomcount{
     background-color: rgba(207, 220, 245, 0.199);
