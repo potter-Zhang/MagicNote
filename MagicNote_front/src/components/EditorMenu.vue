@@ -102,7 +102,7 @@
       type: 'divider'
     },
     {
-      icon: 'format-clear',
+      icon: 'clear-format',
       title: 'Clear Format',
       action: () =>
         props.editor?.chain().focus().clearNodes().unsetAllMarks().run()
