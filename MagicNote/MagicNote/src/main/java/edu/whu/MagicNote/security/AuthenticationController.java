@@ -82,46 +82,45 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String,String>> register(@RequestBody User myuser) {
+    public ResponseEntity<Map<String,String>> register(@RequestBody User user) {
         Map<String,String> result = new HashMap<>();
         // 检查用户名是否存在
-        if (userDetailsService.isUserExists(myuser.getName())) {
+        if (userDetailsService.isUserExists(user.getName())) {
             result.put("error", MessageConstant.USERNAME_EXIST);
             return ResponseEntity.badRequest().body(result);
         }
-        if (myuser.getEmail() == null) {
-            myuser.setEmail("@");   // 邮箱占位符
+        if (user.getEmail() == null) {
+            user.setEmail("@");   // 邮箱占位符
         }
-        String message = checkAndSave(myuser);
+        String message = checkAndSave(user);
         if(!Objects.equals(message, MessageConstant.REGISTER_SUCCESS)){
             result.put("error",message);
             return ResponseEntity.badRequest().body(result);
         }
-        User user = userService.getUserByName(myuser.getName());
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
         final String token = jwtTokenUtil.generateToken(claims);
         fillMapResult(result, user, token);
         return ResponseEntity.ok(result);
-
     }
 
     @PostMapping("registerByEmail")
-    public ResponseEntity<Map<String,String>> registerByEmail(@RequestBody User myuser) {
+    public ResponseEntity<Map<String,String>> registerByEmail(@RequestBody User user) {
         Map<String,String> result = new HashMap<>();
         // 检查用户是否存在
-        if (userDetailsService.isUserExists(myuser.getEmail())) {
+        if (userDetailsService.isUserExists(user.getEmail())) {
             result.put("error", MessageConstant.EMAIL_EXIST);
             return ResponseEntity.badRequest().body(result);
         }
         // 默认用户名设为邮箱地址
-        myuser.setName(myuser.getEmail());
-        String message = checkAndSave(myuser);
+        user.setName(user.getEmail());
+        String message = checkAndSave(user);
         if(Objects.equals(message, MessageConstant.EMAIL_EXIST)){
             result.put("error",message);
             return ResponseEntity.badRequest().body(result);
         }
-        User user = userService.getUserByEmail(myuser.getEmail());
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
         final String token = jwtTokenUtil.generateToken(claims);
