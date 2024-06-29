@@ -73,9 +73,9 @@
                   ElMessage.error(err.response.data.error);
               })
               // for debugging
-              .finally(() => {
-                module.default.push("/dashboard");
-              })
+              // .finally(() => {
+              //   module.default.push("/dashboard");
+              // })
         });
   }
 
@@ -156,6 +156,10 @@
     } else {
       registerByUsername();
     }
+  }
+
+  const loginOrRegister = () => {
+
   }
 
 </script>

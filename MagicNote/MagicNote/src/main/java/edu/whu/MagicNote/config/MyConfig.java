@@ -20,7 +20,7 @@ public class MyConfig implements WebMvcConfigurer {
         log.info("添加Jwt拦截器");
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login", "/loginByEmail", "register", "registerByEmail");
+                .excludePathPatterns("/login", "/loginByEmail", "/register", "/registerByEmail");
     }
 
     @Override
@@ -30,8 +30,7 @@ public class MyConfig implements WebMvcConfigurer {
          * 在interceptor中配置header了
          */
         corsRegistry.addMapping("/**")
-                .allowCredentials(true)
-                .allowedOrigins("http://localhost:5173", "http://127.0.0.1:5173/")
+                .allowedOrigins("http://localhost:5173", "http://127.0.0.1:5173/", "*")
                 .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
                 .allowedHeaders("*")
                 .maxAge(3600);

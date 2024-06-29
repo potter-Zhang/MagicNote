@@ -92,11 +92,6 @@ public class AuthenticationController {
         if (myuser.getEmail() == null) {
             myuser.setEmail("@");   // 邮箱占位符
         }
-        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                .username(myuser.getName())
-                .password(myuser.getPassword())
-                .roles("USER")
-                .build();
         String message = checkAndSave(myuser);
         if(!Objects.equals(message, MessageConstant.REGISTER_SUCCESS)){
             result.put("error",message);
@@ -113,11 +108,6 @@ public class AuthenticationController {
 
     @PostMapping("registerByEmail")
     public ResponseEntity<Map<String,String>> registerByEmail(@RequestBody User myuser) {
-        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                .username(myuser.getEmail())
-                .password(myuser.getPassword())
-                .roles("USER")
-                .build();
         Map<String,String> result = new HashMap<>();
         // 检查用户是否存在
         if (userDetailsService.isUserExists(myuser.getEmail())) {
@@ -127,7 +117,7 @@ public class AuthenticationController {
         // 默认用户名设为邮箱地址
         myuser.setName(myuser.getEmail());
         String message = checkAndSave(myuser);
-        if(!Objects.equals(message, MessageConstant.EMAIL_EXIST)){
+        if(Objects.equals(message, MessageConstant.EMAIL_EXIST)){
             result.put("error",message);
             return ResponseEntity.badRequest().body(result);
         }
@@ -151,6 +141,6 @@ public class AuthenticationController {
         userDetailsService.saveUser(user);
 
         // 返回注册成功的响应
-        return "注册成功";
+        return MessageConstant.REGISTER_SUCCESS;
     }
 }
