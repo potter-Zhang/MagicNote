@@ -4,6 +4,7 @@
   import {loginAPI, loginByEmailAPI, registerAPI, registerByEmailAPI} from "@/api/user";
   import {currentUser} from "@/global";
   import {ElMessage} from "element-plus";
+  import router from "@/router";
 
   const buttonText = ref('登录/注册')
 
@@ -26,19 +27,6 @@
     console.log(inputs.value[0].value, inputs.value[1].value)
   }
 
-  const addInput = function () {
-    inputs.value.push({
-      label: 'Your Code',
-      value: '',
-      type: 'text',
-      class: 'login__input'
-    })
-  }
-
-  const removeInput = function () {
-    inputs.value.pop()
-  }
-
   const isEmail = (str) => {
     const pattern = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
     const reg = new RegExp(pattern);
@@ -54,112 +42,76 @@
   }
 
   const loginByUsername = () => {
-    import("@/router/index")
-        .then(async (module) => {
-          const data = {
-            "name": inputs.value[0]['value'],
-            "password": inputs.value[1]['value']
-          };
-          loginAPI(data)
-              .then((response) => {
-                setCurrentUser(response);
-                module.default.push("/dashboard");
-                ElMessage.success("登录成功");
-              })
-              .catch((err) => {
-                if (err.response.data.error === "用户不存在")
-                  register();
-                else
-                  ElMessage.error(err.response.data.error);
-              })
-              // for debugging
-              // .finally(() => {
-              //   module.default.push("/dashboard");
-              // })
-        });
+    const data = {
+      "name": inputs.value[0]['value'],
+      "password": inputs.value[1]['value']
+    }
+    loginAPI(data)
+        .then(response => {
+          setCurrentUser(response);
+          router.push("/dashboard");
+          ElMessage.success("登录成功");
+        })
+        .catch(err => {
+          if (err.response.data.error === "用户不存在") {
+            registerByUsername(data);
+          } else {
+            ElMessage.error(err.response.data.error);
+          }
+        })
   }
 
   const loginByEmail = () => {
-    import("@/router/index")
-        .then(async (module) => {
-          const data = {
-            "email": inputs.value[0]['value'],
-            "password": inputs.value[1]['value']
-          };
-          loginByEmailAPI(data)
-              .then((response) => {
-                setCurrentUser(response);
-                module.default.push("/dashboard");
-                ElMessage.success("登录成功");
-              })
-              .catch((err) => {
-                if (err.response.data.error === "用户不存在")
-                  register();
-                else
-                  ElMessage.error(err.response.data.error);
-              })
-              
-        });
+    const data = {
+      "email": inputs.value[0]['value'],
+      "password": inputs.value[1]['value']
+    }
+    loginByEmailAPI(data)
+        .then(response => {
+          setCurrentUser(response);
+          router.push("/dashboard");
+          ElMessage.success("登录成功");
+        })
+        .catch(err => {
+          if (err.response.data.error === "用户不存在") {
+            registerByEmail(data);
+          } else {
+            ElMessage.error(err.response.data.error);
+          }
+        })
+  }
+
+  const registerByUsername = (data) => {
+    registerAPI(data)
+        .then((response) => {
+          setCurrentUser(response);
+          router.push("/dashboard");
+          ElMessage.success("注册成功");
+        })
+        .catch((err) => {
+          ElMessage.error(err.response.data.error);
+        })
+  }
+
+  const registerByEmail = (data) => {
+    data["name"] = inputs.value[0]['value']
+    registerByEmailAPI(data)
+        .then(response => {
+          setCurrentUser(response);
+          router.push("/dashboard");
+          ElMessage.success("注册成功");
+        })
+        .catch(err => {
+          ElMessage.error(err.response.data.error);
+        })
   }
 
   const login = () => {
-   
     if (isEmail(inputs.value[0]['value'])) {
       loginByEmail();
     } else {
       loginByUsername();
     }
-  }
-
-  const registerByUsername = () => {
-    import("@/router/index")
-        .then(async (module) => {
-          const data = {
-            "name": inputs.value[0]['value'],
-            "password": inputs.value[1]['value']
-          };
-          registerAPI(data)
-              .then((response) => {
-                setCurrentUser(response);
-                module.default.push("/dashboard");
-                ElMessage.success("注册成功");
-              })
-              .catch((err) => {
-                ElMessage.error(err.response.data.error);
-              })
-        });
-  }
-
-  const registerByEmail = () => {
-    import("@/router/index")
-        .then(async (module) => {
-          const data = {
-            "email": inputs.value[0]['value'],
-            "name": inputs.value[0]['value'],
-            "password": inputs.value[1]['value']
-          };
-          registerByEmailAPI(data)
-              .then((response) => {
-                setCurrentUser(response);
-                module.default.push("/dashboard");
-                ElMessage.success("注册成功");
-              })
-              .catch((err) => {
-                ElMessage.error(err.response.data.error);
-              })
-        });
-  }
-
-  const register = () => {
-    if (isEmail(inputs.value[0]['value'])) {
-      registerByEmail();
-    } else {
-      registerByUsername();
-    }
-  }
-
-  const loginOrRegister = () => {
-
   }
 
 </script>
