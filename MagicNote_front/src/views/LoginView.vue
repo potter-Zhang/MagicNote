@@ -4,9 +4,18 @@
   import {loginAPI, loginByEmailAPI, registerAPI, registerByEmailAPI} from "@/api/user";
   import {currentUser} from "@/global";
   import {ElMessage} from "element-plus";
-  import router from "@/router";
-
+  import {
+    Check,
+    Delete,
+    Edit,
+    Message,
+    Search,
+    Star,
+  } from '@element-plus/icons-vue'
   const buttonText = ref('登录/注册')
+
+  const rememberPassword = ref(false);
+  const autoLogin = ref(false);
 
   const inputs = ref([
     {
@@ -27,6 +36,19 @@
     console.log(inputs.value[0].value, inputs.value[1].value)
   }
 
+  const addInput = function () {
+    inputs.value.push({
+      label: 'Your Code',
+      value: '',
+      type: 'text',
+      class: 'login__input'
+    })
+  }
+
+  const removeInput = function () {
+    inputs.value.pop()
+  }
+
   const isEmail = (str) => {
     const pattern = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
     const reg = new RegExp(pattern);
@@ -42,76 +64,112 @@
   }
 
   const loginByUsername = () => {
-    const data = {
-      "name": inputs.value[0]['value'],
-      "password": inputs.value[1]['value']
-    }
-    loginAPI(data)
-        .then(response => {
-          setCurrentUser(response);
-          router.push("/dashboard");
-          ElMessage.success("登录成功");
-        })
-        .catch(err => {
-          if (err.response.data.error === "用户不存在") {
-            registerByUsername(data);
-          } else {
-            ElMessage.error(err.response.data.error);
-          }
-        })
+    import("@/router/index")
+        .then(async (module) => {
+          const data = {
+            "name": inputs.value[0]['value'],
+            "password": inputs.value[1]['value']
+          };
+          loginAPI(data)
+              .then((response) => {
+                setCurrentUser(response);
+                module.default.push("/dashboard");
+                ElMessage.success("登录成功");
+              })
+              .catch((err) => {
+                if (err.response.data.error === "用户不存在")
+                  register();
+                else
+                  ElMessage.error(err.response.data.error);
+              })
+              // for debugging
+              // .finally(() => {
+              //   module.default.push("/dashboard");
+              // })
+        });
   }
 
   const loginByEmail = () => {
-    const data = {
-      "email": inputs.value[0]['value'],
-      "password": inputs.value[1]['value']
-    }
-    loginByEmailAPI(data)
-        .then(response => {
-          setCurrentUser(response);
-          router.push("/dashboard");
-          ElMessage.success("登录成功");
-        })
-        .catch(err => {
-          if (err.response.data.error === "用户不存在") {
-            registerByEmail(data);
-          } else {
-            ElMessage.error(err.response.data.error);
-          }
-        })
-  }
-
-  const registerByUsername = (data) => {
-    registerAPI(data)
-        .then((response) => {
-          setCurrentUser(response);
-          router.push("/dashboard");
-          ElMessage.success("注册成功");
-        })
-        .catch((err) => {
-          ElMessage.error(err.response.data.error);
-        })
-  }
-
-  const registerByEmail = (data) => {
-    data["name"] = inputs.value[0]['value']
-    registerByEmailAPI(data)
-        .then(response => {
-          setCurrentUser(response);
-          router.push("/dashboard");
-          ElMessage.success("注册成功");
-        })
-        .catch(err => {
-          ElMessage.error(err.response.data.error);
-        })
+    import("@/router/index")
+        .then(async (module) => {
+          const data = {
+            "email": inputs.value[0]['value'],
+            "password": inputs.value[1]['value']
+          };
+          loginByEmailAPI(data)
+              .then((response) => {
+                setCurrentUser(response);
+                module.default.push("/dashboard");
+                ElMessage.success("登录成功");
+              })
+              .catch((err) => {
+                if (err.response.data.error === "用户不存在")
+                  register();
+                else
+                  ElMessage.error(err.response.data.error);
+              })
+              
+        });
   }
 
   const login = () => {
+   
     if (isEmail(inputs.value[0]['value'])) {
       loginByEmail();
     } else {
       loginByUsername();
     }
+  }
+
+  const registerByUsername = () => {
+    import("@/router/index")
+        .then(async (module) => {
+          const data = {
+            "name": inputs.value[0]['value'],
+            "password": inputs.value[1]['value']
+          };
+          registerAPI(data)
+              .then((response) => {
+                setCurrentUser(response);
+                module.default.push("/dashboard");
+                ElMessage.success("注册成功");
+              })
+              .catch((err) => {
+                ElMessage.error(err.response.data.error);
+              })
+        });
+  }
+
+  const registerByEmail = () => {
+    import("@/router/index")
+        .then(async (module) => {
+          const data = {
+            "email": inputs.value[0]['value'],
+            "name": inputs.value[0]['value'],
+            "password": inputs.value[1]['value']
+          };
+          registerByEmailAPI(data)
+              .then((response) => {
+                setCurrentUser(response);
+                module.default.push("/dashboard");
+                ElMessage.success("注册成功");
+              })
+              .catch((err) => {
+                ElMessage.error(err.response.data.error);
+              })
+        });
+  }
+
+  const register = () => {
+    if (isEmail(inputs.value[0]['value'])) {
+      registerByEmail();
+    } else {
+      registerByUsername();
+    }
+  }
+
+  const loginOrRegister = () => {
+
   }
 
 </script>
@@ -121,16 +179,43 @@
 <div class="container">
   <div class="screen">
     <div class="screen__content">
+      <div style="display: flex; align-items: center; margin: 20px 20px 10px 20px">
+        <img src="/inote.ico" height="50" width="50" style="margin-right: 15px">
+        <div style="font-style: italic;font-weight: bold;font-size: 30px">MagicNote</div>
+      </div>
+      <div>
+        <div class="wave-line-css"></div>
+      </div>
       <form class="login" v-on:submit.prevent>
-          <CustomInput v-for="(input, idx) in inputs"
-              :key="idx"
-              :label="input.label"
-              :type="input.type"
-              v-model="input.value"
-              />
-          <button v-on:click="login" class="button login__submit">
-            <span class="button__text">{{ buttonText }}</span>
-          </button>
+        <el-input
+            v-for="(input, idx) in inputs"
+            :key="idx"
+            :placeholder="input.label"
+            :type="input.type"
+            v-model="input.value"
+            class="custom-input"
+            size="large"
+            clearable
+            v-bind="input.type === 'password' ? { 'show-password': true } : {}"
+        />
+        <div>
+          <input type="checkbox" v-model="rememberPassword" id="rememberPassword" />
+          <label for="rememberPassword">记住密码</label>
+        </div>
+        <div>
+          <input type="checkbox" v-model="autoLogin" id="autoLogin" />
+          <label for="autoLogin">自动登录</label>
+        </div>
+        <el-button plain v-on:click="login" style="margin-top: 20px">
+          <span class="button__text">{{ buttonText }}</span>
+        </el-button>
+        <div style="margin-top: 20px">
+          <el-button :icon="Search" circle />
+          <el-button type="primary" :icon="Edit" circle />
+          <el-button type="success" :icon="Check" circle />
+          <el-button type="info" :icon="Message" circle />
+          <el-button type="warning" :icon="Star" circle />
+        </div>
       </form>
       </div>
       <div class="screen__background">
@@ -154,7 +239,7 @@
 	font-family: Raleway, sans-serif;
 }
 body {
-	background: linear-gradient(90deg, #c6d4a8, #b3d765);		
+	background: linear-gradient(45deg, #c6fbe5c0, #ffef89c0);
 }
 .container {
 	display: flex;
@@ -164,11 +249,11 @@ body {
 }
 
 .screen {		
-	background: linear-gradient(90deg, #A5D63F, #b3ca84);
+	background: linear-gradient(90deg, #afffd6, #fdffb7);
 	position: relative;
 	height: 600px;
-	width: 360px;	
-	box-shadow: 0px 0px 24px #405318;
+	width: 480px;
+	box-shadow: 0px 0px 24px #358355;
 }
 
 .screen__content {
@@ -205,7 +290,7 @@ body {
 .screen__background__shape2 {
 	height: 220px;
 	width: 220px;
-	background: #90bc31;	
+	background: #d7ffb3;
 	top: -172px;
 	right: 0;	
 	border-radius: 32px;
@@ -214,7 +299,7 @@ body {
 .screen__background__shape3 {
 	height: 540px;
 	width: 190px;
-	background: linear-gradient(270deg, #add752, #bbcf8f);
+	background: linear-gradient(0deg, #fbffb9, #ceffea);
 	top: -24px;
 	right: 0;	
 	border-radius: 32px;
@@ -223,16 +308,22 @@ body {
 .screen__background__shape4 {
 	height: 400px;
 	width: 200px;
-	background: #759431;	
+	background: #e4ffa5;
 	top: 420px;
 	right: 50px;	
 	border-radius: 60px;
 }
 
+.custom-input {
+  width: 320px;
+  margin-bottom: 30px;
+  font-size: 15px;
+}
+
 .login {
 	width: 320px;
 	padding: 30px;
-	padding-top: 156px;
+	padding-top: 80px;
 }
 
 .login__field {
@@ -313,4 +404,12 @@ body {
   color: #2c3e50;
 }
 
+/*波浪线*/
+.wave-line-css {
+  width: 300px;
+  height: 10px;
+  background: linear-gradient(to right, #f7fb5c, #abffdd);
+  mask-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent);
+  mask-size: 20px 20px;
+}
 </style>

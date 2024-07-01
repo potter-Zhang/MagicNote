@@ -177,7 +177,7 @@
       </div>
       <div v-else-if="currentMode==='notebook' && currentNotebooks.length > 0"  v-for="notebook in currentNotebooks" class="display-item">
         <div class="display-item-icon-and-text"  @click="setSelectedNotebook(notebook.id, notebook.name); displayNotes(notebook.id);">
-          <notebook class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+          <notebook class="icon" theme="multi-color" size="16" :fill="['#333' ,'#40afa0' ,'#FFF']"/>
           <div style="margin-left: 0.5rem; font-size: 0.8rem; font-weight: bold">{{notebook.name}}</div>
         </div>
         <!-- 弹出框进行重命名和删除操作 -->
@@ -211,7 +211,7 @@
       </div>
       <div v-else-if="currentMode==='note' && notes.length > 0" class="display-item" v-for="note in notes">
         <div class="display-item-icon-and-text" @click="setCurrentNote(note.id, note.name, selectedNotebook.id)">
-         <note-icon class="icon" theme="multi-color" size="16" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+         <note-icon class="icon" theme="multi-color" size="16" :fill="['#333' ,'#40afa0' ,'#FFF']"/>
          <div style="margin-left: 5%; font-size: 0.8rem; font-weight: bold">{{note.name}}</div>
         </div>
         <!-- 弹出框进行重命名和删除操作 -->

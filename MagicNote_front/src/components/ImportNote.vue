@@ -118,7 +118,7 @@
       <!-- 选择笔记本和笔记 -->
       <div id="choose-box">
         <div class="upload-area">
-          <el-button class="upload-btn" type="primary">
+          <el-button class="upload-btn" color="#40afa0">
             <div style="display: flex; align-items: center">
               <upload theme="outline" size="30" fill="#ffffff"/>
               <div class="btn-text">导入</div>
@@ -138,7 +138,7 @@
           <el-select v-model="selectedNotebook" value-key="id" style="margin-bottom: 20px" placeholder="请选择笔记本">
             <el-option v-for="item in currentNotebooks" :key="item.id" :label="item.name" :value="item">
               <div style="display: flex; align-items: center">
-                <notebook-icon class="icon" theme="multi-color" size="18" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+                <notebook-icon class="icon" theme="multi-color" size="18" :fill="['#333' ,'#40afa0' ,'#FFF']"/>
                 <div style="margin-left: 5px; font-size: 16px">{{item.name}}</div>
               </div>
             </el-option>
@@ -149,7 +149,9 @@
             <div>新笔记的名称：</div>
           </div>
           <el-input v-model="newNoteName" style="margin-bottom: 20px"/>
-          <el-button type="primary" @click="addNote">创建新笔记</el-button>
+          <el-button style="font-size: 15px;height: 70px;border-radius: 10px" color="#40afa0" @click="addNote">
+            <div class="btn-text">创建新笔记</div>
+          </el-button>
         </div>
 
       </div>
@@ -201,7 +203,7 @@
     display: flex;
     flex-direction: column;
     border-radius: 5px;
-    border: 1px dashed #a5d63f;
+    border: 1px dashed #40afa0;
     padding: 20px;
     margin-top: 10%;
     margin-bottom: 20%;
@@ -217,6 +219,7 @@
     margin-left: 10px;
     font-size: large;
     font-weight: bolder;
+    color: #ffffff;
   }
 
   #preview {
@@ -270,14 +273,14 @@
     display: flex;
     flex-direction: column;
     border-radius: 5px;
-    border: 1px dashed #a5d63f;
+    border: 1px dashed #40afa0;
     padding: 20px;
   }
 
   .rect-before {
     height: 20px;
     width: 5px;
-    background-color: #a5d63f;
+    background-color: #40afa0;
     margin-right: 5px;
   }
 </style>

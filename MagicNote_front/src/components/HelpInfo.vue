@@ -9,7 +9,7 @@ const catalogVisible = ref(true);
 
 <template>
   <div id="container">
-    <arrow-circle-left id="openBtn" @click="catalogVisible=true" v-show="!catalogVisible" class="icon" theme="outline" size="30" fill="#a5d63f"/>
+    <arrow-circle-left id="openBtn" @click="catalogVisible=true" v-show="!catalogVisible" class="icon" theme="outline" size="30" fill="#8fefdd"/>
     <div id="catalog" v-show="catalogVisible">
       <div id="catalog-header">
         <div>目录</div>
@@ -122,7 +122,7 @@ const catalogVisible = ref(true);
   }
 
   #catalog-header {
-    background-color: #a5d63f;
+    background-color: #8fefdd;
     color: white;
     font-size: 24px;
     width: 100%;

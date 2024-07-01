@@ -128,14 +128,14 @@
           <router-link to="/userInfo" style="display: flex; align-items: center">
             <img :src=currentUser.photo class="avatar" @error="e=>{e.target.src = defaultAvatar}">
           </router-link>
-          <router-link to="/userInfo" class="user-zone-font" style="margin-right: 8px">{{currentUser.name}}</router-link>
-          <el-button type="danger" style="padding: 0 5px 0 5px" @click="logout">退出登录</el-button>
+          <router-link to="/userInfo" class="user-zone-font" style="margin-right: 20px">{{currentUser.name}}</router-link>
+          <el-button type="danger" style="padding: 0 10px 0 10px ; margin-left:10px" @click="logout">退出登录</el-button>
         </div>
       </el-header>
 
       <el-container>
         <!-- 侧边栏 -->
-        <el-menu id="side-bar" active-text-color="#a5d63f" default-active="1">
+        <el-menu id="side-bar" active-text-color="#40afa0" default-active="1">
           <div>
             <el-menu-item ref= "startMenuItem" index="1" @click="changeTab('start');">
               <all-application class="icon" theme="outline" size="24" fill="#333"/>
@@ -182,7 +182,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #a5d63f;
+    background-color: #8fefdd;
     width: 100%;
     height: var(--header-height);
     --el-header-padding: 0;
