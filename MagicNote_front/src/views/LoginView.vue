@@ -285,7 +285,8 @@
 	font-family: Raleway, sans-serif;
 }
 body {
-	background: linear-gradient(45deg, #c6fbe5c0, #ffef89c0);
+	background: linear-gradient(45deg, #c6fbe5c0, rgba(255, 239, 160, 0.82));
+  height: 110vh;
 }
 .container {
 	display: flex;
@@ -300,6 +301,7 @@ body {
 	height: 600px;
 	width: 480px;
 	box-shadow: 0px 0px 24px #358355;
+  border-radius: 20px;
 }
 
 .screen__content {
@@ -330,7 +332,7 @@ body {
 	background: #FFF;	
 	top: -50px;
 	right: 120px;	
-	border-radius: 0 72px 0 0;
+	border-radius: 0 72px 40px 0;
 }
 
 .screen__background__shape2 {

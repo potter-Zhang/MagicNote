@@ -1,29 +1,46 @@
 <template>
-  <div class="EditMain">
+  <div class="EditMain" ref="filecont" @mousedown="notsee()" >
+    <ul @mousedown="see()" v-show="visiblemenu" :style="{ left: position.left + 'px', top: position.top + 'px', display: (visiblemenu ? 'grid' : 'none') }" class="contextmenu">
+      <div class="item"  @click="polish()">
+        <el-icon><Brush /></el-icon>
+        润色
+      </div>
+      <div class="item" @click="continuation()">
+        <el-icon><EditPen /></el-icon>
+        续写
+      </div>
+    </ul>
     <div class="lefttools"></div>
     <div class="editor">
-      <div class="editorcard">
+      <div class="editorcard" >
         <div class="toptools">
           <EditorMenu :editor="editor" />
         </div>
-        <div class="editcont">
+        <div class="editcont" >
           <EditorContent
+              @scroll="hasscroll()"
+              @mousedown="notsee()"
+              @mousemove="mousemove()"
+              @mouseup="selecttext($event)"
               style="padding: 8px;  overflow-y: auto;"
               :editor="editor"
           />
         </div>
+
         <div class="bottomcount">
           字数统计:
           {{ editor?.storage.characterCount.characters() }}
         </div>
       </div>
     </div>
+
     <div class="righttools">
       <Outline></Outline>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import {Brush,EditPen,} from '@element-plus/icons-vue'
 import { defineComponent, onMounted, onBeforeUnmount, ref,watch } from 'vue';
 import { Editor, EditorContent, useEditor, BubbleMenu  } from '@tiptap/vue-3';
 import { storeToRefs } from 'pinia'
@@ -54,8 +71,103 @@ import EditorMenu from './EditorMenu/index.vue'
 import { defineStore } from 'pinia'
 import { ElMessage } from 'element-plus';
 
+
 const lowlight = createLowlight()
 lowlight.register({ html, ts, css, js })
+
+const aipolish = ref("")
+const filecont = ref(null);
+const aicontinuation = ref("")
+const visiblemenu = ref(false)
+const position = ref({
+  top: 0,
+  left: 0
+})
+var hasmove=ref(false);
+var hisstring:any;
+var selection:any;
+//进行润色的函数
+const polish=()=>{
+  ailoading.value=true
+  visiblemenu.value = false;
+  let formData = new FormData();
+  formData.append("username","123456");
+  formData.append("key","xxxxxxx");
+  formData.append("cont",hisstring);
+  let url = 'http://127.0.0.1:5000/getpolish' //访问后端接口的url
+  let method = 'post'
+  axios({
+    method,
+    url,
+    data: formData,
+  }).then(res => {
+    console.log(res.data);
+    var tpcard1={"title":"ai辅助评审","cont":hisstring,"review":res.data}
+    ailist.value.push(tpcard1)
+    navigator.clipboard.writeText(res.data)
+    showMessage()
+    ailoading.value=false
+  });
+}
+//进行aireview
+const continuation=()=>{
+  ailoading.value=true
+  visiblemenu.value = false;
+  let formData = new FormData();
+  formData.append("username","123456");
+  formData.append("key","xxxxxxx");
+  formData.append("cont",hisstring);
+  let url = 'http://127.0.0.1:5000/getpolish' //访问后端接口的url
+  let method = 'post'
+  axios({
+    method,
+    url,
+    data: formData,
+  }).then(res => {
+    console.log(res.data);
+
+    showMessage()
+    ailoading.value=false
+  });
+}
+// 获取选中的文字
+const selecttext= (e:MouseEvent)=>{
+  selection = window.getSelection();
+  if(selection!=null&&hisstring!=selection){
+    var content = selection.toString();
+    if(content!=""){
+      var rect = filecont.value.getBoundingClientRect();
+      visiblemenu.value = true
+      // alert(e.clientY)
+      // alert(e.clientX)
+      position.value.top =  e.clientY-60;
+      position.value.left = e.clientX-120;
+      hisstring=content
+    }
+    // alert(content)
+  }
+  else{
+    hisstring=""
+  }
+}
+//鼠标移动
+const mousemove=()=>{
+  hasmove.value=true;
+}
+//鼠标点击
+const notsee=()=>{
+  visiblemenu.value = false;
+  // selection.value="";
+}
+const see=()=>{
+  visiblemenu.value = true;
+  // selection.value="";
+}
+//滚轮滚动
+const hasscroll=()=>{
+  visiblemenu.value = false;
+  // window.getSelection().removeAllRanges()
+}
 const editorStore = useEditorStore()
 // 加载headings
 const loadHeadings = () => {
@@ -135,16 +247,16 @@ const editor = useEditor({
   height: 100%;
 
   display: grid;
-  grid-template-columns: 20% 60% 20%;
+  grid-template-columns: 15% 65% 20%;
 
 }
 .lefttools{
-  background-color: #c6fbe5c0;
+  background-color: #c6fbe5a0;
   height: 100%;
   width: 100%;
 }
 .righttools{
-  background-color: #ffef89c0;
+  background-color: #ffef8980;
   height: 100%;
   width: 100%;
 }
@@ -153,22 +265,14 @@ const editor = useEditor({
 }
 .editorcard{
   position: relative;
-  width:95%;
-  height: 95%;
-  left: 2.5%;
-  top:2.5%;
+  width: 99%;
+  height: 99%;
+  left: 0.5%;
+  top: 0.5%;
   display: grid;
-  grid-template-rows: 5% 92% 3%;
+  grid-template-rows: 4% 93% 3%;
   border: 1px solid #4f5c5765;
-}
-.editorcard .editor{
-  position: relative;
-  width:100%;
-  height: 100%;
-  left: 0;
-  top:0;
-  display: grid;
-  grid-template-rows: 10% 90%;
+  border-radius: 5px;
 }
 .editorcard .editor{
   position: relative;
@@ -182,6 +286,8 @@ const editor = useEditor({
 .toptools{
   background-color: rgba(207, 220, 245, 0.199);
   border-bottom: 1px dashed #9ca19f65;
+  padding-top: 3px;
+  padding-left: 3px;
 }
 .bottomcount{
   background-color: rgba(207, 220, 245, 0.199);
@@ -363,5 +469,41 @@ b {
 .resize-cursor {
   cursor: ew-resize;
   cursor: col-resize;
+}
+.contextmenu {
+  width: 120px;
+  margin: 0;
+  background: #fff;
+  z-index: 3000;
+  position: absolute;
+  list-style-type: none;
+  padding:5px;
+  padding-left: 15px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #333;
+  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
+  display: grid;
+  grid-template-columns:50% 50%;
+
+}
+.contextmenu .item {
+  height: 35px;
+  width:100%;
+  line-height: 35px;
+  color: rgb(29, 33, 41);
+  cursor: pointer;
+}
+.contextmenu .item {
+  height: 35px;
+  width:100%;
+  line-height: 35px;
+  color: rgb(29, 33, 41);
+  cursor: pointer;
+}
+
+.contextmenu .item:hover {
+  background: rgb(229, 230, 235);
 }
 </style>

@@ -12,11 +12,23 @@ const { headings } = storeToRefs(editorStore)
 const handleHeadingClick = (data) => {
   setActiveHeading(data)
 }
+const ch = '*'
+const getQianZhui = (heading) => {
+  if(heading.level == 1){
+    return ch
+  }else{
+    var temp = "|";
+    for(var i = 0; i < heading.level - 1; i++){
+      temp+="->|";
+    }
+    return temp;
+  }
+}
 </script>
 
 <template>
   <div class="outline__list" style="display: flex; flex-direction: column;">
-    <h2 class="text-gray-400">大纲</h2>
+    <h2 class="text-gray-400" style="margin-left: 20px">大纲</h2>
     <template v-for="(heading, index) in headings" :key="index">
       <el-popover
           trigger="click"
@@ -28,8 +40,10 @@ const handleHeadingClick = (data) => {
               text
               class="outline__item"
               :class="`outline__item--${heading.level}`"
+              round
+              style="margin-left: 5px; color: black"
           >
-            {{ heading.text }}
+            {{getQianZhui(heading) + heading.text }}
             <el-icon v-if="heading.icon"><component :is="heading.icon"/></el-icon>
           </el-button>
         </template>
@@ -45,7 +59,11 @@ const handleHeadingClick = (data) => {
   border-radius: 0.5rem;
   padding: 0.75rem;
   background: rgba(black, 0.1);
-
+  .left-aligned-button {
+    justify-content: flex-start; /* 对齐内容到起始位置（左边） */
+    text-align: left; /* 文字左对齐 */
+    padding-left: 16px; /* 根据需要调整内边距 */
+  }
   &__list {
     list-style: none;
     font-size: 18px;
@@ -53,16 +71,19 @@ const handleHeadingClick = (data) => {
   }
 
   &__item {
+    justify-content: flex-start; /* 对齐内容到起始位置（左边） */
+    text-align: left; /* 文字左对齐 */
     a:hover {
       opacity: 0.5;
     }
     &--1 {
       font-size: 23px;
+      font-weight: bold;
+      padding-left: 10px;
     }
     &--3 {
-      padding-left: 1rem;
+      padding-left: 10px;
     }
-
     &--4 {
       padding-left: 2rem;
     }
