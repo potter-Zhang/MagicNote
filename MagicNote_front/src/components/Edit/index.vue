@@ -267,7 +267,7 @@ const editor = useEditor({
   position: relative;
   width: 99%;
   height: 99%;
-  left: 0.5%;
+  left: 0.4%;
   top: 0.5%;
   display: grid;
   grid-template-rows: 4% 93% 3%;

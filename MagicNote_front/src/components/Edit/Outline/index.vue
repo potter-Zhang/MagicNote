@@ -12,10 +12,9 @@ const { headings } = storeToRefs(editorStore)
 const handleHeadingClick = (data) => {
   setActiveHeading(data)
 }
-const ch = '*'
 const getQianZhui = (heading) => {
   if(heading.level == 1){
-    return ch
+    return ''
   }else{
     var temp = "|";
     for(var i = 0; i < heading.level - 1; i++){
@@ -73,6 +72,7 @@ const getQianZhui = (heading) => {
   &__item {
     justify-content: flex-start; /* 对齐内容到起始位置（左边） */
     text-align: left; /* 文字左对齐 */
+    font-size: 15px;
     a:hover {
       opacity: 0.5;
     }
