@@ -18,17 +18,16 @@
         </div>
       </div>
     </div>
-
-    <div class="righttools"></div>
+    <div class="righttools">
+      <Outline></Outline>
+    </div>
   </div>
 </template>
-
-<script lang="ts">
+<script lang="ts" setup>
 import { defineComponent, onMounted, onBeforeUnmount, ref,watch } from 'vue';
 import { Editor, EditorContent, useEditor, BubbleMenu  } from '@tiptap/vue-3';
 import { storeToRefs } from 'pinia'
 import Underline from '@tiptap/extension-underline'
-
 // 列表
 import ListItem from '@tiptap/extension-list-item'
 import OrderedList from '@tiptap/extension-ordered-list'
@@ -40,8 +39,6 @@ import js from 'highlight.js/lib/languages/javascript'
 import ts from 'highlight.js/lib/languages/typescript'
 import html from 'highlight.js/lib/languages/xml'
 import { common, createLowlight } from 'lowlight'
-const lowlight = createLowlight()
-lowlight.register({ html, ts, css, js })
 // 字数统计
 import CharacterCount from '@tiptap/extension-character-count'
 import Heading from '@tiptap/extension-heading'
@@ -50,55 +47,86 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { UndoRound, MoreHorizOutlined } from '@vicons/material'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
-
-
+import Outline from './Outline/index.vue'
 // 使用Pinia
-import { useEditorStore } from '@/stores'
+import { useEditorStore } from '@/store'
 import EditorMenu from './EditorMenu/index.vue'
+import { defineStore } from 'pinia'
+import { ElMessage } from 'element-plus';
 
+const lowlight = createLowlight()
+lowlight.register({ html, ts, css, js })
+const editorStore = useEditorStore()
+// 加载headings
+const loadHeadings = () => {
+  const headings = [] as any[]
+  if (!editor.value) return
+  const transaction = editor.value.state.tr
+  if (!transaction) return
 
-export default defineComponent({
-  components: {
-    EditorContent,
-    EditorMenu,
-  },
-
-  setup() {
-    // 使用ref创建可变的响应式引用
-    // 编辑器初始化
-    const editor = useEditor({
-      content: ``,
-      extensions: [
-        StarterKit,
-        TaskList,
-        TaskItem,
-        Placeholder.configure({
-          placeholder: '开始输入文本 …'
-        }),
-        OrderedList,
-        BulletList,
-        ListItem,
-        CharacterCount.configure({
-          limit: 10000
+  editor.value?.state.doc.descendants((node, pos) => {
+    if (node.type.name === 'heading') {
+      console.log(pos, node)
+      const start = pos
+      const end = pos + node.content.size
+      // const end = pos + node
+      const id = `heading-${headings.length + 1}`
+      if (node.attrs.id !== id) {
+        transaction?.setNodeMarkup(pos, undefined, {
+          ...node.attrs,
+          id
         })
-      ],
-      injectCSS: false,
+      }
 
+      headings.push({
+        level: node.attrs.level,
+        text: node.textContent,
+        start,
+        end,
+        id
+      })
+    }
+  })
+
+  transaction?.setMeta('addToHistory', false)
+  transaction?.setMeta('preventUpdate', true)
+
+  editor.value?.view.dispatch(transaction)
+  editorStore.setHeadings(headings)
+}
+// 使用ref创建可变的响应式引用
+// 编辑器初始化
+const editor = useEditor({
+  content: ``,
+  extensions: [
+    StarterKit.configure({
+      heading: {
+        levels: [1, 2, 3,4,5],
+      },
+    }),
+    TaskList,
+    TaskItem,
+    Placeholder.configure({
+      placeholder: '开始输入文本 …'
+    }),
+    OrderedList,
+    BulletList,
+    ListItem,
+    CharacterCount.configure({
+      limit: 10000
     })
-
-    onMounted(() => {
-
-    });
-
-    // 在组件卸载前销毁Editor实例
-    onBeforeUnmount(() => {
-      editor.value?.destroy();
-    });
-
-    // 返回editor供模板使用
-    return { editor };
+  ],
+  onUpdate({ edit }) {
+    loadHeadings()
+    editorStore.setEditorInstance(editor.value)
   },
-});
+  onCreate({ edit }) {
+    loadHeadings()
+    editorStore.setEditorInstance(editor.value)
+  },
+  injectCSS: false,
+
+})
 </script>
 <style>
 .EditMain{
