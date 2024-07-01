@@ -17,6 +17,7 @@
   import importNote from "../components/ImportNote.vue"
   import searchResultView from "@/components/SearchResult.vue"
   import {onBeforeMount, ref, onMounted, onUnmounted} from 'vue';
+  import {ElMessage} from "element-plus";
 
   const currentTab = ref("start"); // 当前展示在workspace的组件
   const searchKeyword = ref("");  // 搜索框文本
@@ -71,7 +72,10 @@
     currentUser.value.name = "";
     currentUser.value.token = "";
     router.push("/");
+
+    //取消自动登录
     localStorage.removeItem('autoLogin');
+    ElMessage.success("退出登录成功");
   }
 
   //点击magicNote同时转变侧边栏

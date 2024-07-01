@@ -217,6 +217,10 @@
 
   }
 
+  const developingInfo = () => {
+    ElMessage.info("该功能还在开发中，敬请期待");
+  }
+
 </script>
 
 <template>
@@ -252,11 +256,11 @@
           <span class="button__text">{{ buttonText }}</span>
         </el-button>
         <div style="margin-top: 20px">
-          <el-button :icon="Search" circle />
-          <el-button type="primary" :icon="Edit" circle />
-          <el-button type="success" :icon="Check" circle />
-          <el-button type="info" :icon="Message" circle />
-          <el-button type="warning" :icon="Star" circle />
+          <el-button :icon="Search" circle @click="developingInfo"/>
+          <el-button type="primary" :icon="Edit" circle @click="developingInfo"/>
+          <el-button type="success" :icon="Check" circle @click="developingInfo"/>
+          <el-button type="info" :icon="Message" circle @click="developingInfo"/>
+          <el-button type="warning" :icon="Star" circle @click="developingInfo"/>
         </div>
       </form>
       </div>
