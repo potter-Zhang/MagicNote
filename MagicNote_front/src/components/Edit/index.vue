@@ -131,20 +131,20 @@ const editor = useEditor({
 <style>
 .EditMain{
   position: relative;
-  width:100vw;
-  height: 100vh;
+  width:100%;
+  height: 100%;
 
   display: grid;
   grid-template-columns: 20% 60% 20%;
 
 }
 .lefttools{
-  background-color: rgb(111 118 177 / 60%);
+  background-color: #c6fbe5c0;
   height: 100%;
   width: 100%;
 }
 .righttools{
-  background-color: rgb(206 226 117);
+  background-color: #ffef89c0;
   height: 100%;
   width: 100%;
 }

@@ -12,6 +12,7 @@
   import {searchAPI} from "@/api/search"
   import helpInfo from "../components/HelpInfo.vue"
   import editor from "../components/Editor.vue"
+  import editor2 from "../components/Edit/index.vue"
   import notebook from "../components/Notebook.vue"
   import startTab from "../components/StartTab.vue"
   import importNote from "../components/ImportNote.vue"
@@ -52,7 +53,7 @@
   function toggleDrawer() {
     const drawer = document.getElementById("notebook");
     const width = drawer.style.width;
-    const openWidth = "250px";
+    const openWidth = "200px";
     if (width === openWidth) {
       // close
       drawer.style.width = "0";
@@ -170,7 +171,7 @@
           <!-- 工作区 -->
           <div id="workspace" @click="closeDrawer">
             <start-tab v-if="currentTab==='start'" @jumpToNote="changeTab('editor')"/>
-            <editor v-else-if="currentTab==='editor'" @click="closeDrawer"/>
+            <editor2 v-else-if="currentTab==='editor'" @click="closeDrawer"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
             <search-result-view v-else-if="currentTab==='search'" :notes="searchResult" @noteclick="changeTab('editor')"/>
             <import-note v-show="currentTab==='import'"/>
