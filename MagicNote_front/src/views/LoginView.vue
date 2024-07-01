@@ -1,5 +1,5 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import CustomInput from '@/components/CustomInput.vue'
   import {loginAPI, loginByEmailAPI, registerAPI, registerByEmailAPI} from "@/api/user";
   import {currentUser} from "@/global";
@@ -31,6 +31,32 @@
       class: 'login__input'
     }
   ])
+
+  onMounted(() => {
+    loadCredentials();
+    if (autoLogin.value) {
+      login();
+    }
+  });
+
+  const loadCredentials = () => {
+    const savedUsername = localStorage.getItem('username');
+    const savedPassword = localStorage.getItem('password');
+    const savedAutoLogin = localStorage.getItem('autoLogin');
+
+    if (savedUsername) {
+      inputs.value[0]['value'] = savedUsername;
+      rememberPassword.value = true;
+    }
+
+    if (savedPassword) {
+      inputs.value[1]['value'] = savedPassword;
+    }
+
+    if (savedAutoLogin) {
+      autoLogin.value = true;
+    }
+  };
 
   const toggle = function () {
     console.log(inputs.value[0].value, inputs.value[1].value)
@@ -113,11 +139,30 @@
   }
 
   const login = () => {
-   
     if (isEmail(inputs.value[0]['value'])) {
       loginByEmail();
     } else {
       loginByUsername();
+    }
+
+    if (rememberPassword.value||autoLogin.value) {
+      localStorage.setItem('username', inputs.value[0]['value']);
+      localStorage.setItem('password', inputs.value[1]['value']);
+    } else {
+      localStorage.removeItem('username');
+      localStorage.removeItem('password');
+    }
+
+    if (autoLogin.value) {
+      localStorage.setItem('autoLogin', true);
+    } else {
+      localStorage.removeItem('autoLogin');
+    }
+
+    // 登录成功后重置表单状态
+    if (!autoLogin.value) {
+      rememberPassword.value = false;
+      password.value = '';
     }
   }
 
@@ -179,7 +224,7 @@
 <div class="container">
   <div class="screen">
     <div class="screen__content">
-      <div style="display: flex; align-items: center; margin: 20px 20px 10px 20px">
+      <div style="display: flex; align-items: center; margin: 20px 20px 20px 20px">
         <img src="/inote.ico" height="50" width="50" style="margin-right: 15px">
         <div style="font-style: italic;font-weight: bold;font-size: 30px">MagicNote</div>
       </div>
@@ -198,13 +243,10 @@
             clearable
             v-bind="input.type === 'password' ? { 'show-password': true } : {}"
         />
+        <el-checkbox v-model="rememberPassword" id="rememberPassword" style="margin-left: 1px">记住密码</el-checkbox>
+        <el-checkbox v-model="autoLogin" id="autoLogin">自动登录</el-checkbox>
         <div>
-          <input type="checkbox" v-model="rememberPassword" id="rememberPassword" />
-          <label for="rememberPassword">记住密码</label>
-        </div>
-        <div>
-          <input type="checkbox" v-model="autoLogin" id="autoLogin" />
-          <label for="autoLogin">自动登录</label>
+
         </div>
         <el-button plain v-on:click="login" style="margin-top: 20px">
           <span class="button__text">{{ buttonText }}</span>
@@ -308,22 +350,23 @@ body {
 .screen__background__shape4 {
 	height: 400px;
 	width: 200px;
-	background: #e4ffa5;
+	background: linear-gradient(0deg, #bcf685, #ceffea);
 	top: 420px;
-	right: 50px;	
+	right: 40px;
 	border-radius: 60px;
 }
 
 .custom-input {
   width: 320px;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
+  margin-top: 20px;
   font-size: 15px;
 }
 
 .login {
 	width: 320px;
 	padding: 30px;
-	padding-top: 80px;
+	padding-top: 50px;
 }
 
 .login__field {

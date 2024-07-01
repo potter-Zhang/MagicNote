@@ -71,6 +71,7 @@
     currentUser.value.name = "";
     currentUser.value.token = "";
     router.push("/");
+    localStorage.removeItem('autoLogin');
   }
 
   //点击magicNote同时转变侧边栏
