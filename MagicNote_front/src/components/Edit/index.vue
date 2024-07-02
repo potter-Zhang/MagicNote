@@ -251,12 +251,12 @@ const editor = useEditor({
 
 }
 .lefttools{
-  background-color: #c6fbe5a0;
+  background-color: rgba(198, 251, 229, 0.32);
   height: 100%;
   width: 100%;
 }
 .righttools{
-  background-color: #ffef8980;
+  background-color: rgba(255, 229, 51, 0.13);
   height: 100%;
   width: 100%;
 }
