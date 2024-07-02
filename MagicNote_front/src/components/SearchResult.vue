@@ -21,7 +21,7 @@
     </div>
 
     <div v-if="props.notes.length > 0" class="search-item" v-for="note in props.notes">
-        <note-icon class="icon" theme="multi-color" size="20" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+        <note-icon class="icon" theme="multi-color" size="20" :fill="['#333' ,'#40afa0' ,'#FFF']"/>
         <div style="display: flex; flex-direction: column; margin-left: 10px; width: 100%">
           <div style="font-size: large; cursor:pointer" @click="openEditor(note.id, note.name)">{{note.name}}</div>
           <el-text truncated class="content-text">{{note.content}}</el-text>

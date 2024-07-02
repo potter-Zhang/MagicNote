@@ -116,7 +116,7 @@
             <el-select v-model="selectedNotebook" value-key="id" placeholder="请选择笔记本" style="width: 100%">
               <el-option v-for="item in currentNotebooks" :key="item.id" :label="item.name" :value="item">
                 <div style="display: flex; align-items: center">
-                  <notebook class="icon" theme="multi-color" size="18" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+                  <notebook class="icon" theme="multi-color" size="18" :fill="['#333' ,'#40afa0' ,'#FFF']"/>
                   <div style="margin-left: 5px; font-size: 16px">{{item.name}}</div>
                 </div>
               </el-option>
@@ -143,7 +143,7 @@
       <el-button class="start-button" @click="addNotebook">
         <template #default>
           <div class="button-content">
-            <notebook class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+            <notebook class="icon" theme="multi-color" size="24" :fill="['#333' ,'#40afa0' ,'#FFF']"/>
             <div style="margin: 5px 0 5px 0">新建笔记本</div>
             <el-divider/>
             <div style="white-space: pre-wrap; margin-top: 5px;line-height: 1.1rem">笔记本是笔记的集合，有助于笔记的分类和查找</div>
@@ -153,7 +153,7 @@
       <el-button class="start-button" @click="addNoteDialogVisible=true">
         <template #default>
           <div class="button-content">
-            <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+            <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#40afa0' ,'#FFF']"/>
             <div style="margin: 5px 0 5px 0">新建笔记</div>
             <el-divider/>
             <div style="white-space: pre-wrap; margin-top: 5px; line-height: 1.1rem">记录知识、记录生活的一点一滴</div>
@@ -168,7 +168,7 @@
       <div v-for="history in historyNotes">
         <div class="history-card">
           <div style="display: flex; align-items: center; cursor: pointer">
-            <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#a5d63f' ,'#FFF']"/>
+            <note-icon class="icon" theme="multi-color" size="24" :fill="['#333' ,'#40afa0' ,'#FFF']"/>
             <div style="margin-left: 0.5rem" @click="setCurrentNote(history.noteid, history.notename, -1);emit('jumpToNote')">
               {{history.notename}}
             </div>

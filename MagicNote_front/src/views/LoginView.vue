@@ -1,11 +1,21 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import CustomInput from '@/components/CustomInput.vue'
   import {loginAPI, loginByEmailAPI, registerAPI, registerByEmailAPI} from "@/api/user";
   import {currentUser} from "@/global";
   import {ElMessage} from "element-plus";
-
+  import {
+    Check,
+    Delete,
+    Edit,
+    Message,
+    Search,
+    Star,
+  } from '@element-plus/icons-vue'
   const buttonText = ref('登录/注册')
+
+  const rememberPassword = ref(false);
+  const autoLogin = ref(false);
 
   const inputs = ref([
     {
@@ -21,6 +31,32 @@
       class: 'login__input'
     }
   ])
+
+  onMounted(() => {
+    loadCredentials();
+    if (autoLogin.value) {
+      login();
+    }
+  });
+
+  const loadCredentials = () => {
+    const savedUsername = localStorage.getItem('username');
+    const savedPassword = localStorage.getItem('password');
+    const savedAutoLogin = localStorage.getItem('autoLogin');
+
+    if (savedUsername) {
+      inputs.value[0]['value'] = savedUsername;
+      rememberPassword.value = true;
+    }
+
+    if (savedPassword) {
+      inputs.value[1]['value'] = savedPassword;
+    }
+
+    if (savedAutoLogin) {
+      autoLogin.value = true;
+    }
+  };
 
   const toggle = function () {
     console.log(inputs.value[0].value, inputs.value[1].value)
@@ -72,6 +108,10 @@
                 else
                   ElMessage.error(err.response.data.error);
               })
+              // for debugging
+              // .finally(() => {
+              //   module.default.push("/dashboard");
+              // })
         });
   }
 
@@ -94,6 +134,7 @@
                 else
                   ElMessage.error(err.response.data.error);
               })
+              
         });
   }
 
@@ -102,6 +143,26 @@
       loginByEmail();
     } else {
       loginByUsername();
+    }
+
+    if (rememberPassword.value||autoLogin.value) {
+      localStorage.setItem('username', inputs.value[0]['value']);
+      localStorage.setItem('password', inputs.value[1]['value']);
+    } else {
+      localStorage.removeItem('username');
+      localStorage.removeItem('password');
+    }
+
+    if (autoLogin.value) {
+      localStorage.setItem('autoLogin', true);
+    } else {
+      localStorage.removeItem('autoLogin');
+    }
+
+    // 登录成功后重置表单状态
+    if (!autoLogin.value) {
+      rememberPassword.value = false;
+      password.value = '';
     }
   }
 
@@ -152,6 +213,14 @@
     }
   }
 
+  const loginOrRegister = () => {
+
+  }
+
+  const developingInfo = () => {
+    ElMessage.info("该功能还在开发中，敬请期待");
+  }
+
 </script>
 
 <template>
@@ -159,16 +228,40 @@
 <div class="container">
   <div class="screen">
     <div class="screen__content">
+      <div style="display: flex; align-items: center; margin: 20px 20px 20px 20px">
+        <img src="/inote.ico" height="50" width="50" style="margin-right: 15px">
+        <div style="font-style: italic;font-weight: bold;font-size: 30px">MagicNote</div>
+      </div>
+      <div>
+        <div class="wave-line-css"></div>
+      </div>
       <form class="login" v-on:submit.prevent>
-          <CustomInput v-for="(input, idx) in inputs"
-              :key="idx"
-              :label="input.label"
-              :type="input.type"
-              v-model="input.value"
-              />
-          <button v-on:click="login" class="button login__submit">
-            <span class="button__text">{{ buttonText }}</span>
-          </button>
+        <el-input
+            v-for="(input, idx) in inputs"
+            :key="idx"
+            :placeholder="input.label"
+            :type="input.type"
+            v-model="input.value"
+            class="custom-input"
+            size="large"
+            clearable
+            v-bind="input.type === 'password' ? { 'show-password': true } : {}"
+        />
+        <el-checkbox v-model="rememberPassword" id="rememberPassword" style="margin-left: 1px">记住密码</el-checkbox>
+        <el-checkbox v-model="autoLogin" id="autoLogin">自动登录</el-checkbox>
+        <div>
+
+        </div>
+        <el-button plain v-on:click="login" style="margin-top: 20px">
+          <span class="button__text">{{ buttonText }}</span>
+        </el-button>
+        <div style="margin-top: 20px">
+          <el-button :icon="Search" circle @click="developingInfo"/>
+          <el-button type="primary" :icon="Edit" circle @click="developingInfo"/>
+          <el-button type="success" :icon="Check" circle @click="developingInfo"/>
+          <el-button type="info" :icon="Message" circle @click="developingInfo"/>
+          <el-button type="warning" :icon="Star" circle @click="developingInfo"/>
+        </div>
       </form>
       </div>
       <div class="screen__background">
@@ -192,7 +285,8 @@
 	font-family: Raleway, sans-serif;
 }
 body {
-	background: linear-gradient(90deg, #c6d4a8, #b3d765);		
+	background: linear-gradient(45deg, #c6fbe5c0, rgba(255, 239, 160, 0.82));
+  height: 110vh;
 }
 .container {
 	display: flex;
@@ -202,11 +296,12 @@ body {
 }
 
 .screen {		
-	background: linear-gradient(90deg, #A5D63F, #b3ca84);
+	background: linear-gradient(90deg, #afffd6, #fdffb7);
 	position: relative;
 	height: 600px;
-	width: 360px;	
-	box-shadow: 0px 0px 24px #405318;
+	width: 480px;
+	box-shadow: 0px 0px 24px #358355;
+  border-radius: 20px;
 }
 
 .screen__content {
@@ -237,13 +332,13 @@ body {
 	background: #FFF;	
 	top: -50px;
 	right: 120px;	
-	border-radius: 0 72px 0 0;
+	border-radius: 0 72px 40px 0;
 }
 
 .screen__background__shape2 {
 	height: 220px;
 	width: 220px;
-	background: #90bc31;	
+	background: #d7ffb3;
 	top: -172px;
 	right: 0;	
 	border-radius: 32px;
@@ -252,7 +347,7 @@ body {
 .screen__background__shape3 {
 	height: 540px;
 	width: 190px;
-	background: linear-gradient(270deg, #add752, #bbcf8f);
+	background: linear-gradient(0deg, #fbffb9, #ceffea);
 	top: -24px;
 	right: 0;	
 	border-radius: 32px;
@@ -261,16 +356,23 @@ body {
 .screen__background__shape4 {
 	height: 400px;
 	width: 200px;
-	background: #759431;	
+	background: linear-gradient(0deg, #bcf685, #ceffea);
 	top: 420px;
-	right: 50px;	
+	right: 40px;
 	border-radius: 60px;
+}
+
+.custom-input {
+  width: 320px;
+  margin-bottom: 15px;
+  margin-top: 20px;
+  font-size: 15px;
 }
 
 .login {
 	width: 320px;
 	padding: 30px;
-	padding-top: 156px;
+	padding-top: 50px;
 }
 
 .login__field {
@@ -351,4 +453,12 @@ body {
   color: #2c3e50;
 }
 
+/*波浪线*/
+.wave-line-css {
+  width: 300px;
+  height: 10px;
+  background: linear-gradient(to right, #f7fb5c, #abffdd);
+  mask-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent);
+  mask-size: 20px 20px;
+}
 </style>

@@ -1,12 +1,15 @@
 package edu.whu.MagicNote.security;
 
+import edu.whu.MagicNote.property.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,28 +19,22 @@ import java.util.Map;
  */
 @Component
 public class JwtTokenUtil {
-
-    //过期时间
-    public static final long JWT_TOKEN_VALIDITY = 5*60*60*1000;
-    //token的密钥
-    @Value("${jwt.secret}")
-    private String secret;
+    @Autowired
+    private JwtProperties jwtProperties;
 
     //生成Token
-    public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();//可以自由加入各种身份信息，如角色
+    public String generateToken(Map<String, Object> claims) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getTtl()))
+                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8))
                 .compact();
     }
     //解析Token获得Claims
     public Claims getClaimFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8))
                 .parseClaimsJws(token).getBody();
     }
     //对Token进行验证

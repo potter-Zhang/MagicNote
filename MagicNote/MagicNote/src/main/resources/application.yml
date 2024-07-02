@@ -4,9 +4,12 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://rm-cn-wwo3hakti0001ao.rwlb.rds.aliyuncs.com:3306/magicnote
-    Username: testuser
-    password: Java-123456
+#    url: jdbc:mysql://localhost:3306/magicnote
+#    Username: root
+#    password: 159463728
+    url: jdbc:mysql://121.41.176.221:3306/magicnote
+    Username: root
+    password: Aa159463728=
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -25,6 +28,8 @@ spring:
 # 生成openssl rand -hex 64
 jwt:
   secret: f2522288621c04bf9b182a129a19853080112a2b805973060684fb6484cb537c750596109d844a62f683a187d54c3cb5d54e8301530de30a43fb870b5dbf27f7
+  header-name: "Authorization"  # jwt token包含在header的哪个字段中
+  ttl: 14400000 # token的过期时间, 4个小时
 
 tess4j:
   datapath: D:/Dataset/tessdata

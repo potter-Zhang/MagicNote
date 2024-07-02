@@ -213,23 +213,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #a5d63f;
+    background-color: #8fefdd;
     width: 100%;
     height: var(--header-height);
     --el-header-padding: 0;
   }
 
   #backIcon {
-    border: 1px solid #a5d63f;
+    border: 1px solid #8fefdd;
     border-radius: 5px;
-    background-color: #a5d63f;
+    background-color: #8fefdd;
     padding: 4px;
     cursor: pointer;
     margin: 5px 0 0 5px;
   }
 
   .mask {
-    background-color: rgba(165, 214, 63, 0.9);
+    background-color: #8fefdda0;
     position: absolute;
     height: 100%;
     width: 100%;
@@ -292,7 +292,7 @@
     align-items: center;
     height: 100%;
     width: 30%;
-    background-color: #a5d63f;
+    background-color: #8fefdd;
   }
 
   .text-box {

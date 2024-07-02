@@ -12,11 +12,13 @@
   import {searchAPI} from "@/api/search"
   import helpInfo from "../components/HelpInfo.vue"
   import editor from "../components/Editor.vue"
+  import editor2 from "../components/Edit/index.vue"
   import notebook from "../components/Notebook.vue"
   import startTab from "../components/StartTab.vue"
   import importNote from "../components/ImportNote.vue"
   import searchResultView from "@/components/SearchResult.vue"
-  import {onBeforeMount, ref} from 'vue';
+  import {onBeforeMount, ref, onMounted, onUnmounted} from 'vue';
+  import {ElMessage} from "element-plus";
 
   const currentTab = ref("start"); // 当前展示在workspace的组件
   const searchKeyword = ref("");  // 搜索框文本
@@ -51,7 +53,7 @@
   function toggleDrawer() {
     const drawer = document.getElementById("notebook");
     const width = drawer.style.width;
-    const openWidth = "250px";
+    const openWidth = "200px";
     if (width === openWidth) {
       // close
       drawer.style.width = "0";
@@ -61,20 +63,60 @@
     }
   }
 
+  function closeDrawer() {
+    const drawer = document.getElementById("notebook");
+    drawer.style.width = "0";
+  }
+
   const logout = () => {
     currentUser.value.id = -1;
     currentUser.value.name = "";
     currentUser.value.token = "";
     router.push("/");
+
+    //取消自动登录
+    localStorage.removeItem('autoLogin');
+    ElMessage.success("退出登录成功");
   }
 
+  //点击magicNote同时转变侧边栏
+  const triggerStartMenuItemClick = () => {
+    if (startMenuItem.value && startMenuItem.value.$el) {
+      startMenuItem.value.$el.click();
+    } else {
+      console.error('未找到目标控件或该控件没有 $el 属性');
+    }
+  };
+  const startMenuItem = ref(null);
+
+  //点击notebook部分外关闭notebook
+  const noteBookRef = ref(null);
+  // onMounted(() => {
+  //   document.addEventListener('click', handleClickOutside);
+  // });
+  onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+  });
+  // 处理点击事件
+  const handleClickOutside = (event) => {
+    // 如果点击的区域不在组件内部，则触发你想要执行的事件
+    if (noteBookRef.value && !noteBookRef.value.contains(event.target)) {
+      handleOutsideClick();
+    }else{
+      alert("111")
+    }
+  };
+  // 处理点击组件外部的逻辑
+  const handleOutsideClick = () => {
+    closeDrawer();
+  };
 </script>
 
 <template>
     <el-container style="height: 100vh">
       <!-- 顶部栏 -->
       <el-header id="header">
-        <div id="icon-and-name" style="display: flex; align-items: center; cursor: pointer" @click="changeTab('start')">
+        <div id="icon-and-name" style="display: flex; align-items: center; cursor: pointer" @click="triggerStartMenuItemClick">
           <img src="/inote_filled.ico" height="24" width="24" style="margin: 0 15px 0 20px">
           <span style="font-family: 'Arial Black'; font-size: 20px; font-style: italic">MagicNote</span>
         </div>
@@ -92,16 +134,16 @@
           <router-link to="/userInfo" style="display: flex; align-items: center">
             <img :src=currentUser.photo class="avatar" @error="e=>{e.target.src = defaultAvatar}">
           </router-link>
-          <router-link to="/userInfo" class="user-zone-font" style="margin-right: 8px">{{currentUser.name}}</router-link>
-          <el-button type="danger" style="padding: 0 5px 0 5px" @click="logout">退出登录</el-button>
+          <router-link to="/userInfo" class="user-zone-font" style="margin-right: 20px">{{currentUser.name}}</router-link>
+          <el-button type="danger" style="padding: 0 10px 0 10px ; margin-left:10px" @click="logout">退出登录</el-button>
         </div>
       </el-header>
 
       <el-container>
         <!-- 侧边栏 -->
-        <el-menu id="side-bar" active-text-color="#a5d63f" default-active="1">
+        <el-menu id="side-bar" active-text-color="#40afa0" default-active="1">
           <div>
-            <el-menu-item index="1" @click="changeTab('start');">
+            <el-menu-item ref= "startMenuItem" index="1" @click="changeTab('start');">
               <all-application class="icon" theme="outline" size="24" fill="#333"/>
               <template #title><span class="menu-title">开始</span></template>
             </el-menu-item>
@@ -122,14 +164,14 @@
 
         <el-main style="padding: 0; display: flex">
           <!-- 笔记本弹窗 -->
-          <div id="notebook">
+          <div id="notebook" ref="noteBookRef">
             <notebook style="height: 100%" @collapse="toggleDrawer"/>
           </div>
 
           <!-- 工作区 -->
-          <div id="workspace">
+          <div id="workspace" @click="closeDrawer">
             <start-tab v-if="currentTab==='start'" @jumpToNote="changeTab('editor')"/>
-            <editor v-else-if="currentTab==='editor'"/>
+            <editor2 v-else-if="currentTab==='editor'" @click="closeDrawer"/>
             <help-info v-else-if="currentTab==='helpInfo'"/>
             <search-result-view v-else-if="currentTab==='search'" :notes="searchResult" @noteclick="changeTab('editor')"/>
             <import-note v-show="currentTab==='import'"/>
@@ -146,7 +188,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #a5d63f;
+    background-color: #8fefdd;
     width: 100%;
     height: var(--header-height);
     --el-header-padding: 0;

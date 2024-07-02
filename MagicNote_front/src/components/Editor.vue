@@ -2,13 +2,40 @@
 import floatBall from "@/components/FloatBall.vue"
 import '@/static/zepto/distrib/zepto.js'
 import '@/static/editor.md/editormd.min.js' 
-import { onMounted, ref, computed, watch, onBeforeUnmount } from 'vue'
 import bubble from '@/components/AIBubble.vue'
 import { currentNote, currentUser  } from "../global"
 import { globalEventBus } from '@/util/eventBus'
 
 import { getNoteAPI, updateNoteAPI } from '@/api/note.js'
 import {ElMessage} from "element-plus";
+import StarterKit from '@tiptap/starter-kit';
+import { defineComponent, onMounted, onBeforeUnmount, ref,watch } from 'vue';
+
+import { Editor, EditorContent, useEditor, BubbleMenu  } from '@tiptap/vue-3';
+// import { storeToRefs } from 'pinia'
+// import Underline from '@tiptap/extension-underline'
+
+// 列表
+import ListItem from '@tiptap/extension-list-item'
+import OrderedList from '@tiptap/extension-ordered-list'
+import BulletList from '@tiptap/extension-bullet-list'
+// 代码
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import css from 'highlight.js/lib/languages/css'
+import js from 'highlight.js/lib/languages/javascript'
+import ts from 'highlight.js/lib/languages/typescript'
+import html from 'highlight.js/lib/languages/xml'
+import { common, createLowlight } from 'lowlight'
+const lowlight = createLowlight()
+lowlight.register({ html, ts, css, js })
+// 字数统计
+import Placeholder from '@tiptap/extension-placeholder'
+// import { UndoRound, MoreHorizOutlined } from '@vicons/material'
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
+import EditorMenu from "./EditorMenu.vue"
+
+// 
 
 
 const noteInEditor = ref({
@@ -17,7 +44,21 @@ const noteInEditor = ref({
     name: ""
 })
 
-var editor = null
+const editor = useEditor({
+        content: ``,
+        extensions: [
+          StarterKit,
+          TaskList,
+          TaskItem,
+          Placeholder.configure({
+            placeholder: '开始输入文本 …'
+          }),
+          OrderedList,
+          BulletList,
+          ListItem,
+        ],
+        injectCSS: false
+      })
 
 const imageUploadURL = 'http://localhost:8081/upload/photo'
 
@@ -94,146 +135,10 @@ watch(() => currentNote.value.noteId, (note, prevNote) => {
 })
 
 onMounted(() => {
-    console.log('init')
-    const editormd = require('@/static/editor.md/editormd')
-   
-    editor = editormd("editor", {
-      
-      imageUpload : true,
-      imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-      width  : "100%",
-      height : "700px",
-      path   : "./editor.md/lib/",
-      toolbarIcons : function() {
-        return ["save", "|", "undo", "redo", "|", "abstract", "expand", "segment", "generateTable", "generateFlowChart", "|",
-            "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", 
-            "h1", "h2", "h3", "h4", "h5", "h6", "|", 
-            "list-ul", "list-ol", "hr", "|",
-            "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "pagebreak", "|",
-            "watch", "preview", "fullscreen", "clear", "search"]
-      },
-      onload : function() {
-                var keyMap = {
-                  "Ctrl-S": function(cm) {
-                    if (noteInEditor.value.noteId !== -1) {
-                      saveNote()
-                      ElMessage.success('保存成功')
-                    }
-                  }
-                }
-                this.addKeyMap(keyMap)
-                mermaid.init();
-                initGraph();
-                if (currentNote.value.noteId !== -1) {
-                    getNoteAPI(currentNote.value.noteId)
-                        .then((note) => {
-                            this.setMarkdown(note.content.toString())
-                            noteInEditor.value = note
-                        })
-                        .catch((err) => console.log(err))
-                }
-    },
-      onchange : function() {
-          initGraph();
-          mermaid.init();
-      },
-      crossDomainUpload: true,
-      toolbarIconTexts : {
-          abstract : "<div style=\"display: flex; flex-direction: column\"><div class=\"far fa-file\"></div><span style=\"font-size: small\">abstract</span></div>",  // 如果没有图标，则可以这样直接插入内容，可以是字符串或HTML标签
-          expand : "<div style=\"display: flex; flex-direction: column\"><div class=\"fal fa-edit\"></div><span style=\"font-size: small\">expand</span></div>",
-          segment : "<div style=\"display: flex; flex-direction: column\"><div class=\"fal fa-align-justify\"></div><span style=\"font-size: small\">segment</span></div>",
-          generateTable : "<div style=\"display: flex; flex-direction: column\"><div class=\"fal fa-table\"></div><span style=\"font-size: small\">table</span></div>",
-          generateFlowChart : "<div style=\"display: flex; flex-direction: column\"><div class=\"fa fa-connectdevelop\"></div><span style=\"font-size: small\">flow chart</span></div>",
-          save : "<div style=\"display: flex; flex-direction: column\"><div class=\"fa-save\"></div><span style=\"font-size: small\">save</span></div>"
-      },
-      lang : {
-            toolbar : {
-                abstract : "摘要",  // 如果没有图标，则可以这样直接插入内容，可以是字符串或HTML标签
-                expand : "扩写",
-                segment : "分段",
-                generateTable : "表格生成",
-                generateFlowChart : "思维导图生成",
-                save : "保存"
-            }
-        },
-      extensions: ["mermaid"],
-      mermaid: {
-          startOnLoad: true,
-          theme: "default",
-          htmlLabels: false
-      },
-      toolbarHandlers : {
-            /**
-             * @param {Object}      cm         CodeMirror对象
-             * @param {Object}      icon       图标按钮jQuery元素对象
-             * @param {Object}      cursor     CodeMirror的光标对象，可获取光标所在行和位置
-             * @param {String}      selection  编辑器选中的文本
-             */
-            abstract : function(cm, icon, cursor, selection) {
-                if(selection === "") {
-                    cm.setCursor(cursor.line, cursor.ch + 1);
-                } else {
-                    console.log(selection)
-                    setBubble('abstract', selection)
-                }
-            },
-            expand: function(cm, icon, cursor, selection) {
-              if(selection === "") {
-                  cm.setCursor(cursor.line, cursor.ch + 1);
-              } else {
-                  setBubble('expand', selection)
-              }
-            },
-            segment: function(cm, icon, cursor, selection) {
-              if(selection === "") {
-                  cm.setCursor(cursor.line, cursor.ch + 1);
-              } else {
-                  setBubble('segment', selection)
-              }
-            },
-            generateTable: function(cm, icon, cursor, selection) {
-              if(selection === "") {
-                  cm.setCursor(cursor.line, cursor.ch + 1);
-              } else {
-                  setBubble('generateTable', selection)
-              }
-            },
-            generateFlowChart: function(cm, icon, cursor, selection) {
-              if(selection === "") {
-                  cm.setCursor(cursor.line, cursor.ch + 1);
-              } else {
-                  setBubble('generateFlowChart', selection)
-              }
-            },
-            getImageUploadURL: function() {
-              return imageUploadURL + '/' + currentUser.value.id + '/' + currentNote.value.noteId
-            },
-            saveImage: function() {
-              saveNote()
-            }
-            ,
-            save: function(cm, icon, cursor, selection) {
-                
-                var note = noteInEditor.value
-                if (note.noteId === -1) {
-                  ElMessage.error("请先打开一篇笔记")
-                  return;
-                }
-                console.log(note)
-                note.content = this.getMarkdown()
-                
-                updateNoteAPI(note)
-                    .then(() => {
-                      ElMessage.success("保存成功")
-                      globalEventBus.emit('SyncDialog')
-                    })
-                    .catch((err) => console.log(err))
-            }
-          },
-      emoji: true,
-      tex : true
-      });
-
+  // editor = new Editor({
+  //       content: '<p>欢迎使用Tiptap!🎉</p>',
+  //       extensions: [StarterKit],
+  //     });
       globalEventBus.on('SyncNote', () => {
         saveNote()
       })
@@ -246,72 +151,268 @@ onBeforeUnmount(() => {
   if (noteInEditor.value.noteId !== -1) {
     saveNote()
   }
+  //editor?.destroy();
 })
-
-const mermaidHtml = (str) => {
-      return `<pre><code class="language-mermaid"><div class="mermaid">${str}</div></code></pre>`
-}
-const initGraph = () => {
-    $('.editormd-preview-container').find('pre').find('ol').find('.L0').find('.lang-mermaid').each(function() {
-        var buffer = new Array();
-        $(this).parent().parent().find('li').each(function() {
-            $(this).find('span').each(function() {
-                buffer.push($(this).text());
-            })
-            buffer.push("\n");
-        })
-
-        var preDom = $(this).parent().parent().parent();
-        var contentBuffer = buffer.join("");
-        var content = mermaidHtml(contentBuffer);
-        console.log(content);
-        $(content).insertAfter(preDom);
-        $(preDom).remove();
-    })
-}
 
 </script>
 
 <template>
-  <component :is="'script'" src="./editor.md/jquery-1.12.0/package/distrib/jquery.min.js"></component>
-  <link rel="stylesheet" href="./editor.md/css/editormd.min.css" />
-  <div id="editor-container">
-    <div id="currentEditing">正在编辑：{{currentNote.name}} </div>
-    <div id="editor">
-
+  <div class="EditMain">
+    <div class="editor">
+      <div class="editorcard">
+        
+        <div class="toptools">
+          <EditorMenu :editor="editor" />
+        </div>
+        <div class="editcont">
+          <EditorContent
+            style="padding: 8px;  overflow-y: auto;"
+            :editor="editor"
+            />
+        </div>
+        <div class="bottomcount"></div>
+      </div>
     </div>
-    <bubble @insert="insert" @replace="replace" @close="reset" @function-done="func=''"
-            v-show="showBubble" :text="selectedText" :func="func"></bubble>
-    <float-ball @synEditor="saveNote"/>
   </div>
+
 </template>
 
 <style>
-  #editor {
+  /* #editor {
     height: 100% !important;
     width: 100% !important;
     margin: 0;
     box-sizing: border-box;
     border: 0;
-  }
-  .editormd-preview {
-    width: 50% !important;
-  }
-  .editormd .CodeMirror {
-    width: 50% !important;
-  }
+  } */
 
 </style>
 
 <style scoped>
-  #editor-container {
+.EditMain{
+    position: relative;
+    width:100%;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 100%;
+  
+  }
+ 
+
+  .editorcard{
+    position: relative;
+    width:95%;
+    height: 95%;
+    left: 2.5%;
+    top:2.5%;
+    display: grid;
+    grid-template-rows: 5% 92% 3%;
+    border: 1px solid #4f5c5765;
+  }
+  .editorcard .editor{
+    position: relative;
+    width:100%;
+    height: 100%;
+    left: 0;
+    top:0;
+    display: grid;
+    grid-template-rows: 10% 90%;
+  }
+  .editorcard .editor{
+    position: relative;
+    width:100%;
+    height: 100%;
+    left: 0;
+    top:0;
+    display: grid;
+    grid-template-rows: 10% 90%;
+  }
+  .toptools{
+    background-color: rgba(207, 220, 245, 0.199);
+    border-bottom: 1px dashed #9ca19f65;
+    
+  }
+  .bottomcount{
+    background-color: rgba(207, 220, 245, 0.199);
+    border-top: 1px dashed #9ca19f65;
+    height: 100%;
     width: 100%;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 100%;
+    justify-items: center;
+    align-items: center;
+  }
+  .editcont{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  </style>
+  
+  <style lang="scss">
+  b {
+    font-weight: bold;
+  }
+  .ProseMirror {
+    overflow-y: scroll;
+  }
+  .ProseMirror p {
+    margin: 0;
+  }
+  .ProseMirror:focus {
+    outline: none;
+  }
+  .tiptap p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+  
+  .tiptap {
+    > * + * {
+      margin-top: 0.75em;
+    }
+  
+    ul {
+      padding: 0 2rem;
+      list-style: square;
+    }
+    ol {
+      padding: 0 2rem;
+      list-style: decimal;
+    }
+    table {
+      border-collapse: collapse;
+      table-layout: fixed;
+      width: 100%;
+      margin: 0;
+      overflow: hidden;
+  
+      td,
+      th {
+        min-width: 1em;
+        border: 2px solid #ced4da;
+        padding: 3px 5px;
+        vertical-align: top;
+        box-sizing: border-box;
+        position: relative;
+  
+        > * {
+          margin-bottom: 0;
+        }
+      }
+  
+      th {
+        font-weight: bold;
+        text-align: left;
+        background-color: #f1f3f5;
+      }
+  
+      .selectedCell:after {
+        z-index: 2;
+        position: absolute;
+        content: '';
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: rgba(200, 200, 255, 0.4);
+        pointer-events: none;
+      }
+  
+      .column-resize-handle {
+        position: absolute;
+        right: -2px;
+        top: 0;
+        bottom: -2px;
+        width: 4px;
+        background-color: #adf;
+        pointer-events: none;
+      }
+  
+      p {
+        margin: 0;
+      }
+    }
+    pre {
+      background: #0d0d0d;
+      color: #fff;
+      font-family: 'JetBrainsMono', monospace;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+  
+      code {
+        color: inherit;
+        padding: 0;
+        background: none;
+        font-size: 0.8rem;
+      }
+  
+      .hljs-comment,
+      .hljs-quote {
+        color: #616161;
+      }
+  
+      .hljs-variable,
+      .hljs-template-variable,
+      .hljs-attribute,
+      .hljs-tag,
+      .hljs-name,
+      .hljs-regexp,
+      .hljs-link,
+      .hljs-name,
+      .hljs-selector-id,
+      .hljs-selector-class {
+        color: #f98181;
+      }
+      .hljs-number,
+      .hljs-meta,
+      .hljs-built_in,
+      .hljs-builtin-name,
+      .hljs-literal,
+      .hljs-type,
+      .hljs-params {
+        color: #fbbc88;
+      }
+  
+      .hljs-string,
+      .hljs-symbol,
+      .hljs-bullet {
+        color: #b9f18d;
+      }
+  
+      .hljs-title,
+      .hljs-section {
+        color: #faf594;
+      }
+  
+      .hljs-keyword,
+      .hljs-selector-tag {
+        color: #70cff8;
+      }
+  
+      .hljs-emphasis {
+        font-style: italic;
+      }
+  
+      .hljs-strong {
+        font-weight: 700;
+      }
+    }
+  }
+  
+  .tableWrapper {
+    overflow-x: auto;
+  }
+  
+  .resize-cursor {
+    cursor: ew-resize;
+    cursor: col-resize;
   }
 
-  #currentEditing {
-    color: rgb(128, 128, 128);
-    margin: 5px;
-  }
 </style>
