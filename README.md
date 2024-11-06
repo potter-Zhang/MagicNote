@@ -10,7 +10,7 @@
 
 
 ### JavaEE Project - Group Responsibilities
-This is an AI-Enhanced Intelligent Note-Taking Website Project.
+**This is an AI-Enhanced Intelligent Note-Taking Website Project.**
 
 **Jerome Yi (易杰): Backend Development**
    - Primary responsibilities include setting up parts of the backend framework; developing specific services and controllers; designing and maintaining database relationships.
@@ -33,3 +33,27 @@ This is an AI-Enhanced Intelligent Note-Taking Website Project.
    - Focused on the development of AI-related front-end components and the editor.
    - Designed the login and registration interfaces, integrated the editor and extended its toolbar, and implemented the import notes page and AI floating widget.
    - Developed and debugged streaming APIs for AI note extension features, integrated APIs for importing various rich text resources, image upload, and developed the AI conversation feature for notes, as well as synchronization and saving of note content.
+
+
+
+## Features and Screenshots
+
+![1730886197281](图/Register.png)
+
+![](图/Note.png)
+
+
+
+![1730887074280](图/Abstract.png)
+
+![](图\Expand.png)
+
+![](图/Segment.png)
+
+![](图/Table.png)
+
+![](图/Flow.png)
+
+![](图/Chat.png)
+
+![](图/Import.png)
